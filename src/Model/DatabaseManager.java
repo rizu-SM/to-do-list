@@ -64,5 +64,35 @@ public class DatabaseManager {
             return false;
         }
     }
+    public static User login(String email, String password) {
+        // Hacher le mot de passe saisi
+        String hashedPassword = SecurityUtil.hashSHA256(password);
+
+        String query = "SELECT * FROM users WHERE email = ? AND motdepass = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
+        	//getConnection() retourne une connexion active avec la base.
+            stmt.setString(1, email);
+            stmt.setString(2, hashedPassword);
+            ResultSet rs = stmt.executeQuery();
+            //executeQuery() exécute la requête et retourne le résultat dans un ResultSet.
+
+            // Si un utilisateur correspondant est trouvé
+            if (rs.next()) {
+            	//Si un enregistrement est trouvé dans la base :
+                return new User(
+                		//Retourne un objet User 
+                    rs.getInt("id"),
+                    rs.getString("nom"),
+                    rs.getString("prenom"),
+                    rs.getString("sex"),
+                    rs.getString("email"),
+                    rs.getString("motdepass") // Retourne le mot de passe haché (optionnel)
+                );
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la connexion : " + e.getMessage());
+        }
+        return null; // Aucun utilisateur trouvé
+    }
     
 }
