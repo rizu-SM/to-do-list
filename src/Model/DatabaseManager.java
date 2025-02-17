@@ -8,6 +8,8 @@ import java.sql.SQLException;
 import util.SecurityUtil;
 import util.ValidationUtil;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager {
     private static final String URL = "jdbc:mysql://localhost:3306/project?characterEncoding=UTF-8";
@@ -94,5 +96,52 @@ public class DatabaseManager {
         }
         return null; // Aucun utilisateur trouvé
     }
+    
+    //ajout les task-----------------------------------------------------------------------------------------------------------
+    
+    public static boolean addTask(Task task) {
+        String query = "INSERT INTO tasks (user_id, titre, description, date_limite, statut, priorite) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
+            stmt.setInt(1, task.getUserId());
+            stmt.setString(2, task.getTitre());
+            stmt.setString(3, task.getDescription());
+            stmt.setDate(4, java.sql.Date.valueOf(task.getDateLimite()));
+            stmt.setString(5, task.getStatut());
+            stmt.setString(6, task.getPriorite());
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'ajout de la tâche : " + e.getMessage());
+            return false;
+        }
+    }
+    
+    //method pour avait les task de l utilisateur avec son id
+    
+    public static List<Task> getTasksByUserId(int userId) {
+        List<Task> tasks = new ArrayList<>();
+        String query = "SELECT * FROM tasks WHERE user_id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Task task = new Task(
+                    rs.getInt("id"),
+                    rs.getInt("user_id"),
+                    rs.getString("titre"),
+                    rs.getString("description"),
+                    rs.getDate("date_limite").toLocalDate(),
+                    rs.getString("statut"),
+                    rs.getString("priorite")
+                );
+                tasks.add(task);
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération des tâches : " + e.getMessage());
+        }
+        return tasks;
+    }
+    
+    
     
 }
