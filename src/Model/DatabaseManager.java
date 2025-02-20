@@ -55,7 +55,7 @@ public class DatabaseManager {
         	//evite sql injection , car les paramètres ? ne sont pas directement concaténés dans la requête
             stmt.setString(1, user.getNom());//ajout des valeur a ? avec l objet quon avait
             stmt.setString(2, user.getPrenom());
-            stmt.setString(3, user.getSex());
+            stmt.setString(3, String.valueOf(user.getSex()));
             stmt.setString(4, user.getEmail());
             stmt.setString(5, hashedPassword);
             stmt.executeUpdate();
@@ -81,14 +81,14 @@ public class DatabaseManager {
             // Si un utilisateur correspondant est trouvé
             if (rs.next()) {
             	//Si un enregistrement est trouvé dans la base :
-                return new User(
-                		//Retourne un objet User 
-                    rs.getInt("id"),
-                    rs.getString("nom"),
-                    rs.getString("prenom"),
-                    rs.getString("sex"),
-                    rs.getString("email"),
-                    rs.getString("motdepass") // Retourne le mot de passe haché (optionnel)
+            	return new User(
+                        rs.getInt("id"),
+                        rs.getString("nom"),
+                        rs.getString("prenom"),
+                        rs.getString("sex").charAt(0),
+                        rs.getString("email"),
+                        rs.getString("motdepass"), // mot de passe haché
+                        rs.getInt("coin")   
                 );
             }
         } catch (SQLException e) {
@@ -97,9 +97,60 @@ public class DatabaseManager {
         return null; // Aucun utilisateur trouvé
     }
     
+    public static boolean terminerTacheEtMAJDB(Task task, User user) {
+        int userId = getUserIdByEmail(user.getEmail()); // Récupérer user_id dynamiquement
+
+        if (userId == -1) {
+            System.out.println("Erreur : Aucun utilisateur trouvé avec cet email.");
+            return false;
+        }
+
+        if (task.terminerTache(user)) {
+            try (Connection conn = getConnection()) {
+                String updateTask = "UPDATE tasks SET statut = 'Terminé' WHERE id = ?";
+                PreparedStatement stmtTask = conn.prepareStatement(updateTask);
+                stmtTask.setInt(1, task.getId());
+                stmtTask.executeUpdate();
+
+                String updateUser = "UPDATE users SET coin = ? WHERE id = ?";
+                PreparedStatement stmtUser = conn.prepareStatement(updateUser);
+                stmtUser.setInt(1, user.getCoin());
+                stmtUser.setInt(2, userId); // Utiliser l'ID récupéré
+                stmtUser.executeUpdate();
+
+                System.out.println("Tâche terminée, " + task.getCoinsForTask() + " coins ajoutés !");
+                return true;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+        } else {
+            System.out.println("Cette tâche est déjà terminée.");
+            return false;
+        }
+    }
+
+
+
     //ajout les task-----------------------------------------------------------------------------------------------------------
+    public static int getUserIdByEmail(String email) {
+        String query = "SELECT id FROM users WHERE email = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("id"); // Return the found user ID
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération de l'ID utilisateur : " + e.getMessage());
+        }
+        return -1; // Return -1 if no user is found
+    }
+
     
     public static boolean addTask(Task task) {
+        
+
         String query = "INSERT INTO tasks (user_id, titre, description, date_limite, statut, priorite) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
             stmt.setInt(1, task.getUserId());
@@ -115,7 +166,7 @@ public class DatabaseManager {
             return false;
         }
     }
-    
+
     //method pour avait les task de l utilisateur avec son id
     
     public static List<Task> getTasksByUserId(int userId) {

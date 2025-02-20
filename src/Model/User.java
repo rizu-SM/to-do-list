@@ -2,19 +2,20 @@ package Model;
 import util.ValidationUtil;
 
 public class User {
-    private int id;
+    private int id; // Auto-incrémenté en base de données
     private String nom;
     private String prenom;
-    private String sex;
+    private char sex;
     private String email;
     private String motdepass;
+    private int coin;
 
-    // Constructeur
-    public User(int id, String nom, String prenom, String sex, String email, String motdepass) {
-        this.id = id;
+    // Constructeur sans id (pour création d'un nouvel utilisateur)
+    public User(String nom, String prenom, char sex, String email, String motdepass, int coin) {
         this.nom = nom;
         this.prenom = prenom;
         this.sex = sex;
+        this.coin = coin;
         if (ValidationUtil.isValidEmail(email)) {
             this.email = email;
         } else {
@@ -23,18 +24,29 @@ public class User {
         this.motdepass = motdepass;
     }
 
+    // Constructeur complet (si besoin)
+    public User(int id, String nom, String prenom, char sex, String email, String motdepass, int coin) {
+        this(nom, prenom, sex, email, motdepass, coin); // Réutilise l'autre constructeur
+        this.id = id;
+    }
+
     // Getters et Setters
     public int getId() { return id; }
     public String getNom() { return nom; }
     public String getPrenom() { return prenom; }
-    public String getSex() { return sex; }
+    public char getSex() { return sex; }
     public String getEmail() { return email; }
     public String getMotdepass() { return motdepass; }
+    public int getCoin() { return coin; }
+    
+    public void setCoin(int coin) { this.coin = coin; }
     public void setNom(String nom) { this.nom = nom; }
     public void setPrenom(String prenom) { this.prenom = prenom; }
-    public void setSex(String sex) { this.sex = sex; }
-    
-}
+    public void setSex(char sex) { this.sex = sex; }
 
+    public void ajouterCoins(int coins) {
+        this.coin += coins;
+    }
+}
 
 
