@@ -61,6 +61,7 @@ public class LogInPage extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setBounds(100, 100, 450, 300);
         contentPane = new JPanel();
+        
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
         contentPane.setLayout(null);
         setContentPane(contentPane);
@@ -161,7 +162,7 @@ public class LogInPage extends JFrame {
         });
 
         // Case à cocher pour afficher/masquer le mot de passe
-        chkShowPassword = new JCheckBox("Afficher le mot de passe");
+        chkShowPassword = new JCheckBox("Show password");
         chkShowPassword.setFont(new Font("Tahoma", Font.PLAIN, 10));
         chkShowPassword.setBounds(30, 150, 150, 20);
         chkShowPassword.setBackground(new Color(0x8AC1CB)); // Couleur de fond #8AC1CB
@@ -216,17 +217,17 @@ public class LogInPage extends JFrame {
         txtJoinUs.setBounds(291, 133, 86, 20);
         contentPane.add(txtJoinUs);
 
-        JButton LogInBtn_1 = new JButton("Sign Up");
-        LogInBtn_1.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        LogInBtn_1.setForeground(Color.WHITE);
-        LogInBtn_1.setBorder(null);
-        LogInBtn_1.setBackground(new Color(51, 153, 204));
-        LogInBtn_1.setActionCommand("LogIn");
-        LogInBtn_1.setBounds(273, 216, 89, 23);
-        contentPane.add(LogInBtn_1);
+        JButton SignUP = new JButton("Sign Up");
+        SignUP.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        SignUP.setForeground(Color.WHITE);
+        SignUP.setBorder(null);
+        SignUP.setBackground(new Color(51, 153, 204));
+        SignUP.setActionCommand("LogIn");
+        SignUP.setBounds(273, 216, 89, 23);
+        contentPane.add(SignUP);
 
         // Ajouter l'écouteur d'événements au bouton "Sign Up"
-        LogInBtn_1.addActionListener(new ActionListener() {
+        SignUP.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 // Ouvrir la fenêtre suivante
