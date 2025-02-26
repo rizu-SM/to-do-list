@@ -62,15 +62,6 @@ public class Task {
     }
   
 
-    public boolean terminerTache(User user) {
-        if (!statut.equals("Terminé")) {
-            statut = "Terminé";
-            user.ajouterCoins(getCoinsForTask());
-            return true;
-        }
-        return false;
-    }
-
     
     public String toString() {
         return "Task{" +

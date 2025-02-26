@@ -28,7 +28,7 @@ public class AuthController {
         return DatabaseManager.createUser(user);
     }
 
-    // Méthode pour déconnecter un utilisateur
+    // Méthode pour déconnecter un utilisateur (jjust faire user=null)
     public void logout() {
         if (loggedInUser != null) {
             System.out.println("Déconnexion en cours...");

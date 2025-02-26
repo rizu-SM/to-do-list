@@ -17,11 +17,11 @@ public class DatabaseManager {
 
     // Méthode pour établir la connexion à la base de données
     public static Connection getConnection() {
-        if (conn == null || isConnectionClosed(conn)) {
+        if (conn == null || isConnectionClosed(conn)) { // pour vérify si isConnectionClosed(conn) 
             try {
                 System.out.println("Établissement de la connexion...");
-                Class.forName("com.mysql.jdbc.Driver");
-                conn = DriverManager.getConnection(URL, USER, PASSWORD);
+                Class.forName("com.mysql.jdbc.Driver");//Cette ligne charge le driver JDBC nécessaire pour connecter Java à une base de données MySQL.
+                conn = DriverManager.getConnection(URL, USER, PASSWORD);//Établissement de la connexion avec la base de données
                 System.out.println("Connexion réussie !");
             } catch (ClassNotFoundException e) {
                 System.out.println("Driver non trouvé : " + e.getMessage());
@@ -32,6 +32,7 @@ public class DatabaseManager {
         return conn;
     }
     
+    //verifié  la connextion a base de donnée  
     private static boolean isConnectionClosed(Connection conn) {
         try {
             return conn == null || conn.isClosed();
@@ -42,6 +43,7 @@ public class DatabaseManager {
     }
     
 	 // Méthode pour fermer la connexion (à appeler à la fin de l'application)
+    //pour éviter plusieurs problemes liés à la gestion des ressources
 	    public static void closeConnection() {
 	        if (conn != null) {
 	            try {
@@ -56,14 +58,16 @@ public class DatabaseManager {
     // Méthode pour créer un nouvel utilisateur
     public static boolean createUser(User user) {
         String query = "INSERT INTO users (nom, prenom, sex, email, motdepass, coin) VALUES (?, ?, ?, ?, ?, ?)";
+        //c est un requette sql
         try (PreparedStatement stmt = getConnection().prepareStatement(query)) {
-            stmt.setString(1, user.getNom());
-            stmt.setString(2, user.getPrenom());
+        	//ouvre la connexion a la base de donner avec getConnection et evit sql injection utilisant prepareStatement (concaténation de string)+permet dexecuter la requette sql 
+            stmt.setString(1, user.getNom());//remplace les parametres par les valeur real
+            stmt.setString(2, user.getPrenom()); 
             stmt.setString(3, String.valueOf(user.getSex()));
             stmt.setString(4, user.getEmail());
             stmt.setString(5, user.getMotdepass());
             stmt.setInt(6, user.getCoin());
-            stmt.executeUpdate();
+            stmt.executeUpdate(); //execute la requet sql 
             return true;
         } catch (SQLException e) {
             System.out.println("Erreur lors de la création de l'utilisateur : " + e.getMessage());
@@ -78,6 +82,9 @@ public class DatabaseManager {
             stmt.setString(1, email);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
+            
+            //Quand tu exécutes stmt.executeQuery() on obtient tableau contenant les resultat de la requet sql
+            //si rs.next return true ca veut dire  Il y a une ligne dans le résultat, donc l’utilisateur existe dans la base de données.
             if (rs.next()) {
                 return new User(
                     rs.getInt("id"),
@@ -140,36 +147,39 @@ public class DatabaseManager {
         }
         return tasks;
     }
-
-    // Méthode pour marquer une tâche comme terminée et mettre à jour les coins
-    public static boolean terminerTacheEtMAJDB(Task task, User user) {
-        int userId = getUserIdByEmail(user.getEmail());
-        if (userId == -1) {
-            System.out.println("Erreur : Aucun utilisateur trouvé avec cet email.");
+    
+    public static boolean deleteTask(int taskId) {
+        String query = "DELETE FROM tasks WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, taskId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // Retourne true si une tâche a été supprimée
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la suppression de la tâche : " + e.getMessage());
             return false;
         }
-
-        try (Connection conn = getConnection()) {
-            // Marquer la tâche comme terminée
-            String updateTask = "UPDATE tasks SET statut = 'Terminé' WHERE id = ?";
-            PreparedStatement stmtTask = conn.prepareStatement(updateTask);
-            stmtTask.setInt(1, task.getId());
-            stmtTask.executeUpdate();
-
-            // Mettre à jour les coins de l'utilisateur
-            String updateUser = "UPDATE users SET coin = ? WHERE id = ?";
-            PreparedStatement stmtUser = conn.prepareStatement(updateUser);
-            stmtUser.setInt(1, user.getCoin());
-            stmtUser.setInt(2, userId);
-            stmtUser.executeUpdate();
-
-            System.out.println("Tâche terminée, " + task.getCoinsForTask() + " coins ajoutés !");
-            return true;
+    }
+    
+    public static boolean updateTask(Task task) {
+        String query = "UPDATE tasks SET titre = ?, description = ?, date_limite = ?, statut = ?, priorite = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, task.getTitre());
+            stmt.setString(2, task.getDescription());
+            stmt.setDate(3, java.sql.Date.valueOf(task.getDateLimite()));
+            stmt.setString(4, task.getStatut());
+            stmt.setString(5, task.getPriorite());
+            stmt.setInt(6, task.getId());
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0; // Retourne true si la tâche a été mise à jour
         } catch (SQLException e) {
             System.out.println("Erreur lors de la mise à jour de la tâche : " + e.getMessage());
             return false;
         }
     }
+
+
 
     // Méthode pour récupérer l'ID d'un utilisateur par son email
     public static int getUserIdByEmail(String email) {
