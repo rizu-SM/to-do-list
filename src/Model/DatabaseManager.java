@@ -11,7 +11,7 @@ import java.util.List;
 public class DatabaseManager {
     private static final String URL = "jdbc:mysql://localhost:3306/project?characterEncoding=UTF-8";
     private static final String USER = "root";
-    private static final String PASSWORD = "supra_2006";
+    private static final String PASSWORD = "lyna1234";
 
     private static Connection conn = null;
 
