@@ -42,13 +42,17 @@ public class Main {
 
                         // Menu des tâches
                         while (true) {
-                            System.out.println("\n=== Menu des Tâches ===");
-                            System.out.println("1. Ajouter une tâche");
-                            System.out.println("2. Afficher les tâches");
-                            System.out.println("3. Marquer une tâche comme terminée");
-                            System.out.println("4. Supprimer une tâche");
-                            System.out.println("5. Modifier une tâche");
+                            System.out.println("\n=== Menu des task ===");
+                            System.out.println("1. Ajouter une task");
+                            System.out.println("2. Afficher les task");
+                            System.out.println("3. Marquer une task comme terminée");
+                            System.out.println("4. Supprimer une task");
+                            System.out.println("5. Modifier une task");
                             System.out.println("6. Se déconnecter");
+                            System.out.println("7. afficher les task d apres priorité");
+                            System.out.println("8. afficher task d'apres catégorie");
+                            System.out.println("9. afficher les task d'apres la date");
+                            System.out.println("10. d apres l état");
                             System.out.print("Choix : ");
                             int taskChoice = scanner.nextInt();
                             scanner.nextLine(); // Nettoyer le buffer
@@ -80,8 +84,10 @@ public class Main {
                                     String statut = scanner.nextLine();
                                     System.out.print("Entrez la priorité (Faible, Moyenne, Haute) : ");
                                     String priorite = scanner.nextLine();
+                                    System.out.print("Entrez la catégorie (routin, work, study ,sport , other) : ");
+                                    String categorie = scanner.nextLine();
 
-                                    Task newTask = new Task(0, user.getId(), titre, description, date, statut, priorite);
+                                    Task newTask = new Task(0, user.getId(), titre, description, date, statut, priorite, categorie);
                                     if (taskController.addTask(newTask)) {
                                         System.out.println("Tâche ajoutée avec succès !");
                                     } else {
@@ -217,6 +223,8 @@ public class Main {
                                     String newStatut = scanner.nextLine();
                                     System.out.print("Entrez la nouvelle priorité (Faible, Moyenne, Haute) (actuelle : " + taskToEdit.getPriorite() + ") : ");
                                     String newPriorite = scanner.nextLine();
+                                    System.out.print("Entrez la nouvelle categorie (routin, work, study, sport, other) (actuelle : " + taskToEdit.getCategorie() + ") : ");
+                                    String newCategorie = scanner.nextLine();
 
                                     // Mettre à jour la tâche
                                     taskToEdit.setTitre(newTitre);
@@ -224,6 +232,7 @@ public class Main {
                                     taskToEdit.setDateLimite(newDate);
                                     taskToEdit.setStatut(newStatut);
                                     taskToEdit.setPriorite(newPriorite);
+                                    taskToEdit.setCategorie(newCategorie);
 
                                     if (taskController.editTask(taskToEdit)) {
                                         System.out.println("Tâche modifiée avec succès !");
@@ -237,6 +246,41 @@ public class Main {
                                     authController.logout();
                                     System.out.println("Déconnexion réussie.");
                                     return; // Retour au menu principal
+                                case 7:
+                                    System.out.println("=== Tâches triées par priorité ===");
+                                    List<Task> sortedTasks = taskController.getTasksByUserIdSortedByPriority(user.getId());
+                                    for (Task t : sortedTasks) {
+                                        System.out.println(t);
+                                    }
+                                    break;
+                                case 8:
+                                    System.out.println("Entrez la catégorie : ");
+                                    String category = scanner.nextLine();
+                                    System.out.println("=== Tâches de la catégorie '" + category + "' ===");
+                                    List<Task> categoryTasks = taskController.getTasksByCategory(user.getId(), category);
+                                    for (Task t : categoryTasks) {
+                                        System.out.println(t);
+                                    }
+                                    break;
+                                case 9:
+                                    System.out.println("=== Tâches triées par date ===");
+                                    List<Task> sortedByDateTasks = taskController.getTasksSortedByDate(user.getId());
+                                    for (Task t : sortedByDateTasks) {
+                                        System.out.println(t);
+                                    }
+                                    break;
+                                case 10:
+                                    System.out.println("Entrez le statut des tâches à afficher ( 'À faire', 'En cours', 'Terminé'):");
+                                    String status = scanner.nextLine();
+                                    System.out.println("=== Tâches avec le statut : " + status + " ===");
+                                    List<Task> filteredTasks = taskController.getTasksByStatus(user.getId(), status);
+                                    for (Task t : filteredTasks) {
+                                        System.out.println(t);
+                                    }
+                                    break;
+
+
+
 
                                 default:
                                     System.out.println("Choix invalide.");

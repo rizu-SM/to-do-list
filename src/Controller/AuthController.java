@@ -7,10 +7,10 @@ import Model.DatabaseManager;
 
 
 public class AuthController {
-    private User loggedInUser = null; // Stocker l'utilisateur connecté
+    private static User loggedInUser = null; // Stocker l'utilisateur connecté
 
     // Méthode pour connecter un utilisateur
-    public User login(String email, String password) {
+    public static User login(String email, String password) {
     	String hashedPassword = SecurityUtil.hashSHA256(password);
         loggedInUser = DatabaseManager.login(email, hashedPassword);
         return loggedInUser;

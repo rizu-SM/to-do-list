@@ -1,35 +1,28 @@
 package View;
+import Model.*;
+import Controller.*;
 
 import java.awt.EventQueue;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
+import java.awt.*;
 import java.awt.Color;
-import javax.swing.JTextField;
-import javax.swing.JPasswordField;
-import javax.swing.JCheckBox;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import javax.swing.JButton;
 import java.awt.Cursor;
-import javax.swing.JTextArea;
-import javax.swing.JScrollPane;
-import javax.swing.border.LineBorder;
 import java.awt.Component;
-import javax.swing.JComboBox;
-import javax.swing.JDesktopPane;
-import javax.swing.JToolBar;
-import javax.swing.JSplitPane;
+
 
 public class LogInPage extends JFrame {
 
     private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     private JTextField txtSignIn;
-    private JTextField txtEmail;
+    private JTextField txtEmail;// 
     private JTextField txtPasswordPlaceholder; // Placeholder pour le mot de passe
     private JPasswordField txtPassword; // Champ de mot de passe réel
     private JCheckBox chkShowPassword;
@@ -37,6 +30,7 @@ public class LogInPage extends JFrame {
     private JTextField Hello;
     private JTextField texteA;
     private JTextField txtJoinUs;
+    private JFrame frame;
 
     /**
      * Launch the application.
@@ -177,6 +171,22 @@ public class LogInPage extends JFrame {
         LogInBtn.setActionCommand("LogIn");
         LogInBtn.setBounds(67, 218, 89, 23);
         logInPanel.add(LogInBtn);
+        LogInBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String email = txtEmail.getText();
+                String password = new String(txtPassword.getPassword());
+                System.out.println("Entered Email: " + email);
+                System.out.println("Entered Password: " + password);
+
+                User user = AuthController.login(email, password);
+                if (user != null) {
+                    JOptionPane.showMessageDialog(frame, "Login Successful! Welcome " + user.getNom());
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Invalid credentials", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
 
         // Texte "Hello friend !"
         Hello = new JTextField();
