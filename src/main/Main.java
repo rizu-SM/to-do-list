@@ -2,8 +2,10 @@ package main;
 
 import Model.User;
 import Model.Task;
+import Model.Note;
 import Controller.AuthController;
 import Controller.TaskController;
+import Controller.NoteController;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -15,6 +17,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         AuthController authController = new AuthController();
         TaskController taskController = new TaskController();
+        NoteController noteController = new NoteController();
 
         User user = null; // Utilisateur connecté
 
@@ -39,6 +42,7 @@ public class Main {
                     user = authController.login(email, password);
                     if (user != null) {
                         System.out.println("Connexion réussie ! Bienvenue, " + user.getNom() + ".");
+                        menuNotes(scanner, noteController, user); // Afficher le menu des notes
                         menuTaches(scanner, authController, taskController, user); // Afficher le menu des tâches
                     } else {
                         System.out.println("Email ou mot de passe incorrect.");
@@ -81,6 +85,82 @@ public class Main {
             }
         }
     }
+ //  Menu pour gérer les notes
+    private static void menuNotes(Scanner scanner, NoteController noteController, User user) {
+        while (true) {
+            System.out.println("\n=== Menu des Notes ===");
+            System.out.println("1. Ajouter une note");
+            System.out.println("2. Afficher mes notes");
+            System.out.println("3. Modifier une note");
+            System.out.println("4. Supprimer une note");
+            System.out.println("5. Retour au menu principal");
+            System.out.print("Choix : ");
+            int choix = scanner.nextInt();
+            scanner.nextLine(); 
+
+            switch (choix) {
+                case 1:
+                    System.out.print("Titre : ");
+                    String titre = scanner.nextLine();
+                    System.out.print("Description : ");
+                    String description = scanner.nextLine();
+                    Note newNote = new Note(0, titre, description, user.getId());
+                    if (noteController.addNote(newNote)) {
+                        System.out.println("Note ajoutée !");
+                    } else {
+                        System.out.println("Erreur lors de l'ajout.");
+                    }
+                    break;
+
+                case 2:
+                    List<Note> notes = noteController.getNotesByUserId(user.getId());
+                    if (notes.isEmpty()) {
+                        System.out.println("Aucune note trouvée.");
+                    } else {
+                        System.out.println("=== Vos Notes ===");
+                        for (Note n : notes) {
+                            System.out.println(n);
+                        }
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("ID de la note à modifier : ");
+                    int noteId = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Nouveau titre : ");
+                    String newTitre = scanner.nextLine();
+                    System.out.print("Nouvelle description : ");
+                    String newDesc = scanner.nextLine();
+
+                    if (noteController.updateNote(new Note(noteId, newTitre, newDesc, user.getId()))) {
+                        System.out.println("Note mise à jour !");
+                    } else {
+                        System.out.println("Erreur lors de la modification.");
+                    }
+                    break;
+
+                case 4:
+                    System.out.print("ID de la note à supprimer : ");
+                    int idSuppr = scanner.nextInt();
+                    scanner.nextLine();
+
+                    if (noteController.deleteNote(idSuppr)) {
+                        System.out.println("Note supprimée !");
+                    } else {
+                        System.out.println("Erreur lors de la suppression.");
+                    }
+                    break;
+
+                case 5:
+                    return; // Retourner au menu principal
+
+                default:
+                    System.out.println("Choix invalide.");
+            }
+        }
+    }
+
 
     // Méthode pour afficher le menu des tâches
     private static void menuTaches(Scanner scanner, AuthController authController, TaskController taskController, User user) {
@@ -184,9 +264,8 @@ public class Main {
                         System.out.println("Erreur lors de la mise à jour.");
                     }
                     break;
-
-
-                case 4:
+                    
+                case 5:
                     // Déconnexion
                     authController.logout();
                     System.out.println("Déconnexion réussie.");
@@ -197,7 +276,10 @@ public class Main {
             }
         }
     }
+    
 }
+
+
 
 
 

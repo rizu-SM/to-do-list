@@ -11,7 +11,7 @@ import java.util.List;
 public class DatabaseManager {
     private static final String URL = "jdbc:mysql://localhost:3306/project?characterEncoding=UTF-8";
     private static final String USER = "root";
-    private static final String PASSWORD = "supra_2006";
+    private static final String PASSWORD = "lyna1234";
 
     private static Connection conn = null;
 
@@ -185,4 +185,74 @@ public class DatabaseManager {
         }
         return -1;
     }
+
+    // Ajouter une note
+    public static boolean addNote(Note note) {
+        String query = "INSERT INTO notes (titre, description, userId) VALUES (?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, note.getTitre());
+            stmt.setString(2, note.getDescription());
+            stmt.setInt(3, note.getUserId());
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'ajout de la note : " + e.getMessage());
+            return false;
+        }
+    }
+    
+ // Récupérer les notes d’un utilisateur
+    public static List<Note> getNotesByUserId(int userId) {
+        List<Note> notes = new ArrayList<>();
+        String query = "SELECT * FROM notes WHERE userId = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Note note = new Note(
+                        rs.getInt("id"),
+                        rs.getString("titre"),
+                        rs.getString("description"),
+                        rs.getInt("userId")
+                );
+                notes.add(note);
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération des notes : " + e.getMessage());
+        }
+        return notes;
+    }
+    public static boolean updateNote(Note note) {
+        String query = "UPDATE notes SET titre = ?, description = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, note.getTitre());
+            stmt.setString(2, note.getDescription());
+            stmt.setInt(3, note.getId());
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la mise à jour de la note : " + e.getMessage());
+            return false;
+        }
+    }
+    public static boolean deleteNote(int id) {
+        String query = "DELETE FROM notes WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la suppression de la note : " + e.getMessage());
+            return false;
+        }
+    }
+
+
+    
+    
+    
 }
