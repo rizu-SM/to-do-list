@@ -23,6 +23,24 @@ public class TaskController {
     public List<Task> getTasksByUserId(int userId) {
         return DatabaseManager.getTasksByUserId(userId);
     }
+    
+    
+    public List<Task> getTasksByUserIdSortedByPriority(int userId) {
+        return DatabaseManager.getTasksByUserIdSortedByPriority(userId); 
+    }
+    
+    public List<Task> getTasksByCategory(int userId, String category) {
+        return DatabaseManager.getTasksByCategory(userId, category);
+    }
+    
+    public List<Task> getTasksSortedByDate(int userId) {
+        return DatabaseManager.getTasksSortedByDate(userId);
+    }
+    
+    public List<Task> getTasksByStatus(int userId, String status) {
+        return DatabaseManager.getTasksByStatus(userId, status);
+    }
+
 
     
     
@@ -105,7 +123,7 @@ public class TaskController {
     
     
     public boolean editTask(Task task) {
-        // Vérifier si la tâche est déjà terminée
+        // verify sif task is Terminer or no 
         if ("Terminé".equalsIgnoreCase(task.getStatut())) {
             System.out.println("Cette tâche est déjà terminée et ne peut pas être modifiée.");
             return false;

@@ -10,9 +10,10 @@ public class Task {
     private LocalDate dateLimite;
     private String statut; // À faire, En cours, Terminé
     private String priorite; // Faible, Moyenne, Haute
+    private String categorie;
 
 
-    public Task(int id, int userId, String titre, String description, LocalDate dateLimite, String statut, String priorite) {
+    public Task(int id, int userId, String titre, String description, LocalDate dateLimite, String statut, String priorite ,String categorie) {
         this.id = id;
         this.userId = userId;
         this.titre = titre;
@@ -20,14 +21,16 @@ public class Task {
         this.dateLimite = dateLimite;
         this.statut = statut;
         this.priorite = priorite;
+        this.categorie=categorie;
     }
-    public Task( int userId, String titre, String description, LocalDate dateLimite, String statut, String priorite) {
+    public Task( int userId, String titre, String description, LocalDate dateLimite, String statut, String priorite, String categorie) {
         this.userId = userId;
         this.titre = titre;
         this.description = description;
         this.dateLimite = dateLimite;
         this.statut = statut;
         this.priorite = priorite;
+        this.categorie=categorie;
     }
 
     // Getters et Setters
@@ -38,6 +41,7 @@ public class Task {
     public LocalDate getDateLimite() { return dateLimite; }
     public String getStatut() { return statut; }
     public String getPriorite() { return priorite; }
+    public String getCategorie() { return categorie; } 
 
     public void setId(int id) { this.id = id; }
     public void setUserId(int userId) { this.userId = userId; }
@@ -46,6 +50,7 @@ public class Task {
     public void setDateLimite(LocalDate dateLimite) { this.dateLimite = dateLimite; }
     public void setStatut(String statut) { this.statut = statut; }
     public void setPriorite(String priorite) { this.priorite = priorite; }
+    public void setCategorie(String categorie) { this.categorie = categorie; }
     
     //system de coin
     public int getCoinsForTask() {
@@ -72,6 +77,7 @@ public class Task {
                 ", dateLimite=" + dateLimite +
                 ", statut='" + statut + '\'' +
                 ", priorite='" + priorite + '\'' +
+                ", categorie='" + categorie + '\'' +
                 '}';
     }
 }

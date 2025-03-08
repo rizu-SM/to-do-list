@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="700.0" style="-fx-background-color: FF6767;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.MainController">
+   <children>
+      <BorderPane layoutX="26.0" layoutY="34.0" prefHeight="432.0" prefWidth="648.0" style="-fx-background-color: FFF; -fx-background-radius: 10;">
+         <right>
+            <AnchorPane prefHeight="432.0" prefWidth="323.0" BorderPane.alignment="CENTER">
+               <children>
+                  <TextField alignment="CENTER" layoutX="14.0" layoutY="62.0" prefHeight="31.0" prefWidth="269.0" promptText="Enter your First Name" style="-fx-background-color: FFFF; -fx-border-style: solid; -fx-border-radius: 5;">
+                     <font>
+                        <Font name="Calisto MT" size="12.0" />
+                     </font></TextField>
+                  <Text layoutX="14.0" layoutY="43.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sign Up" wrappingWidth="115.47000122070312">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Text>
+                  <TextField alignment="CENTER" layoutX="14.0" layoutY="110.0" prefHeight="31.0" prefWidth="269.0" promptText="Enter your Last Name" style="-fx-background-color: FFFF; -fx-border-style: solid; -fx-border-radius: 5;">
+                     <font>
+                        <Font name="Calisto MT" size="12.0" />
+                     </font>
+                  </TextField>
+                  <ImageView fitHeight="14.0" fitWidth="14.0" layoutX="28.0" layoutY="71.0" opacity="0.67">
+                     <image>
+                        <Image url="@../images/user%20(2).png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="14.0" fitWidth="14.0" layoutX="28.0" layoutY="119.0" opacity="0.67">
+                     <image>
+                        <Image url="@../images/user%20(2).png" />
+                     </image>
+                  </ImageView>
+                  <TextField alignment="CENTER" layoutX="14.0" layoutY="160.0" prefHeight="31.0" prefWidth="269.0" promptText="Enter your Email" style="-fx-background-color: FFFF; -fx-border-style: solid; -fx-border-radius: 5;">
+                     <font>
+                        <Font name="Calisto MT" size="12.0" />
+                     </font>
+                  </TextField>
+                  <ImageView fitHeight="16.0" fitWidth="22.0" layoutX="24.0" layoutY="168.0" opacity="0.6">
+                     <image>
+                        <Image url="@../images/email%20(1).png" />
+                     </image>
+                  </ImageView>
+                  <TextField alignment="CENTER" layoutX="14.0" layoutY="209.0" prefHeight="31.0" prefWidth="269.0" promptText="Enter your Sex" style="-fx-background-color: FFFF; -fx-border-style: solid; -fx-border-radius: 5;">
+                     <font>
+                        <Font name="Calisto MT" size="12.0" />
+                     </font>
+                  </TextField>
+                  <ImageView fitHeight="19.0" fitWidth="27.0" layoutX="23.0" layoutY="215.0" opacity="0.62">
+                     <image>
+                        <Image url="@../images/sex.png" />
+                     </image>
+                  </ImageView>
+                  <PasswordField alignment="CENTER" layoutX="16.0" layoutY="258.0" prefHeight="31.0" prefWidth="265.0" promptText="Enter your Password" style="-fx-border-style: solid; -fx-border-radius: 5;">
+                     <font>
+                        <Font name="Calisto MT" size="12.0" />
+                     </font>
+                  </PasswordField>
+                  <PasswordField alignment="CENTER" layoutX="16.0" layoutY="308.0" prefHeight="31.0" prefWidth="265.0" promptText="Confirme your Password" style="-fx-border-style: solid; -fx-border-radius: 5;">
+                     <font>
+                        <Font name="Calisto MT" size="12.0" />
+                     </font>
+                  </PasswordField>
+                  <ImageView fitHeight="15.0" fitWidth="26.0" layoutX="23.0" layoutY="266.0" opacity="0.78">
+                     <image>
+                        <Image url="@../images/padlock%20(2).png" />
+                     </image>
+                  </ImageView>
+                  <ImageView fitHeight="15.0" fitWidth="26.0" layoutX="23.0" layoutY="316.0" opacity="0.71">
+                     <image>
+                        <Image url="@../images/padlock%20(2).png" />
+                     </image>
+                  </ImageView>
+                  <Button layoutX="24.0" layoutY="356.0" mnemonicParsing="false" opacity="0.78" prefHeight="25.0" prefWidth="75.0" style="-fx-background-color: FF6767;" text="Register" textFill="WHITE">
+                     <font>
+                        <Font name="Gadugi" size="12.0" />
+                     </font>
+                     <cursor>
+                        <Cursor fx:constant="HAND" />
+                     </cursor>
+                  </Button>
+                  <Text layoutX="28.0" layoutY="405.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Already have an account?" wrappingWidth="130.80339813232422">
+                     <font>
+                        <Font name="Calisto MT" size="11.0" />
+                     </font>
+                  </Text>
+                  <Hyperlink layoutX="149.0" layoutY="390.0" onAction="#afficherSignInForm" prefHeight="24.0" prefWidth="47.0" text="Sign In" textFill="#008bd9">
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                  </Hyperlink>
+               </children>
+            </AnchorPane>
+         </right>
+         <left>
+            <AnchorPane prefHeight="432.0" prefWidth="302.0" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fitHeight="362.0" fitWidth="314.0" layoutX="-3.0" layoutY="14.0">
+                     <image>
+                        <Image url="@../images/weaver_Enterprise-Mobility.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </AnchorPane>
+         </left>
+      </BorderPane>
+   </children>
+</Pane>
