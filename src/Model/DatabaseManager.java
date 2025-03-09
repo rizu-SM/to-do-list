@@ -104,7 +104,7 @@ public class DatabaseManager {
 
     // Méthode pour ajouter une tâche
     public static boolean addTask(Task task) {
-        String query = "INSERT INTO tasks (user_id, titre, description, date_limite, statut, priorite, categorie) VALUES (?, ?, ?, ?, ?, ? ,?)";
+        String query = "INSERT INTO tasks (user_id, titre, description, date_limite, statut, priorite) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, task.getUserId());
@@ -113,7 +113,6 @@ public class DatabaseManager {
             stmt.setDate(4, java.sql.Date.valueOf(task.getDateLimite()));
             stmt.setString(5, task.getStatut());
             stmt.setString(6, task.getPriorite());
-            stmt.setString(7, task.getCategorie());
             stmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -138,8 +137,7 @@ public class DatabaseManager {
                         rs.getString("description"),
                         rs.getDate("date_limite").toLocalDate(),
                         rs.getString("statut"),
-                        rs.getString("priorite"),
-                        rs.getString("categorie")
+                        rs.getString("priorite")
                     );
                     tasks.add(task);
                 }
@@ -153,10 +151,9 @@ public class DatabaseManager {
     public static boolean deleteTask(int taskId) {
         String query = "DELETE FROM tasks WHERE id = ?";
         try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) //Prepares the DELETE query for execution
-        {
+             PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setInt(1, taskId);
-            int rowsAffected = stmt.executeUpdate();// Execute Delete Query , normalement 1
+            int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0; // Retourne true si une tâche a été supprimée
         } catch (SQLException e) {
             System.out.println("Erreur lors de la suppression de la tâche : " + e.getMessage());
@@ -165,17 +162,15 @@ public class DatabaseManager {
     }
     
     public static boolean updateTask(Task task) {
-        String query = "UPDATE tasks SET titre = ?, description = ?, date_limite = ?, statut = ?, priorite = ?, categorie = ? WHERE id = ?";
+        String query = "UPDATE tasks SET titre = ?, description = ?, date_limite = ?, statut = ?, priorite = ? WHERE id = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
-        	stmt.setString(1, task.getTitre());
-        	stmt.setString(2, task.getDescription());
-        	stmt.setDate(3, java.sql.Date.valueOf(task.getDateLimite()));
-        	stmt.setString(4, task.getStatut());
-        	stmt.setString(5, task.getPriorite());
-        	stmt.setString(6, task.getCategorie()); // Correct ici
-        	stmt.setInt(7, task.getId()); // Correct ici
-
+            stmt.setString(1, task.getTitre());
+            stmt.setString(2, task.getDescription());
+            stmt.setDate(3, java.sql.Date.valueOf(task.getDateLimite()));
+            stmt.setString(4, task.getStatut());
+            stmt.setString(5, task.getPriorite());
+            stmt.setInt(6, task.getId());
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0; // Retourne true si la tâche a été mise à jour
         } catch (SQLException e) {
@@ -183,122 +178,6 @@ public class DatabaseManager {
             return false;
         }
     }
-    
-    public static List<Task> getTasksByUserIdSortedByPriority(int userId) {
-        List<Task> tasks = new ArrayList<>();
-        String query = "SELECT * FROM tasks WHERE user_id = ? ORDER BY FIELD(priorite, 'Haute', 'Moyenne', 'Faible')";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Task task = new Task(
-                        rs.getInt("id"),
-                        rs.getInt("user_id"),
-                        rs.getString("titre"),
-                        rs.getString("description"),
-                        rs.getDate("date_limite").toLocalDate(),
-                        rs.getString("statut"),
-                        rs.getString("priorite"),
-                        rs.getString("categorie")
-                    );
-                    tasks.add(task);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Erreur lors de la récupération des tâches triées : " + e.getMessage());
-        }
-        return tasks;
-    }
-    
-    public static List<Task> getTasksByCategory(int userId, String category) {
-        List<Task> tasks = new ArrayList<>();
-        String query = "SELECT * FROM tasks WHERE user_id = ? AND categorie = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            stmt.setString(2, category);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Task task = new Task(
-                        rs.getInt("id"),
-                        rs.getInt("user_id"),
-                        rs.getString("titre"),
-                        rs.getString("description"),
-                        rs.getDate("date_limite").toLocalDate(),
-                        rs.getString("statut"),
-                        rs.getString("priorite"),
-                        rs.getString("categorie")
-                    );
-                    tasks.add(task);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Erreur SQL : " + e.getMessage());
-        }
-        return tasks;
-    }
-    
-    public static List<Task> getTasksSortedByDate(int userId) {
-        List<Task> tasks = new ArrayList<>();
-        String query = "SELECT * FROM tasks WHERE user_id = ? ORDER BY date_limite ASC"; // Tri par date croissante
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Task task = new Task(
-                        rs.getInt("id"),
-                        rs.getInt("user_id"),
-                        rs.getString("titre"),
-                        rs.getString("description"),
-                        rs.getDate("date_limite").toLocalDate(),
-                        rs.getString("statut"),
-                        rs.getString("priorite"),
-                        rs.getString("categorie")
-                    );
-                    tasks.add(task);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println(" Erreur SQL : " + e.getMessage());
-        }
-        return tasks;
-    }
-    
-    public static List<Task> getTasksByStatus(int userId, String status) {
-        List<Task> tasks = new ArrayList<>();
-        String query = "SELECT * FROM tasks WHERE user_id = ? AND statut = ?";
-
-        try (Connection conn = getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setInt(1, userId);
-            stmt.setString(2, status);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Task task = new Task(
-                        rs.getInt("id"),
-                        rs.getInt("user_id"),
-                        rs.getString("titre"),
-                        rs.getString("description"),
-                        rs.getDate("date_limite").toLocalDate(),
-                        rs.getString("statut"),
-                        rs.getString("priorite"),
-                        rs.getString("categorie")
-                    );
-                    tasks.add(task);
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Erreur SQL : " + e.getMessage());
-        }
-        return tasks;
-    }
-
-
 
 
 
