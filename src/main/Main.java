@@ -2,6 +2,7 @@ package main;
 
 import Model.User;
 import Model.Task;
+import Model.Note;
 import Controller.AuthController;
 import Controller.TaskController;
 import java.time.LocalDate;
@@ -9,12 +10,15 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
+import Controller.NoteController;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         AuthController authController = new AuthController();
         TaskController taskController = new TaskController();
+        NoteController noteController = new NoteController();
+        
 
         User user = null; // Utilisateur connecté
 
@@ -53,6 +57,7 @@ public class Main {
                             System.out.println("8. afficher task d'apres catégorie");
                             System.out.println("9. afficher les task d'apres la date");
                             System.out.println("10. d apres l état");
+                            System.out.println("11. Gérer les notes");
                             System.out.print("Choix : ");
                             int taskChoice = scanner.nextInt();
                             scanner.nextLine(); // Nettoyer le buffer
@@ -278,78 +283,77 @@ public class Main {
                                         System.out.println(t);
                                     }
                                     break;
+                                case 11:
+                                    // Afficher les tâches
+                                	while (true) {
+                                        System.out.println("\n=== Menu des Notes ===");
+                                        System.out.println("1. Ajouter une note");
+                                        System.out.println("2. Afficher mes notes");
+                                        System.out.println("3. Modifier une note");
+                                        System.out.println("4. Supprimer une note");
+                                        System.out.println("5. Retour au menu principal");
+                                        System.out.print("Choix : ");
+                                        int choixNote = scanner.nextInt();
+                                        scanner.nextLine();
+
+                                        switch (choixNote) {
+                                            case 1:
+                                                System.out.print("Titre : ");
+                                                String title = scanner.nextLine();
+                                                System.out.print("Description : ");
+                                                String describe = scanner.nextLine();
+                                                Note note = new Note(0, user.getId() , title, describe);
+                                                if (noteController.addNote(note)) {
+                                                    System.out.println("Note ajoutée !");
+                                                } else {
+                                                    System.out.println("Erreur lors de l'ajout.");
+                                                }
+                                                break;
+
+                                            case 2:
+                                                List<Note> notes = noteController.getNotesByUserId(user.getId());
+                                                for (Note n : notes) {
+                                                    System.out.println(n);
+                                                }
+                                                break;
+
+                                            case 3:
+                                                System.out.print("ID de la note à modifier : ");
+                                                int noteId = scanner.nextInt();
+                                                scanner.nextLine();
+                                                System.out.print("Nouveau titre : ");
+                                                String newTitle = scanner.nextLine();
+                                                System.out.print("Nouvelle description : ");
+                                                String newDesc = scanner.nextLine();
+                                                Note updatedNote = new Note(noteId, user.getId(), newTitle, newDesc);
+                                                if (noteController.updateNote(updatedNote)) {
+                                                    System.out.println("Note mise à jour !");
+                                                } else {
+                                                    System.out.println("Erreur lors de la mise à jour.");
+                                                }
+                                                break;
+
+                                            case 4:
+                                                System.out.print("ID de la note à supprimer : ");
+                                                int deleteId = scanner.nextInt();
+                                                if (noteController.deleteNote(deleteId)) {
+                                                    System.out.println("Note supprimée !");
+                                                } else {
+                                                    System.out.println("Erreur lors de la suppression.");
+                                                }
+                                                break;
+
+                                            case 5:
+                                                break;
+                                        }}
+                                        
 
 
 
 
                                 default:
                                     System.out.println("Choix invalide.");
-                            }
-                        }
-                    } else {
-                        System.out.println("Email ou mot de passe incorrect.");
-                    }
-                    break;
-
-                case 2:
-                    // Création d'un nouveau compte
-                    System.out.println("----- Bienvenue -----");
-                    System.out.print("Entrez votre nom : ");
-                    String nom = scanner.nextLine();
-                    System.out.print("Entrez votre prénom : ");
-                    String prenom = scanner.nextLine();
-                    System.out.print("Entrez votre sexe (M/F) : ");
-                    char sex = scanner.next().charAt(0);
-                    scanner.nextLine(); // Nettoyer le buffer
-                    System.out.print("Entrez votre email : ");
-                    String newEmail = scanner.nextLine();
-                    System.out.print("Entrez votre mot de passe : ");
-                    String newPassword = scanner.nextLine();
-
-                    if (authController.signup(nom, prenom, sex, newEmail, newPassword)) {
-                        System.out.println("Compte créé avec succès, bienvenue " + nom + " !");
-                        user = authController.login(newEmail, newPassword); // Connexion après inscription
-                        if (user != null) {
-                            // Menu des tâches après inscription
-                            while (true) {
-                                System.out.println("\n=== Menu des Tâches ===");
-                                System.out.println("1. Ajouter une tâche");
-                                System.out.println("2. Afficher les tâches");
-                                System.out.println("3. Marquer une tâche comme terminée");
-                                System.out.println("4. Supprimer une tâche");
-                                System.out.println("5. Modifier une tâche");
-                                System.out.println("6. Se déconnecter");
-                                System.out.print("Choix : ");
-                                int taskChoice = scanner.nextInt();
-                                scanner.nextLine(); // Nettoyer le buffer
-
-                                switch (taskChoice) {
-                                    // Same logic as in case 1
-                                    // (Copy the task menu logic here)
-                                }
-                            }
-                        }
-                    } else {
-                        System.out.println("Erreur lors de la création de l'utilisateur.");
-                    }
-                    break;
-
-                case 3:
-                    // Quitter
-                    System.out.println("Au revoir !");
-                    return;
-
-                default:
-                    System.out.println("Choix invalide.");
-            }
-        }
-    }
-}
-
-
-
-
-
+                                	}}}}}}}
 
 
 
