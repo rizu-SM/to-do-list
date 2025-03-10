@@ -179,7 +179,189 @@ public class DatabaseManager {
         }
     }
 
+    
+    public static List<Task> getTasksByUserIdSortedByPriority(int userId) {
+        List<Task> tasks = new ArrayList<>();
+        String query = "SELECT * FROM tasks WHERE user_id = ? ORDER BY FIELD(priorite, 'Haute', 'Moyenne', 'Faible')";
 
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Task task = new Task(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getString("titre"),
+                        rs.getString("description"),
+                        rs.getDate("date_limite").toLocalDate(),
+                        rs.getString("statut"),
+                        rs.getString("priorite"),
+                        rs.getString("categorie")
+                    );
+                    tasks.add(task);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération des tâches triées : " + e.getMessage());
+        }
+        return tasks;
+    }
+    
+    public static List<Task> getTasksByCategory(int userId, String category) {
+        List<Task> tasks = new ArrayList<>();
+        String query = "SELECT * FROM tasks WHERE user_id = ? AND categorie = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            stmt.setString(2, category);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Task task = new Task(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getString("titre"),
+                        rs.getString("description"),
+                        rs.getDate("date_limite").toLocalDate(),
+                        rs.getString("statut"),
+                        rs.getString("priorite"),
+                        rs.getString("categorie")
+                    );
+                    tasks.add(task);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur SQL : " + e.getMessage());
+        }
+        return tasks;
+    }
+    
+    public static List<Task> getTasksSortedByDate(int userId) {
+        List<Task> tasks = new ArrayList<>();
+        String query = "SELECT * FROM tasks WHERE user_id = ? ORDER BY date_limite ASC"; // Tri par date croissante
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Task task = new Task(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getString("titre"),
+                        rs.getString("description"),
+                        rs.getDate("date_limite").toLocalDate(),
+                        rs.getString("statut"),
+                        rs.getString("priorite"),
+                        rs.getString("categorie")
+                    );
+                    tasks.add(task);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println(" Erreur SQL : " + e.getMessage());
+        }
+        return tasks;
+    }
+    
+    public static List<Task> getTasksByStatus(int userId, String status) {
+        List<Task> tasks = new ArrayList<>();
+        String query = "SELECT * FROM tasks WHERE user_id = ? AND statut = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            stmt.setString(2, status);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Task task = new Task(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getString("titre"),
+                        rs.getString("description"),
+                        rs.getDate("date_limite").toLocalDate(),
+                        rs.getString("statut"),
+                        rs.getString("priorite"),
+                        rs.getString("categorie")
+                    );
+                    tasks.add(task);
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur SQL : " + e.getMessage());
+        }
+        return tasks;
+    }
+
+    
+    public static boolean addNote(Note note) {
+        String sql = "INSERT INTO notes (user_id, titre, description) VALUES (?, ?, ?)";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) { // Utilisation de 'sql' au lieu de 'query'
+            
+            stmt.setInt(1, note.getUserId());
+            stmt.setString(2, note.getTitre()); // Correction de l'ordre des paramètres
+            stmt.setString(3, note.getDescription());
+
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de l'ajout de la note : " + e.getMessage());
+            return false;
+        }
+    }
+
+    
+ // Récupérer les notes d’un utilisateur
+    public static List<Note> getNotesByUserId(int userId) {
+        List<Note> notes = new ArrayList<>();
+        String query = "SELECT * FROM notes WHERE user_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Note note = new Note(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getString("titre"),
+                        rs.getString("description")
+
+                );
+                notes.add(note);
+            }
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la récupération des notes : " + e.getMessage());
+        }
+        return notes;
+    }
+    public static boolean updateNote(Note note) {
+        String query = "UPDATE notes SET titre = ?, description = ? WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, note.getTitre());
+            stmt.setString(2, note.getDescription());
+            stmt.setInt(3, note.getId());
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la mise à jour de la note : " + e.getMessage());
+            return false;
+        }
+    }
+    public static boolean deleteNote(int id) {
+        String query = "DELETE FROM notes WHERE id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, id);
+            stmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la suppression de la note : " + e.getMessage());
+            return false;
+        }
+    }
 
     // Méthode pour récupérer l'ID d'un utilisateur par son email
     public static int getUserIdByEmail(String email) {
