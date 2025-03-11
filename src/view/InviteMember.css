@@ -1,0 +1,124 @@
+/* Conteneur principal */
+.container {
+    -fx-background-color: #FFFFFF;
+    -fx-spacing: 20px;
+    -fx-alignment: center;
+    -fx-padding: 20px;
+}
+
+/* Titre souligné en orange */
+.title-label {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: black;
+    -fx-border-color: #FF6600;
+    -fx-border-width: 0 0 2px 0; /* Soulignement orange en bas */
+    -fx-padding: 5px 0;
+    -fx-translate-y: -70px; /* Déplace le titre légèrement vers le haut */
+}
+
+/* Champ Email */
+.text-field {
+    -fx-pref-width: 300px;
+    -fx-pref-height: 40px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-color: #BBBBBB;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 0 10px;
+    -fx-font-size: 14px;
+}
+
+/* Bouton Send Invite (Gris élégant) */
+.send-button {
+    -fx-pref-width: 90px;  /* Largeur réduite */
+    -fx-pref-height: 35px; /* Hauteur plus compacte */
+    -fx-font-size: 14px;    /* Texte légèrement plus petit */
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-radius: 8px;
+    -fx-background-color: #707070; /* Gris moderne */
+    -fx-border-color: #505050; /* Bordure plus foncée */
+    -fx-border-width: 2px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 5, 0.3, 0, 2);
+}
+
+/* Effet au survol */
+.send-button:hover {
+    -fx-background-color: #505050; /* Gris plus foncé */
+    -fx-border-color: #404040;
+}
+
+/* Effet au clic */
+.send-button:pressed {
+    -fx-background-color: #303030;
+    -fx-translate-y: 2px;
+}
+
+
+
+.send-button:hover {
+    -fx-background-color: #E65C00;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.4), 10, 0.6, 0, 4);
+}
+
+.send-button:pressed {
+    -fx-background-color: #CC5200;
+    -fx-translate-y: 2px; /* Effet de clic */
+}
+/* Conteneur de l'invitation */
+.invite-container {
+    -fx-background-color: #F0F0F0; /* Gris clair */
+    -fx-padding: 20px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-alignment: center;
+    -fx-spacing: 15px;
+}
+
+/* Ajout d'une bordure subtile */
+.invite-container {
+    -fx-border-color: #D0D0D0; 
+    -fx-border-width: 2px;
+}
+/* Bouton "Go Back" */
+.header-container {
+    -fx-alignment: top-right;
+    -fx-padding: 10px;
+}
+.back-button {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-underline: true; /* Ajoute le soulignement */
+    
+    -fx-cursor: hand;
+    
+}
+
+.back-button:hover {
+    -fx-text-fill: #FF6600; /* Change la couleur au survol */
+}
+/* Style du bouton Invite + */
+.invite-button {
+    -fx-background-color: #B0B0B0; /* Gris clair */
+    -fx-text-fill: black; /* Texte noir pour contraste */
+    -fx-font-size: 16px; 
+    -fx-font-weight: bold; 
+    -fx-padding: 10px 20px; 
+    -fx-background-radius: 25px; 
+    -fx-border-color: transparent; 
+    -fx-cursor: hand; 
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 2);
+}
+
+/* Effet au survol */
+.invite-button:hover {
+    -fx-background-color: #B0B0B0; /* Gris légèrement plus foncé */
+}
+
+/* Effet lorsque le bouton est cliqué */
+.invite-button:pressed {
+    -fx-background-color: #A0A0A0; /* Gris encore plus foncé */
+}

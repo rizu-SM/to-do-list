@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.AccountInfoController"
+            stylesheets="@style.css">
+
+    <!-- Barre supérieure (barre de recherche et icônes) -->
+    <top>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="top-bar">
+            <TextFlow>
+                <Text text="Dash" styleClass="title-red"/>
+                <Text text="board" styleClass="title-black"/>
+            </TextFlow>
+            <TextField fx:id="searchField" promptText="Search your task here..." styleClass="search-field"/>
+            <Button text="🔍" styleClass="icon-button"/>
+            <Button text="📅" styleClass="icon-button"/>
+            <Button text="🔔" styleClass="icon-button"/>
+            <VBox>
+                <Label fx:id="dayLabel" styleClass="day-label"/>
+                <Label fx:id="dateLabel" styleClass="date-label"/>
+                 <VBox>
+        <Label fx:id="dayLabel" styleClass="day-label"/>
+    </VBox>
+            </VBox>
+        </HBox>
+    </top>
+
+    <!-- Barre latérale (Menu) -->
+    <left>
+        <VBox spacing="15" styleClass="sidebar">
+            <Label text="Sundar Gurung" styleClass="user-name"/>
+            <Label text="sundargurung360@gmail.com" styleClass="user-email"/>  <!-- RESTE BLANC -->
+
+            <Button text="🏠 Dashboard" styleClass="sidebar-button"/>
+            <Button text="⚡ Vital Task" styleClass="sidebar-button"/>
+            <Button text="📝 My Task" styleClass="sidebar-button"/>
+            <Button text="📂 Task Categories" styleClass="sidebar-button"/>
+            <Button text="⚙ Settings" styleClass="sidebar-button"/>
+            <Button text="❓ Help" styleClass="sidebar-button"/>
+            <Button text="🚪 Logout" styleClass="logout-button"/>
+        </VBox>
+    </left>
+
+    <!-- Contenu principal -->
+    <center>
+        <VBox spacing="20" alignment="TOP_CENTER" styleClass="main-content">
+            <padding>
+                <Insets top="30" right="50" bottom="30" left="50"/>
+            </padding>
+
+            <!-- Barre avec titre à gauche et "Go Back" à droite -->
+            <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 5px 0;">
+                <Label text="Account Information"
+                       style="-fx-font-weight: bold; -fx-text-fill: black; -fx-font-size: 20px; 
+                              -fx-border-color: orange; -fx-border-width: 0 0 2px 0; -fx-border-style: solid;"/>
+                <Pane HBox.hgrow="ALWAYS"/>  <!-- Pousse "Go Back" à droite -->
+                <Label text="Go Back" styleClass="back-button" onMouseClicked="#handleGoBack"/>
+            </HBox>
+
+            <!-- Informations utilisateur -->
+            <VBox spacing="5" alignment="CENTER">
+                <Label text="Sundar Gurung" styleClass="name-label"/>
+                <Label text="sundargurung360@gmail.com" style="-fx-text-fill: black;"/>  <!-- NOIR DANS CETTE SECTION -->
+            </VBox>
+
+            <!-- Cadre contenant les champs -->
+            <VBox fx:id="formContainer" styleClass="form-container" spacing="15" alignment="CENTER">
+                <VBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="First Name" styleClass="form-label"/>
+                    <TextField fx:id="firstNameField"/>
+
+                    <Label text="Last Name" styleClass="form-label"/>
+                    <TextField fx:id="lastNameField"/>
+                </VBox>
+
+                <HBox spacing="10">
+                    <Button text="Save Changes" styleClass="save-button"/>
+                    <Button text="Cancel" styleClass="cancel-button"/>
+                </HBox>
+            </VBox>
+        </VBox>
+    </center>
+
+</BorderPane>

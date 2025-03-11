@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.chart.PieChart?>
+
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" 
+    fx:controller="application.DashboardController"
+    stylesheets="@style.css">
+
+    <!-- Sidebar -->
+   <top>
+        <HBox spacing="10" alignment="CENTER_LEFT" styleClass="top-bar">
+            <TextFlow>
+                <Text text="Dash" styleClass="title-red"/>
+                <Text text="board" styleClass="title-black"/>
+            </TextFlow>
+            <TextField fx:id="searchField" promptText="Search your task here..." styleClass="search-field"/>
+            <Button text="🔍" styleClass="icon-button"/>
+            <Button text="📅" styleClass="icon-button"/>
+            <Button text="🔔" styleClass="icon-button"/>
+            <VBox>
+                <Label fx:id="dayLabel" styleClass="day-label"/>
+                <Label fx:id="dateLabel" styleClass="date-label"/>
+                 <VBox>
+        <Label fx:id="dayLabel" styleClass="day-label"/>
+    </VBox>
+            </VBox>
+        </HBox>
+    </top>
+
+    <!-- Barre latérale (Menu) -->
+    <left>
+        <VBox spacing="15" styleClass="sidebar">
+            <Label text="Sundar Gurung" styleClass="user-name"/>
+            <Label text="sundargurung360@gmail.com" styleClass="user-email"/>  <!-- RESTE BLANC -->
+
+            <Button text="🏠 Dashboard" styleClass="sidebar-button"/>
+            <Button text="⚡ Vital Task" styleClass="sidebar-button"/>
+            <Button text="📝 My Task" styleClass="sidebar-button"/>
+            <Button text="📂 Task Categories" styleClass="sidebar-button"/>
+            <Button text="⚙ Settings" styleClass="sidebar-button"/>
+            <Button text="❓ Help" styleClass="sidebar-button"/>
+            <Button text="🚪 Logout" styleClass="logout-button"/>
+        </VBox>
+    </left>
+
+    <!-- Main Content -->
+    <center>
+        <VBox spacing="15" styleClass="main-content">
+            <HBox spacing="250">
+    <!-- Welcome à gauche -->
+    <Label text="Welcome Back, Sundar 👋" styleClass="welcome-text"/>
+    
+    <!-- Permet d'écarter les éléments -->
+    <Region />
+    
+    <!-- Bouton + Invite à droite -->
+    <Button text="Invite+" fx:id="inviteButton" styleClass="invite-button"/>
+</HBox>
+            
+            
+
+            <HBox spacing="20">
+    <!-- To-Do List -->
+    <VBox fx:id="toDoListContainer" styleClass="task-list">
+       <HBox spacing="25">  <!-- Augmenter le spacing ici -->
+    <Label text="📌 To-Do List" styleClass="section-title"/>
+    <Region />
+    <Button text="+ Add Task" fx:id="addTaskButton" styleClass="add-task-button"/>
+</HBox>
+       
+        <VBox fx:id="taskContainer" spacing="10"/>
+    </VBox>
+
+    <!-- Task Status & Completed Task -->
+    <VBox fx:id="taskStatusContainer">
+        <VBox styleClass="task-status">
+            <Label text="📊 Task Status" styleClass="section-title"/>
+            <PieChart fx:id="taskStatusChart" styleClass="task-chart"/>
+        </VBox>
+
+        <VBox styleClass="completed-task">
+            <Label text="✅ Completed Task" styleClass="section-title"/>
+            <VBox fx:id="completedTaskContainer" spacing="10"/>
+        </VBox>
+    </VBox>
+</HBox>
+            
+        </VBox>
+    </center>
+
+</BorderPane>

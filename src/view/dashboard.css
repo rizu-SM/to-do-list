@@ -1,0 +1,249 @@
+/* 🌟 Styles globaux */
+.root {
+    -fx-background-color: #F4F6F9;
+    -fx-font-family: "Arial";
+}
+
+/* 🎨 Barre latérale (Sidebar) */
+.sidebar {
+    -fx-background-color: #FF6F61;
+    -fx-padding: 20px;
+    -fx-spacing: 15px;
+    -fx-alignment: center-left;
+}
+
+.sidebar-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-alignment: CENTER-LEFT;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 5px;
+    -fx-pref-width: 200px;
+}
+
+.sidebar-button:hover {
+    -fx-background-color: rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-button:selected, .sidebar-button:focused {
+    -fx-background-color: white;
+    -fx-text-fill: #FF6F61;
+    -fx-font-weight: bold;
+}
+
+.user-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.user-email {
+    -fx-font-size: 12px;
+    -fx-text-fill: white;
+}
+
+/* 🔴 Bouton de déconnexion */
+.logout-button {
+    -fx-background-color: #D32F2F;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-padding: 10px;
+    -fx-border-radius: 5px;
+}
+
+.logout-button:hover {
+    -fx-background-color: #B71C1C;
+}
+
+/* 🔝 Barre supérieure (Top Bar) */
+.top-bar {
+    -fx-background-color: white;
+    -fx-padding: 10px 20px;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 0 0 1px 0;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* 🏆 TITRE "DASHBOARD" AVEC BORDURE ROUGE */
+.dashboard-title {
+    -fx-border-width: 0px 0px 3px 0px;
+    -fx-padding: 5px;
+}
+
+.title-red {
+    -fx-fill: #FF6F61;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-stroke: #FF6F61;
+    -fx-stroke-width: 1px;
+}
+
+.title-black {
+    -fx-fill: black;
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+/* 🔍 Barre de recherche */
+.search-field {
+    -fx-pref-width: 500px;
+    -fx-background-color: #F0F0F0;
+    -fx-border-radius: 20px;
+    -fx-padding: 5px 15px;
+    -fx-border-color: transparent;
+}
+
+.search-field:focused {
+    -fx-border-color: #FF6F61;
+    -fx-border-width: 2px;
+}
+
+/* 🖱️ Boutons icônes */
+.icon-button {
+    -fx-background-color: #FF6F61;
+    -fx-text-fill: white;
+    -fx-border-radius: 50%;
+    -fx-padding: 5px;
+}
+
+.icon-button:hover {
+    -fx-background-color: #E65100;
+}
+
+/* 📌 Contenu principal */
+.main-content {
+    -fx-padding: 20px;
+    -fx-spacing: 20px;
+}
+
+/* 🌟 TITRE DE BIENVENUE */
+.welcome-text {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333;
+}
+
+/* 📝 To-Do List */
+.task-list {
+    -fx-pref-width: 500px;
+    -fx-pref-height: 400px;
+    -fx-background-color: #FFFFFF;
+    -fx-border-radius: 10px;
+    -fx-border-color: #E0E0E0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 3);
+}
+
+/* 📊 Task Status */
+.task-status {
+    -fx-pref-width: 300px;
+    -fx-pref-height: 180px;
+    -fx-background-color: #F8F9FC;
+    -fx-border-radius: 10px;
+    -fx-border-color: #E0E0E0;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.1), 5, 0, 0, 3);
+}
+
+/* ✅ Completed Task */
+
+
+/* 🌟 Statuts des tâches avec couleurs du graphique */
+
+
+
+
+
+
+/* 🌟 Task Status */
+.task-status {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 15px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+/* 🌟 Completed Task */
+.completed-task {
+    -fx-background-color: #FDEBD0; /* Beige */
+    -fx-padding: 15px;
+    -fx-border-radius: 10px;
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+/* 📌 Conteneur de chaque tâche */
+.task-item {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 10px;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 5);
+}
+
+/* 📌 Étiquette de statut */
+.task-status-label {
+    -fx-alignment: center;
+    -fx-padding: 5px 10px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+.section-title {
+    -fx-font-size: 18px;  /* Augmenter la taille de la police */
+    -fx-font-weight: bold; /* Mettre en gras */
+}
+.task-details {
+    -fx-spacing: 10px; /* Espacement entre Priority et Status */
+}
+
+.task-priority, .task-status {
+    -fx-font-size: 13px;
+    -fx-text-fill: #888888; /* Gris pour ressembler à l'image */
+}
+.task-card {
+    -fx-background-color: #FFFFFF;
+    -fx-padding: 15;
+    -fx-spacing: 10;
+    -fx-background-radius: 10;
+    -fx-border-color: #E0E0E0;
+    -fx-border-radius: 10;
+}
+
+.task-title {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+}
+
+.task-desc {
+    -fx-font-size: 12px;
+    -fx-text-fill: #666666;
+}
+
+.task-priority-status {
+    -fx-spacing: 10;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.task-priority {
+    -fx-font-size: 12px;
+    -fx-text-fill: #3498DB;
+}
+
+.status-not-started {
+    -fx-text-fill: #E74C3C; /* Rouge */
+}
+
+.status-in-progress {
+    -fx-text-fill: #F39C12; /* Orange */
+}
+
+.status-completed {
+    -fx-text-fill: #2ECC71; /* Vert */
+}
+.task-details {
+    -fx-spacing: 10;
+    -fx-alignment: CENTER_LEFT;
+}
