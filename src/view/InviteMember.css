@@ -29,6 +29,7 @@
     -fx-font-size: 14px;
 }
 
+
 /* Bouton Send Invite (Gris élégant) */
 .send-button {
     -fx-pref-width: 90px;  /* Largeur réduite */

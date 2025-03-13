@@ -23,7 +23,7 @@ public class DashboardApp extends Application {
             Scene scene = new Scene(root);
 
             // Charger le CSS
-            URL cssLocation = getClass().getResource("application.css");
+            URL cssLocation = getClass().getResource("style.css");
             
 
             if (cssLocation != null) {

@@ -12,12 +12,12 @@ package view;
 	    public void start(Stage primaryStage) {
 	        try {
 	            // Charger l'interface depuis le fichier FXML
-	            FXMLLoader loader = new FXMLLoader(getClass().getResource("/application/AccountInfo.fxml"));
+	            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AccountInfo.fxml"));
 	            Parent root = loader.load();
 
 	            // Créer la scène et appliquer la feuille de style CSS
 	            Scene scene = new Scene(root);
-	            scene.getStylesheets().add(getClass().getResource("/application/ressources/style.css").toExternalForm());
+	            scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
 
 	            // Configurer et afficher la fenêtre principale
 	            primaryStage.setTitle("Account Information");

@@ -12,8 +12,8 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="application.InviteMemberController"
-            stylesheets="@style.cs"
+            fx:controller="view.InviteMemberController"
+            stylesheets="@style.css"
             styleClass="container">
 
     <!-- Barre supérieure (barre de recherche et icônes) -->

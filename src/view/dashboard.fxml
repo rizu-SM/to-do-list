@@ -5,7 +5,7 @@
 <?import javafx.scene.chart.PieChart?>
 
 <BorderPane xmlns:fx="http://javafx.com/fxml/1" 
-    fx:controller="application.DashboardController"
+    fx:controller="view.DashboardController"
     stylesheets="@style.css">
 
     <!-- Sidebar -->
@@ -63,16 +63,20 @@
 
             <HBox spacing="20">
     <!-- To-Do List -->
+    <!-- To-Do List -->
     <VBox fx:id="toDoListContainer" styleClass="task-list">
        <HBox spacing="25">  <!-- Augmenter le spacing ici -->
     <Label text="📌 To-Do List" styleClass="section-title"/>
     <Region />
     <Button text="+ Add Task" fx:id="addTaskButton" styleClass="add-task-button"/>
 </HBox>
-       
-        <VBox fx:id="taskContainer" spacing="10"/>
-    </VBox>
 
+        <ScrollPane fitToWidth="true" fitToHeight="false" styleClass="task-scrollpane">
+    <VBox fx:id="taskContainer" spacing="10" prefHeight="400"/>
+</ScrollPane>
+
+    </VBox>
+    
     <!-- Task Status & Completed Task -->
     <VBox fx:id="taskStatusContainer">
         <VBox styleClass="task-status">
