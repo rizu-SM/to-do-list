@@ -1,8 +1,229 @@
+.root {
+    -fx-background-color: #F8F9FC;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
 
+/* Sidebar Styles */
+.sidebar {
+    -fx-background-color: #FF6B6B;
+    -fx-padding: 20px;
+    -fx-pref-width: 250px;
+    -fx-spacing: 10px;
+}
 
+.profile-section {
+    -fx-alignment: center;
+    -fx-spacing: 10px;
+    -fx-padding: 0 0 20px 0;
+}
 
+.profile-image {
+    -fx-background-radius: 40px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 10, 0, 0, 0);
+}
 
+.username-label {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
 
+.email-label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-opacity: 0.8;
+}
+
+.menu-items {
+    -fx-spacing: 5px;
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-alignment: center-left;
+    -fx-padding: 10px;
+    -fx-cursor: hand;
+}
+
+.menu-item:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+.menu-item.active {
+    -fx-background-color: white;
+    -fx-text-fill: #FF6B6B;
+    -fx-background-radius: 5px;
+}
+
+.logout-button {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-text-fill: white;
+    -fx-padding: 10px;
+    -fx-cursor: hand;
+}
+
+/* Header Styles */
+.header {
+    -fx-padding: 20px;
+    -fx-spacing: 20px;
+    -fx-alignment: center-left;
+}
+
+.search-field {
+    -fx-background-color: white;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 20px;
+    -fx-prompt-text-fill: #999;
+}
+
+.header-right {
+    -fx-spacing: 15px;
+    -fx-alignment: center;
+}
+
+.notification-button, .calendar-button {
+    -fx-background-color: white;
+    -fx-background-radius: 50%;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-cursor: hand;
+}
+
+.date-label {
+    -fx-text-fill: #666;
+    -fx-font-size: 14px;
+}
+
+/* Welcome Section */
+.welcome-section {
+    -fx-padding: 0 20px 20px 20px;
+    -fx-alignment: center-left;
+}
+
+.welcome-text {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.invite-button {
+    -fx-background-color: #FF6B6B;
+    -fx-text-fill: white;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+}
+
+/* Tasks Section */
+.tasks-section {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-padding: 20px;
+    -fx-spacing: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+}
+
+.section-header {
+    -fx-spacing: 10px;
+    -fx-alignment: center-left;
+}
+
+.section-title {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.add-task-button {
+    -fx-background-color: #FF6B6B;
+    -fx-text-fill: white;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 20px;
+    -fx-cursor: hand;
+}
+
+/* Task Items */
+.task-item {
+    -fx-background-color: white;
+    -fx-padding: 15px;
+    -fx-spacing: 10px;
+    -fx-background-radius: 8px;
+    -fx-border-color: #EEE;
+    -fx-border-radius: 8px;
+}
+
+.task-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.task-description {
+    -fx-text-fill: #666;
+    -fx-font-size: 14px;
+}
+
+.task-meta {
+    -fx-spacing: 10px;
+}
+
+.task-priority, .task-status {
+    -fx-padding: 5px 10px;
+    -fx-background-radius: 15px;
+    -fx-font-size: 12px;
+}
+
+.priority-high {
+    -fx-background-color: #FFE0E0;
+    -fx-text-fill: #FF6B6B;
+}
+
+.priority-medium {
+    -fx-background-color: #FFF3E0;
+    -fx-text-fill: #FF9800;
+}
+
+.priority-low {
+    -fx-background-color: #E0F2F1;
+    -fx-text-fill: #009688;
+}
+
+.status-not-started {
+    -fx-background-color: #FFEBEE;
+    -fx-text-fill: #F44336;
+}
+
+.status-in-progress {
+    -fx-background-color: #E3F2FD;
+    -fx-text-fill: #2196F3;
+}
+
+.status-completed {
+    -fx-background-color: #E8F5E9;
+    -fx-text-fill: #4CAF50;
+}
+
+/* Status Section */
+.status-section {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-padding: 20px;
+    -fx-spacing: 15px;
+    -fx-pref-width: 300px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);
+}
+
+.status-chart {
+    -fx-padding: 10px;
+}
+
+/* Completed Task List */
+.completed-task-list {
+    -fx-spacing: 10px;
+}
+
+.completed-task-item {
+    -fx-opacity: 0.7;
+}
 
 /* 📝 To-Do List */
 .task-list {

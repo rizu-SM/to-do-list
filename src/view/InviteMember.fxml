@@ -9,6 +9,9 @@
 <?import javafx.geometry.Pos?>
 <?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.layout.AnchorPane?>
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -45,13 +48,13 @@
             <Label text="Sundar Gurung" styleClass="user-name"/>
             <Label text="sundargurung360@gmail.com" styleClass="user-email"/>  
 
-            <Button text="🏠 Dashboard" styleClass="sidebar-button"/>
+            <Button text="🏠 Dashboard" styleClass="sidebar-button" onAction="#handleDashboardButton"/>
             <Button text="⚡ Vital Task" styleClass="sidebar-button"/>
             <Button text="📝 My Task" styleClass="sidebar-button"/>
-            <Button text="📂 Task Categories" styleClass="sidebar-button"/>
-            <Button text="⚙ Settings" styleClass="sidebar-button"/>
+            <Button text="📂 Task Categories" styleClass="sidebar-button" onAction="#handleTaskCategoriesButton"/>
+            <Button text="⚙ Settings" styleClass="sidebar-button" onAction="#handleSettingsButton"/>
             <Button text="❓ Help" styleClass="sidebar-button"/>
-            <Button text="🚪 Logout" styleClass="logout-button"/>
+            <Button text="🚪 Logout" styleClass="logout-button" onAction="#handleLogoutButton"/>
         </VBox>
     </left>
 
@@ -63,7 +66,19 @@
 
             <!-- Champs email et bouton -->
             <TextField fx:id="emailField" promptText="Email" styleClass="text-field"/>
-            <Button fx:id="sendInviteButton" text="Invite +" styleClass="invite-button" onAction="#handleSendInvite"/>
+            <Button fx:id="sendInviteButton" layoutX="281.0" layoutY="504.0" mnemonicParsing="false" onAction="#handleSendInvite" style="-fx-background-color: FF6767;" text="Send Invite" textFill="WHITE">
+               <font>
+                  <Font name="Trebuchet MS" size="14.0" />
+               </font>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+            <Label fx:id="statusLabel" layoutX="40.0" layoutY="550.0" textAlignment="CENTER" wrapText="true" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0">
+               <font>
+                  <Font name="Trebuchet MS" size="12.0" />
+               </font>
+            </Label>
         </VBox>
     </center>
 

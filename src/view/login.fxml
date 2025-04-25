@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="view.LoginController"
+      alignment="CENTER"
+      spacing="15"
+      stylesheets="@login.css">
+
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <Label text="Connexion" styleClass="title"/>
+
+    <TextField fx:id="emailField" 
+               promptText="Email"
+               styleClass="input-field"/>
+
+    <PasswordField fx:id="passwordField" 
+                  promptText="Mot de passe"
+                  styleClass="input-field"/>
+
+    <Label fx:id="errorLabel" 
+           styleClass="error-label"
+           visible="false"/>
+
+    <Button text="Se connecter"
+            onAction="#handleLogin"
+            styleClass="login-button"/>
+
+</VBox> 

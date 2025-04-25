@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane style="-fx-background-color: #FF6767;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainController">
+    <children>
+        <BorderPane AnchorPane.topAnchor="16.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0"
+                    style="-fx-background-color: white; -fx-background-radius: 10;">
+            <center>
+                <HBox spacing="0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+
+                    <!-- Left side with image -->
+                    <StackPane prefWidth="400.0" style="-fx-padding: 20;" HBox.hgrow="ALWAYS">
+                        <ImageView fitHeight="400.0" fitWidth="400.0" preserveRatio="true">
+                            <image>
+                                <Image url="@images/weaver_Enterprise-Mobility.png" />
+                            </image>
+                        </ImageView>
+                    </StackPane>
+
+                    <!-- Right side with sign up form -->
+                    <VBox spacing="15" alignment="CENTER_LEFT" style="-fx-padding: 30;" HBox.hgrow="ALWAYS">
+                        <Text text="Sign Up">
+                            <font>
+                                <Font name="System Bold" size="24.0"/>
+                            </font>
+                        </Text>
+
+                        <!-- First Name -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="16" fitWidth="16" opacity="0.67">
+                                <image>
+                                    <Image url="@../images/user%20(2).png"/>
+                                </image>
+                            </ImageView>
+                            <TextField promptText="Enter your First Name" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+
+                        <!-- Last Name -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="16" fitWidth="16" opacity="0.67">
+                                <image>
+                                    <Image url="@../images/user%20(2).png"/>
+                                </image>
+                            </ImageView>
+                            <TextField promptText="Enter your Last Name" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+
+                        <!-- Email -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="16" fitWidth="22" opacity="0.6">
+                                <image>
+                                    <Image url="@../images/email%20(1).png"/>
+                                </image>
+                            </ImageView>
+                            <TextField promptText="Enter your Email" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+
+                        <!-- Sex -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="18" fitWidth="20" opacity="0.62">
+                                <image>
+                                    <Image url="@../images/sex.png"/>
+                                </image>
+                            </ImageView>
+                            <TextField promptText="Enter your Sex" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+
+                        <!-- Password -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="15" fitWidth="20" opacity="0.78">
+                                <image>
+                                    <Image url="@../images/padlock%20(2).png"/>
+                                </image>
+                            </ImageView>
+                            <PasswordField promptText="Enter your Password" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+
+                        <!-- Confirm Password -->
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <ImageView fitHeight="15" fitWidth="20" opacity="0.71">
+                                <image>
+                                    <Image url="@../images/padlock%20(2).png"/>
+                                </image>
+                            </ImageView>
+                            <PasswordField promptText="Confirm your Password" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                        </HBox>
+
+                        <!-- Register Button -->
+                        <Button text="Register" maxWidth="Infinity" style="-fx-background-color: #FF6767; -fx-text-fill: white; -fx-background-radius: 5;">
+                            <cursor>
+                                <Cursor fx:constant="HAND"/>
+                            </cursor>
+                        </Button>
+
+                        <!-- Already have an account -->
+                        <HBox spacing="5" alignment="CENTER_LEFT">
+                            <Text text="Already have an account?">
+                                <font>
+                                    <Font name="Calisto MT" size="11.0"/>
+                                </font>
+                            </Text>
+                            <Hyperlink onAction="#afficherSignInForm" text="Sign In" textFill="#008bd9"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+            </center>
+        </BorderPane>
+    </children>
+</AnchorPane>
