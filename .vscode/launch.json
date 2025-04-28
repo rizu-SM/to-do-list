@@ -1,0 +1,98 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "Model.Main",
+            "projectName": "Progress"
+        },
+        {
+            "type": "java",
+            "name": "Main(1)",
+            "request": "launch",
+            "mainClass": "main.Main",
+            "projectName": "Progress"
+        },
+        {
+            "type": "java",
+            "name": "AccountInformationView",
+            "request": "launch",
+            "mainClass": "view.AccountInformationView",
+            "projectName": "Progress"
+        },
+        {
+            "type": "java",
+            "name": "DashboardApp",
+            "request": "launch",
+            "mainClass": "view.DashboardApp",
+            "projectName": "Progress"
+        },
+        {
+            "type": "java",
+            "name": "InviteMemberView",
+            "request": "launch",
+            "mainClass": "view.InviteMemberView",
+            "projectName": "Progress"
+        },
+        {
+            "type": "java",
+            "name": "Main(2)",
+            "request": "launch",
+            "mainClass": "view.Main",
+            "projectName": "Progress"
+        },
+        {
+            "type": "java",
+            "name": "Main(3)",
+            "request": "launch",
+            "mainClass": "Model.Main",
+            "projectName": "src"
+        },
+        {
+            "type": "java",
+            "name": "Main(4)",
+            "request": "launch",
+            "mainClass": "main.Main",
+            "projectName": "src"
+        },
+        {
+            "type": "java",
+            "name": "AccountInformationView(1)",
+            "request": "launch",
+            "mainClass": "view.AccountInformationView",
+            "projectName": "src"
+        },
+        {
+            "type": "java",
+            "name": "DashboardApp(1)",
+            "request": "launch",
+            "mainClass": "view.DashboardApp",
+            "projectName": "src"
+        },
+        {
+            "type": "java",
+            "name": "InviteMemberView(1)",
+            "request": "launch",
+            "mainClass": "view.InviteMemberView",
+            "projectName": "src"
+        },
+        {
+            "type": "java",
+            "name": "Main(5)",
+            "request": "launch",
+            "mainClass": "view.Main",
+            "projectName": "src"
+        }
+    ]
+}

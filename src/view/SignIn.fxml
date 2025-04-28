@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane style="-fx-background-color: #FF6767;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainController">
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainController">
     <children>
         <BorderPane style="-fx-background-color: white; -fx-background-radius: 10;" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
             <center>
@@ -39,7 +39,8 @@
                                     <Image url="@images/email%20(1).png" />
                                 </image>
                             </ImageView>
-                            <TextField promptText="Enter your Email" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS" />
+                            <TextField fx:id="emailField" promptText="Enter your Email" 
+                                style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS" />
                         </HBox>
 
                         <!-- Password input -->
@@ -49,18 +50,16 @@
                                     <Image url="@images/padlock%20(2).png" />
                                 </image>
                             </ImageView>
-                            <PasswordField promptText="Enter your Password" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS" />
+                            <PasswordField fx:id="passwordField" promptText="Enter your Password" 
+                                style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS" />
                         </HBox>
 
                         <!-- Remember me checkbox -->
                         <CheckBox text="Remember Me" />
 
                         <!-- Login Button -->
-                        <Button maxWidth="Infinity" onAction="#afficherDashboard" style="-fx-background-color: #FF6767; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;" text="Login">
-                            <cursor>
-                                <Cursor fx:constant="HAND" />
-                            </cursor>
-                        </Button>
+                        <Button text="Login" onAction="#afficherDashboard" 
+                            style="-fx-background-color: #FF6767; -fx-text-fill: white; -fx-background-radius: 5; -fx-padding: 10;" />
 
                         <!-- Link -->
                         <HBox alignment="CENTER" spacing="5">

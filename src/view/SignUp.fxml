@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane style="-fx-background-color: #FF6767;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainController">
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.SignUpController">
     <children>
         <BorderPane AnchorPane.topAnchor="16.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0"
                     style="-fx-background-color: white; -fx-background-radius: 10;">
@@ -46,7 +46,7 @@
                                     <Image url="@../images/user%20(2).png"/>
                                 </image>
                             </ImageView>
-                            <TextField promptText="Enter your First Name" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="nomField" promptText="Enter your First Name" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
                         </HBox>
 
                         <!-- Last Name -->
@@ -56,7 +56,7 @@
                                     <Image url="@../images/user%20(2).png"/>
                                 </image>
                             </ImageView>
-                            <TextField promptText="Enter your Last Name" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="prenomField" promptText="Enter your Last Name" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
                         </HBox>
 
                         <!-- Email -->
@@ -66,7 +66,7 @@
                                     <Image url="@../images/email%20(1).png"/>
                                 </image>
                             </ImageView>
-                            <TextField promptText="Enter your Email" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="emailField" promptText="Enter your Email" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
                         </HBox>
 
                         <!-- Sex -->
@@ -76,7 +76,7 @@
                                     <Image url="@../images/sex.png"/>
                                 </image>
                             </ImageView>
-                            <TextField promptText="Enter your Sex" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                            <TextField fx:id="sexField" promptText="Enter your Sex" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
                         </HBox>
 
                         <!-- Password -->
@@ -86,7 +86,7 @@
                                     <Image url="@../images/padlock%20(2).png"/>
                                 </image>
                             </ImageView>
-                            <PasswordField promptText="Enter your Password" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                            <PasswordField fx:id="passwordField" promptText="Enter your Password" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
                         </HBox>
 
                         <!-- Confirm Password -->
@@ -96,11 +96,11 @@
                                     <Image url="@../images/padlock%20(2).png"/>
                                 </image>
                             </ImageView>
-                            <PasswordField promptText="Confirm your Password" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
+                            <PasswordField fx:id="confirmPasswordField" promptText="Confirm your Password" style="-fx-border-color: #ccc; -fx-border-radius: 5; -fx-background-radius: 5;" HBox.hgrow="ALWAYS"/>
                         </HBox>
 
                         <!-- Register Button -->
-                        <Button text="Register" maxWidth="Infinity" style="-fx-background-color: #FF6767; -fx-text-fill: white; -fx-background-radius: 5;">
+                        <Button fx:id="registerButton" text="Register" onAction="#handleSignUp" maxWidth="Infinity" style="-fx-background-color: #FF6767; -fx-text-fill: white; -fx-background-radius: 5;">
                             <cursor>
                                 <Cursor fx:constant="HAND"/>
                             </cursor>
