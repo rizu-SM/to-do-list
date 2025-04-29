@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.Cursor?>
+
+<VBox spacing="20" styleClass="main-content" stylesheets="@style.css"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="view.NotesController">
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Text text="My Notes" styleClass="section-title">
+            <font>
+                <Font name="System Bold" size="24.0"/>
+            </font>
+        </Text>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="+ New Note" onAction="#createNewNote" styleClass="new-note-button"/>
+    </HBox>
+
+    <!-- Notes Container with ScrollPane -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+        <VBox fx:id="notesContainer" spacing="15" styleClass="notes-container">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+        </VBox>
+    </ScrollPane>
+</VBox> 

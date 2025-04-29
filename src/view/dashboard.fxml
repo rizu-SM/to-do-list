@@ -12,120 +12,196 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.text.TextFlow?>
 <?import javafx.scene.Cursor?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ProgressIndicator?>
 
 <BorderPane stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.DashboardController">
 
-    <!-- Sidebar -->
+    <!-- Top Bar -->
    <top>
-        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="top-bar">
+        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="top-bar">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
             <TextFlow>
                 <Text styleClass="title-red" text="Dash" />
                 <Text styleClass="title-black" text="board" />
             </TextFlow>
+            
+            <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">
             <TextField fx:id="searchField" promptText="Search your task here..." styleClass="search-field" />
-            <Button styleClass="icon-button" text="🔍" />
-            <Button styleClass="icon-button" text="📅" />
-            <Button styleClass="icon-button" text="🔔" />
-            <VBox>
+                <Button styleClass="icon-button">
+                    <graphic>
+                        <ImageView fitWidth="15" fitHeight="15">
+                            <Image url="@images/loupe.png" />
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="icon-button">
+                    <graphic>
+                        <ImageView fitWidth="15" fitHeight="15">
+                            <Image url="@images/calendar.png" />
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="icon-button">
+                    <graphic>
+                        <ImageView fitWidth="15" fitHeight="15">
+                            <Image url="@images/notification.png" />
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
                 <Label fx:id="dayLabel" styleClass="day-label" />
                 <Label fx:id="dateLabel" styleClass="date-label" />
-                 <VBox>
-        <Label fx:id="dayLabel" styleClass="day-label" />
-    </VBox>
-            </VBox>
+            </HBox>
         </HBox>
     </top>
 
-    <!-- Barre latérale (Menu) -->
+    <!-- Sidebar -->
     <left>
-        <VBox spacing="15" styleClass="sidebar">
-            <Label fx:id="userNameLabel" styleClass="user-name" text="Sundar Gurung" />
-            <Label fx:id="userEmailLabel" styleClass="user-email" text="sundargurung360@gmail.com" />
-
-            <Button styleClass="sidebar-button" text="🏠 Dashboard" onAction="#showDashboard">
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-            </Button>
-            <Button styleClass="sidebar-button" text="⚡ Vital Task">
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-            </Button>
-            <Button styleClass="sidebar-button" text="📝 My Task">
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-            </Button>
-            <Button styleClass="sidebar-button" text="📂 Task Categories" onAction="#showTaskCategories">
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-            </Button>
-            <Button styleClass="sidebar-button" text="⚙ Settings" onAction="#openSettings">
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-            </Button>
-            <Button styleClass="sidebar-button" text="❓ Help">
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-            </Button>
-            <Button styleClass="logout-button" text="🚪 Logout" onAction="#handleLogout">
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-            </Button>
+        <VBox prefHeight="400.0" prefWidth="200.0" style="-fx-background-color: #FF6B6B;">
+            <children>
+                <Label text="To-Do List" textFill="WHITE">
+                    <font>
+                        <Font size="24.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                    </VBox.margin>
+                </Label>
+                <Button styleClass="sidebar-button" text="🏠 Dashboard" onAction="#showDashboard">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="sidebar-button" text="📝 My Task" onAction="#showNewTask">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="sidebar-button" text="📝 Notes" onAction="#showNotes">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="sidebar-button" text="⚙ Settings" onAction="#openSettings">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Region VBox.vgrow="ALWAYS" />
+                <Button styleClass="sidebar-button" text="🚪 Logout" onAction="#handleLogout">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <VBox.margin>
+                        <Insets bottom="20.0" />
+                    </VBox.margin>
+                </Button>
+            </children>
+            <padding>
+                <Insets top="10" />
+            </padding>
         </VBox>
     </left>
 
     <!-- Main Content -->
     <center>
-        <VBox spacing="15" styleClass="main-content">
-            <HBox spacing="250">
-    <!-- Welcome à gauche -->
-    <Label styleClass="welcome-text" text="Welcome Back, Sundar 👋" />
-    
-    <!-- Permet d'écarter les éléments -->
-    <Region />
-    
-    <!-- Bouton + Invite à droite -->
-    <Button fx:id="inviteButton" styleClass="invite-button" text="Invite+" onAction="#handleInviteButton" />
-</HBox>
+        <VBox spacing="20" styleClass="main-content">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- Welcome Section -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Text text="Welcome back, " styleClass="welcome-text"/>
+                <Text fx:id="userNameText" styleClass="welcome-text"/>
+                <Text text="👋" styleClass="welcome-text"/>
+                <Region HBox.hgrow="ALWAYS" />
+                <Button fx:id="inviteButton" styleClass="invite-button" text="+ Invite" onAction="#handleInviteButton" />
+            </HBox>
             
-            
+            <!-- Tasks Section -->
+            <HBox spacing="20" VBox.vgrow="ALWAYS">
+                <!-- Tasks List -->
+                <VBox spacing="15" HBox.hgrow="ALWAYS">
+                    <HBox spacing="25" alignment="CENTER_LEFT">
+                        <Label styleClass="section-title" text="📌 To-Do List" />
+                        <Region HBox.hgrow="ALWAYS" />
+                        <Button fx:id="addTaskButton" onAction="#afficheNewTask" styleClass="add-task-button" text="+ Add Task" />
+                    </HBox>
 
-            <HBox spacing="20">
-    <!-- To-Do List -->
-    <!-- To-Do List -->
-    <VBox fx:id="toDoListContainer" styleClass="task-list">
-       <HBox spacing="25">  <!-- Augmenter le spacing ici -->
-    <Label styleClass="section-title" text="📌 To-Do List" />
-    <Region />
-    <Button fx:id="addTaskButton" onAction="#afficheNewTask" styleClass="add-task-button" text="+ Add Task" />
-</HBox>
+                    <ScrollPane fitToWidth="true" styleClass="task-scrollpane" VBox.vgrow="ALWAYS">
+                        <VBox fx:id="taskContainer" spacing="15">
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                            <!-- Task cards will be added here dynamically, without delete and status buttons -->
+                        </VBox>
+                    </ScrollPane>
+                </VBox>
+                
+                <!-- Task Status & Completed Task -->
+                <VBox fx:id="taskStatusContainer" minWidth="300" maxWidth="300" spacing="20">
+                    <!-- Task Statistics -->
+                    <VBox minWidth="250" maxWidth="250" styleClass="task-stats-container">
+                        <padding>
+                            <Insets top="15" right="15" bottom="15" left="15"/>
+                        </padding>
+                        <Label styleClass="section-title" text="📊 Task Status" />
+                        <VBox fx:id="taskStatsContainer" styleClass="task-stats-container" spacing="25" alignment="CENTER">
+                            <padding>
+                                <Insets top="15" />
+                            </padding>
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <ProgressIndicator fx:id="completedProgress" progress="1.0" styleClass="completed-cycle" prefWidth="80" prefHeight="80"/>
+                                <VBox spacing="5">
+                                    <Label text="Completed" styleClass="status-label"/>
+                                    <Label fx:id="completedPercent" text="100%" styleClass="percent-label"/>
+                                </VBox>
+                            </HBox>
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <ProgressIndicator fx:id="inProgressProgress" progress="0.0" styleClass="inprogress-cycle" prefWidth="80" prefHeight="80"/>
+                                <VBox spacing="5">
+                                    <Label text="In Progress" styleClass="status-label"/>
+                                    <Label fx:id="inProgressPercent" text="0%" styleClass="percent-label"/>
+                                </VBox>
+                            </HBox>
+                            <HBox spacing="15" alignment="CENTER_LEFT">
+                                <ProgressIndicator fx:id="notStartedProgress" progress="0.0" styleClass="notstarted-cycle" prefWidth="80" prefHeight="80"/>
+                                <VBox spacing="5">
+                                    <Label text="Not Started" styleClass="status-label"/>
+                                    <Label fx:id="notStartedPercent" text="0%" styleClass="percent-label"/>
+                                </VBox>
+                            </HBox>
+                        </VBox>
+                    </VBox>
 
-        <ScrollPane fitToHeight="false" fitToWidth="true" styleClass="task-scrollpane">
-    <VBox fx:id="taskContainer" prefHeight="400" spacing="10" />
-</ScrollPane>
-
-    </VBox>
-    
-    <!-- Task Status & Completed Task -->
-    <VBox fx:id="taskStatusContainer">
-        <VBox styleClass="task-status">
-            <Label styleClass="section-title" text="📊 Task Status" />
-            <PieChart fx:id="taskStatusChart" styleClass="task-chart" />
-        </VBox>
-
-        <VBox styleClass="completed-task">
-            <Label styleClass="section-title" text="✅ Completed Task" />
-            <VBox fx:id="completedTaskContainer" spacing="10" />
-        </VBox>
-    </VBox>
-</HBox>
-            
+                    <!-- Completed Tasks Section -->
+                    <VBox styleClass="completed-task">
+                        <padding>
+                            <Insets top="10" right="20" bottom="20" left="20"/>
+                        </padding>
+                        <Label styleClass="section-title" text="✅ Completed Task" />
+                        <VBox fx:id="completedTaskContainer" spacing="10" />
+                    </VBox>
+                </VBox>
+            </HBox>
         </VBox>
     </center>
 

@@ -16,16 +16,25 @@ import javafx.stage.Stage;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.BorderPane;
+import java.util.ArrayList;
+import java.util.List;
+import util.UserSession;
+import Model.Task;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.net.URL;
+import java.util.ResourceBundle;
+import javafx.scene.control.ProgressIndicator;
+import javafx.geometry.Pos;
+import javafx.scene.text.Text;
+import javafx.fxml.Initializable;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.ButtonType;
+import java.util.Optional;
 
-public class DashboardController {
-	  private Stage stage;
-	  private Scene scene; 
-	  private Parent root;
+public class DashboardController extends BaseController implements Initializable {
     @FXML private Label dayLabel;
     @FXML private Label dateLabel;
     @FXML private VBox toDoListContainer;
@@ -38,17 +47,45 @@ public class DashboardController {
     // Ajout des labels pour les informations utilisateur
     @FXML private Label userNameLabel;
     @FXML private Label userEmailLabel;
+    @FXML private Text userNameText;
 
-    public void initialize() {
-        // Afficher la date actuelle
+    // Static list to store all tasks
+    private static List<Task> allTasks = new ArrayList<>();
+
+    // Public static method to access tasks
+    public static List<Task> getAllTasks() {
+        return allTasks;
+    }
+
+    @FXML
+    private VBox taskStatsContainer;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Update user info from session
+        updateUserInfo();
+
+        // Display current date
         LocalDate today = LocalDate.now();
         dayLabel.setText(formatDay(today.getDayOfWeek().toString()));
         dateLabel.setText(today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-        // Ajuster la largeur des sections
+        // Adjust section widths
         if (toDoListContainer != null && taskStatusContainer != null) {
             HBox.setHgrow(toDoListContainer, Priority.ALWAYS);
             HBox.setHgrow(taskStatusContainer, Priority.NEVER);
+        }
+
+        // Make task container scrollable
+        if (taskContainer != null) {
+            taskContainer.setSpacing(15);
+            taskContainer.setPadding(new javafx.geometry.Insets(10));
+            
+            // Enable vertical growth
+            VBox.setVgrow(taskContainer, Priority.ALWAYS);
+            
+            // Display all existing tasks
+            displayAllTasks();
         }
 
         // Configurer le PieChart des statuts des tâches
@@ -82,15 +119,32 @@ public class DashboardController {
         if (userEmailLabel != null) {
             userEmailLabel.setText("sundargurung360@gmail.com");
         }
+
+        updateTaskStatistics();
     }
 
-    // Méthode pour mettre à jour les informations utilisateur
-    public void updateUserInfo(String fullName, String email) {
+    // Method to update user info and welcome message
+    @Override
+    public void updateUserInfo() {
+        UserSession session = UserSession.getInstance();
         if (userNameLabel != null) {
-            userNameLabel.setText(fullName);
+            userNameLabel.setText(session.getFirstName());
         }
         if (userEmailLabel != null) {
-            userEmailLabel.setText(email);
+            userEmailLabel.setText(session.getEmail());
+        }
+        if (userNameText != null) {
+            userNameText.setText(session.getFirstName());
+        }
+        
+        // Update welcome message in the main content area
+        if (toDoListContainer != null && toDoListContainer.getParent() instanceof HBox) {
+            HBox mainContent = (HBox) toDoListContainer.getParent();
+            mainContent.lookupAll(".welcome-text").forEach(node -> {
+                if (node instanceof Label) {
+                    ((Label) node).setText("Welcome Back, " + session.getFirstName() + " 👋");
+                }
+            });
         }
     }
 
@@ -98,68 +152,113 @@ public class DashboardController {
         return day.substring(0, 1).toUpperCase() + day.substring(1).toLowerCase();
     }
 
- // Ajouter une tâche avec priorité et statut
-    private void addTask(String title, String description, String priority, String status) {
-        if (taskContainer != null) {
-            Label titleLabel = new Label(title);
-            titleLabel.getStyleClass().add("task-title");
-
-            Label descLabel = new Label(description);
-            descLabel.getStyleClass().add("task-desc");
-
-            // Création des labels pour Priority et Status
-            Label priorityLabel = new Label("Priority: " + priority);
-            priorityLabel.getStyleClass().add("task-priority");
-
-            Label statusLabel = new Label(status);
-            updateTaskStatus(statusLabel, status); // Appliquer la bonne couleur
-
-            // HBox pour aligner Priority et Status sur la même ligne
-            HBox taskDetails = new HBox(15, priorityLabel, statusLabel);
-            taskDetails.getStyleClass().add("task-details");
-
-            // Création du conteneur de la tâche
-            VBox taskCard = new VBox(10, titleLabel, descLabel, taskDetails);
-            taskCard.getStyleClass().add("task-card");
-
-            taskContainer.getChildren().add(taskCard);
+    // Method to display all tasks
+    private void displayAllTasks() {
+        taskContainer.getChildren().clear();
+        for (Task task : allTasks) {
+            createTaskCard(task);
         }
     }
 
-    // Ajouter une tâche complétée
-    private void addCompletedTask(String title, String description) {
-        if (completedTaskContainer != null) {
-            Label titleLabel = new Label(title);
+    // Method to create a task card
+    private void createTaskCard(Task task) {
+        // Create date header
+        String dateStr = task.getCreatedDate().format(DateTimeFormatter.ofPattern("dd MMMM"));
+        Label dateLabel = new Label(dateStr + (task.getCreatedDate().equals(LocalDate.now()) ? " • Today" : ""));
+        dateLabel.getStyleClass().add("task-date");
+
+        // Create title with options menu
+        HBox titleBox = new HBox();
+        titleBox.setSpacing(10);
+        titleBox.getStyleClass().add("task-title-box");
+
+        Label titleLabel = new Label(task.getTitle());
             titleLabel.getStyleClass().add("task-title");
 
-            Label descLabel = new Label(description);
+        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        
+        // Create status ComboBox
+        ComboBox<String> statusComboBox = new ComboBox<>();
+        statusComboBox.getItems().addAll("Not Started", "In Progress", "Completed");
+        statusComboBox.setValue(task.getStatus());
+        statusComboBox.getStyleClass().add("status-combo-box");
+        
+        // Handle status change
+        statusComboBox.setOnAction(event -> {
+            String newStatus = statusComboBox.getValue();
+            task.setStatus(newStatus);
+            updateTaskStatus(statusComboBox, newStatus);
+            updateTaskStatistics();
+        });
+        
+        // Set initial status style
+        updateTaskStatus(statusComboBox, task.getStatus());
+
+        // Create delete button
+        Button deleteButton = new Button("🗑");
+        deleteButton.getStyleClass().add("delete-task-button");
+        deleteButton.setOnAction(e -> confirmAndDeleteTask(task));
+        
+        titleBox.getChildren().addAll(titleLabel, spacer, statusComboBox, deleteButton);
+
+        // Description
+        Label descLabel = new Label(task.getDescription());
             descLabel.getStyleClass().add("task-desc");
+        descLabel.setWrapText(true);
 
-            VBox taskCard = new VBox(titleLabel, descLabel);
-            taskCard.getStyleClass().add("completed-task-card");
+        // Status and Priority row
+        HBox detailsBox = new HBox();
+        detailsBox.setSpacing(15);
+        detailsBox.getStyleClass().add("task-details");
 
-            completedTaskContainer.getChildren().add(taskCard);
+        Label priorityLabel = new Label("Priority: " + task.getPriority());
+        priorityLabel.getStyleClass().add("task-priority");
+
+        // Created date
+        Label createdLabel = new Label("Created on " + task.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        createdLabel.getStyleClass().add("task-created-date");
+
+        detailsBox.getChildren().addAll(priorityLabel, createdLabel);
+        HBox.setHgrow(createdLabel, Priority.ALWAYS);
+
+        // Main task card
+        VBox taskCard = new VBox(10);
+        taskCard.getStyleClass().add("task-card");
+        taskCard.getChildren().addAll(dateLabel, titleBox, descLabel, detailsBox);
+
+        // Add task card to container
+        taskContainer.getChildren().add(taskCard);
+        }
+
+    private void confirmAndDeleteTask(Task task) {
+        Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmDialog.setTitle("Delete Task");
+        confirmDialog.setHeaderText("Delete Task");
+        confirmDialog.setContentText("Are you sure you want to delete this task?");
+        
+        Optional<ButtonType> result = confirmDialog.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            allTasks.remove(task);
+            displayAllTasks();
+            updateTaskStatistics();
         }
     }
 
-    // Mise à jour des couleurs du statut de la tâche
-    public void updateTaskStatus(Label statusLabel, String status) {
-        // Appliquer directement le texte
-        statusLabel.setText(status);
+    private void updateTaskStatus(ComboBox<String> statusComboBox, String status) {
+        // Remove all status-related style classes
+        statusComboBox.getStyleClass().removeAll("status-not-started", "status-in-progress", "status-completed");
 
-        // Supprimer toutes les classes existantes
-        statusLabel.getStyleClass().removeAll("status-not-started", "status-in-progress", "status-completed");
-
-        // Ajouter la bonne classe pour la couleur du texte
+        // Add appropriate style class based on status
         switch (status) {
             case "Not Started":
-                statusLabel.getStyleClass().add("status-not-started");
+                statusComboBox.getStyleClass().add("status-not-started");
                 break;
             case "In Progress":
-                statusLabel.getStyleClass().add("status-in-progress");
+                statusComboBox.getStyleClass().add("status-in-progress");
                 break;
             case "Completed":
-                statusLabel.getStyleClass().add("status-completed");
+                statusComboBox.getStyleClass().add("status-completed");
                 break;
         }
     }
@@ -343,6 +442,144 @@ public class DashboardController {
             alert.setContentText("Details: " + ex.getMessage());
             alert.showAndWait();
         }
+    }
+
+    @FXML
+    private void showNotes(ActionEvent event) {
+        try {
+            // Get the current BorderPane
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            
+            // Load the Notes.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Notes.fxml"));
+            Parent notesRoot = loader.load();
+            
+            // Replace only the center content
+            borderPane.setCenter(notesRoot);
+            
+            // Update button styles
+            Node sourceButton = (Node) event.getSource();
+            if (sourceButton.getParent() instanceof VBox) {
+                VBox sidebar = (VBox) sourceButton.getParent();
+                
+                // Reset all buttons to default style
+                sidebar.getChildren().forEach(node -> {
+                    if (node instanceof Button) {
+                        node.getStyleClass().remove("sidebar-button-selected");
+                        node.getStyleClass().add("sidebar-button");
+                    }
+                });
+                
+                // Set the Notes button to selected
+                sourceButton.getStyleClass().remove("sidebar-button");
+                sourceButton.getStyleClass().add("sidebar-button-selected");
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Navigation Error");
+            alert.setContentText("Could not load the Notes page. Please try again.");
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
+    public void showNewTask(ActionEvent event) {
+        try {
+            // Get the current BorderPane
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            
+            // Load the MyTasks.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyTasks.fxml"));
+            Parent myTasksRoot = loader.load();
+            
+            // Replace only the center content
+            borderPane.setCenter(myTasksRoot);
+            
+            // Update button styles
+            Node sourceButton = (Node) event.getSource();
+            if (sourceButton.getParent() instanceof VBox) {
+                VBox sidebar = (VBox) sourceButton.getParent();
+                
+                // Reset all buttons to default style
+                sidebar.getChildren().forEach(node -> {
+                    if (node instanceof Button) {
+                        node.getStyleClass().remove("sidebar-button-selected");
+                        node.getStyleClass().add("sidebar-button");
+                    }
+                });
+                
+                // Set the My Task button to selected
+                sourceButton.getStyleClass().remove("sidebar-button");
+                sourceButton.getStyleClass().add("sidebar-button-selected");
+            }
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Navigation Error");
+            alert.setContentText("Could not load the My Tasks page. Please try again.");
+            alert.showAndWait();
+        }
+    }
+
+    private void updateTaskStatistics() {
+        taskStatsContainer.getChildren().clear();
+        
+        if (allTasks.isEmpty()) {
+            Label noTasksLabel = new Label("No tasks available");
+            noTasksLabel.getStyleClass().add("task-status-title");
+            taskStatsContainer.getChildren().add(noTasksLabel);
+            return;
+        }
+
+        Label titleLabel = new Label("Task Status");
+        titleLabel.getStyleClass().add("task-status-title");
+        taskStatsContainer.getChildren().add(titleLabel);
+
+        int totalTasks = allTasks.size();
+        int completedTasks = (int) allTasks.stream().filter(task -> task.getStatus().equals("Completed")).count();
+        int inProgressTasks = (int) allTasks.stream().filter(task -> task.getStatus().equals("In Progress")).count();
+        int notStartedTasks = (int) allTasks.stream().filter(task -> task.getStatus().equals("Not Started")).count();
+
+        createStatusRow("Completed", completedTasks, totalTasks, "completed-progress");
+        createStatusRow("In Progress", inProgressTasks, totalTasks, "in-progress-progress");
+        createStatusRow("Not Started", notStartedTasks, totalTasks, "not-started-progress");
+    }
+
+    private void createStatusRow(String status, int count, int total, String styleClass) {
+        HBox statusRow = new HBox();
+        statusRow.getStyleClass().add("status-row");
+        
+        Label statusLabel = new Label(status);
+        statusLabel.getStyleClass().add("status-label");
+        
+        ProgressIndicator progressIndicator = new ProgressIndicator();
+        double percentage = total > 0 ? (double) count / total : 0;
+        progressIndicator.setProgress(percentage);
+        progressIndicator.getStyleClass().add(styleClass);
+        
+        Label percentageLabel = new Label(String.format("%.0f%%", percentage * 100));
+        percentageLabel.getStyleClass().add("percentage-label");
+        
+        statusRow.getChildren().addAll(statusLabel, progressIndicator, percentageLabel);
+        taskStatsContainer.getChildren().add(statusRow);
+    }
+
+    // Method to add a new task
+    public void addTask(String title, String description, String priority, String status) {
+        Task newTask = new Task(title, description, priority, status);
+        allTasks.add(0, newTask);
+        displayAllTasks();
+        updateTaskStatistics();
+    }
+
+    public void refreshTasks() {
+        // ... existing refresh code ...
+        updateTaskStatistics();
     }
 }
 

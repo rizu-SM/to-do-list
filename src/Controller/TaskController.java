@@ -16,6 +16,10 @@ public class TaskController {
         return DatabaseManager.addTask(task);
     }
 
+    public boolean shareTasksWithUserByEmail(int ownerId, String viewerEmail) {
+        // Appel à la méthode de DatabaseManager pour gérer la logique de partage
+        return DatabaseManager.shareTasksWithUserByEmail(ownerId, viewerEmail);
+    }
     
     
     
@@ -119,6 +123,26 @@ public class TaskController {
     public boolean deleteTask(int taskId) {
         return DatabaseManager.deleteTask(taskId);
     }
+    
+    public List<User> getInvitedUsers(int ownerId) {
+        return DatabaseManager.getInvitedUsers(ownerId);
+    }
+
+    public boolean removeInvitationByEmail(int ownerId, String email) {
+        // Récupérer le viewer à partir de l'email
+    	int viewerId = 0;
+         viewerId = DatabaseManager.getUserIdByEmail(email);
+        if (viewerId != 0) {
+            return DatabaseManager.removeSharedUser(ownerId, viewerId);
+        }
+        return false; // Viewer non trouvé
+    }
+
+
+    public List<User> getOwnersWhoSharedWith(int viewerId) {
+        return DatabaseManager.getOwnersWhoSharedWith(viewerId);
+    }
+
     
     
     

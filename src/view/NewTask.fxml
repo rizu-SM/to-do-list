@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.shape.Circle?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
@@ -48,29 +49,46 @@
                   </Text>
                   <DatePicker fx:id="datePicker" layoutX="18.0" layoutY="83.0" AnchorPane.leftAnchor="18.0" AnchorPane.rightAnchor="18.0" />
 
-                  <Text layoutX="18.0" layoutY="135.0" strokeType="OUTSIDE" strokeWidth="0.0" text="priority">
+                  <Text layoutX="18.0" layoutY="135.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Priority">
                      <font>
                         <Font name="Trebuchet MS" size="14.0" />
                      </font>
                   </Text>
-                  <CheckBox fx:id="extremePriority" layoutX="14.0" layoutY="151.0" mnemonicParsing="false" text="Extreme" textFill="#a1a3ab">
-                     <font>
-                        <Font name="Trebuchet MS" size="12.0" />
-                     </font>
-                  </CheckBox>
-                  <Circle fill="#ff6767" layoutX="88.0" layoutY="159.0" radius="6.0" stroke="#ff6767" strokeType="INSIDE" />
-                  <CheckBox fx:id="moderatePriority" layoutX="201.0" layoutY="151.0" mnemonicParsing="false" text="Moderate" textFill="#a1a3ab">
-                     <font>
-                        <Font name="Trebuchet MS" size="12.0" />
-                     </font>
-                  </CheckBox>
-                  <CheckBox fx:id="lowPriority" layoutX="378.0" layoutY="151.0" mnemonicParsing="false" text="Low" textFill="#a1a3ab">
-                     <font>
-                        <Font name="Trebuchet MS" size="12.0" />
-                     </font>
-                  </CheckBox>
-                  <Circle fill="#1e77fd" layoutX="291.0" layoutY="159.0" radius="6.0" stroke="#1e77fd" strokeType="INSIDE" />
-                  <Circle fill="#1fef3e" layoutX="438.0" layoutY="159.0" radius="6.0" stroke="#1fef3e" strokeType="INSIDE" />
+                  
+                  <!-- Priority Selection Container -->
+                  <HBox layoutX="18.0" layoutY="151.0" spacing="30" alignment="CENTER_LEFT">
+                     <children>
+                        <!-- Extreme Priority -->
+                        <HBox alignment="CENTER" spacing="5">
+                           <CheckBox fx:id="extremePriority" mnemonicParsing="false" text="Extreme" textFill="#a1a3ab">
+                              <font>
+                                 <Font name="Trebuchet MS" size="12.0" />
+                              </font>
+                           </CheckBox>
+                           <Circle fill="#ff6767" radius="6.0" stroke="#ff6767" strokeType="INSIDE" />
+                        </HBox>
+                        
+                        <!-- Moderate Priority -->
+                        <HBox alignment="CENTER" spacing="5">
+                           <CheckBox fx:id="moderatePriority" mnemonicParsing="false" text="Moderate" textFill="#a1a3ab">
+                              <font>
+                                 <Font name="Trebuchet MS" size="12.0" />
+                              </font>
+                           </CheckBox>
+                           <Circle fill="#1e77fd" radius="6.0" stroke="#1e77fd" strokeType="INSIDE" />
+                        </HBox>
+                        
+                        <!-- Low Priority -->
+                        <HBox alignment="CENTER" spacing="5">
+                           <CheckBox fx:id="lowPriority" mnemonicParsing="false" text="Low" textFill="#a1a3ab">
+                              <font>
+                                 <Font name="Trebuchet MS" size="12.0" />
+                              </font>
+                           </CheckBox>
+                           <Circle fill="#1fef3e" radius="6.0" stroke="#1fef3e" strokeType="INSIDE" />
+                        </HBox>
+                     </children>
+                  </HBox>
 
                   <ChoiceBox fx:id="category" layoutX="19.0" layoutY="204.0" AnchorPane.leftAnchor="19.0" AnchorPane.rightAnchor="19.0" />
                   <Text layoutX="19.0" layoutY="193.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Category">

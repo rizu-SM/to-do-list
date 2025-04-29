@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import Controller.AuthController;
 import Model.User;
+import util.UserSession;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -54,7 +55,17 @@ public class MainController {
     public void afficherLogInForm(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/view/SignUp.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));
+        
+        // Get the current window dimensions
+        double width = stage.getScene().getWidth();
+        double height = stage.getScene().getHeight();
+        
+        // Create new scene with the same dimensions
+        Scene scene = new Scene(root, width, height);
+        
+        // Set window properties
+        stage.setResizable(false);
+        stage.setScene(scene);
         stage.show();
     }
 
@@ -73,10 +84,29 @@ public class MainController {
 
         if (user != null) {
             try {
+                // Set user info in UserSession
+                UserSession.getInstance().setUser(user);
+                
                 // Load the dashboard
-                Parent root = FXMLLoader.load(getClass().getResource("/view/Dashboard.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
+                Parent root = loader.load();
+                
+                // Get the dashboard controller
+                DashboardController dashboardController = loader.getController();
+                dashboardController.updateUserInfo();
+                
                 stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setScene(new Scene(root));
+                
+                // Get the current window dimensions
+                double width = stage.getScene().getWidth();
+                double height = stage.getScene().getHeight();
+                
+                // Create new scene with the same dimensions
+                Scene scene = new Scene(root, width, height);
+                
+                // Set window properties
+                stage.setResizable(false);
+                stage.setScene(scene);
                 stage.show();
             } catch (Exception e) {
                 e.printStackTrace();

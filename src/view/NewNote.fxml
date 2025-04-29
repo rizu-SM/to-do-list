@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox spacing="20" styleClass="main-content" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="view.NewNoteController"
+      stylesheets="@style.css">
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Text text="Create New Note" styleClass="section-title">
+            <font>
+                <Font name="System Bold" size="24.0"/>
+            </font>
+        </Text>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="Go Back" onAction="#handleBackButton" styleClass="back-button"/>
+    </HBox>
+
+    <!-- Note Form -->
+    <VBox spacing="15" styleClass="form-container">
+        <Label text="Title" styleClass="form-label"/>
+        <TextField fx:id="titleField" promptText="Enter note title" styleClass="form-field"/>
+        
+        <Label text="Description" styleClass="form-label"/>
+        <TextArea fx:id="descriptionArea" promptText="Enter note description" 
+                  styleClass="form-field" wrapText="true" prefRowCount="10"/>
+        
+        <HBox spacing="10" alignment="CENTER_RIGHT">
+            <Button text="Cancel" onAction="#handleBackButton" styleClass="cancel-button"/>
+            <Button text="Save Note" onAction="#handleSaveButton" styleClass="save-button"/>
+        </HBox>
+    </VBox>
+</VBox> 

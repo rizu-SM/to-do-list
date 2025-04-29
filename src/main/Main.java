@@ -3,6 +3,7 @@ package main;
 import Model.User;
 import Model.Task;
 import Model.Note;
+import Model.Notification;
 import Controller.AuthController;
 import Controller.TaskController;
 import java.time.LocalDate;
@@ -11,6 +12,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
 import Controller.NoteController;
+import Controller.NotificationController;
 
 public class Main {
     public static void main(String[] args) {
@@ -19,6 +21,8 @@ public class Main {
         TaskController taskController = new TaskController();
         NoteController noteController = new NoteController();
         
+        NotificationController.startScheduler();
+
 
         User user = null; // Utilisateur connecté
 
@@ -58,7 +62,12 @@ public class Main {
                             System.out.println("9. afficher les task d'apres la date");
                             System.out.println("10. d apres l état");
                             System.out.println("11. Gérer les notes");
-                            System.out.print("Choix : ");
+                            System.out.println("12. afficher les notification");
+                            System.out.println("13. inviter un membre");
+                            System.out.println("14. Voir les membres invités");
+                            System.out.println("15. Supprimer une invitation");
+                            System.out.println("16. Voir les tâches des utilisateurs qui m'ont invité");
+
                             int taskChoice = scanner.nextInt();
                             scanner.nextLine(); // Nettoyer le buffer
 
@@ -346,6 +355,82 @@ public class Main {
                                             case 5:
                                                 break;
                                         }}
+                                case 12:
+                                    List<Notification> notifications = NotificationController.getNotificationsByUserId(user.getId());
+                                    if (notifications.isEmpty()) {
+                                        System.out.println("Aucune notification trouvée.");
+                                    } else {
+                                        System.out.println("=== Notifications ===");
+                                        for (Notification n : notifications) {
+                                            System.out.println("- " + n.getMessage());
+                                        }
+                                    }
+                                    break;
+                                case 13:
+                                	System.out.println("Entrez l'email de person tu veut invite");
+                                    String invited = scanner.nextLine();
+                                    taskController.shareTasksWithUserByEmail(user.getId(),invited);
+                                	
+                                case 14:
+                                    // Voir les personnes que j'ai invitées
+                                    List<User> invitedUsers = taskController.getInvitedUsers(user.getId());
+                                    if (invitedUsers.isEmpty()) {
+                                        System.out.println("Vous n'avez invité aucun utilisateur.");
+                                    } else {
+                                        System.out.println("=== Utilisateurs invités ===");
+                                        for (User u : invitedUsers) {
+                                            System.out.println(u.getNom() + " " + u.getPrenom() + " - " + u.getEmail());
+                                        }
+                                    }
+                                    break;
+
+                                case 15:
+                                    // Supprimer une invitation par email
+                                    System.out.print("Entrez l'email de l'utilisateur à désinviter (ou 'non' pour annuler) : ");
+                                    String emailToRemove = scanner.nextLine();
+                                    if (!emailToRemove.equalsIgnoreCase("non")) {
+                                        boolean removed = taskController.removeInvitationByEmail(user.getId(), emailToRemove);
+                                        if (removed) {
+                                            System.out.println("Invitation supprimée avec succès.");
+                                        } else {
+                                            System.out.println("Aucune invitation trouvée pour cet email.");
+                                        }
+                                    }
+                                    break;
+
+                                case 16:
+                                    // Voir les tâches d'un autre utilisateur qui vous a invité
+                                    List<User> sharedWithMe = taskController.getOwnersWhoSharedWith(user.getId());
+                                    if (sharedWithMe.isEmpty()) {
+                                        System.out.println("Aucun utilisateur ne vous a partagé ses tâches.");
+                                    } else {
+                                        System.out.println("=== Utilisateurs vous ayant invité ===");
+                                        for (int i = 0; i < sharedWithMe.size(); i++) {
+                                            User u = sharedWithMe.get(i);
+                                            System.out.println((i + 1) + ". " + u.getNom() + " " + u.getPrenom() + " - " + u.getEmail());
+                                        }
+
+                                        System.out.print("Sélectionnez l'utilisateur (numéro) pour voir ses tâches : ");
+                                        int selected = scanner.nextInt();
+                                        scanner.nextLine(); // Nettoyer le buffer
+
+                                        if (selected >= 1 && selected <= sharedWithMe.size()) {
+                                            User selectedUser = sharedWithMe.get(selected - 1);
+                                            List<Task> sharedTasks = taskController.getTasksByUserId(selectedUser.getId());
+                                            if (sharedTasks.isEmpty()) {
+                                                System.out.println("Cet utilisateur n’a pas de tâches.");
+                                            } else {
+                                                System.out.println("=== Tâches de " + selectedUser.getNom() + " ===");
+                                                for (Task task : sharedTasks) {
+                                                    System.out.println("- " + task.getTitre() + " [" + task.getStatut() + "]");
+                                                }
+                                            }
+                                        } else {
+                                            System.out.println("Numéro invalide.");
+                                        }
+                                    }
+                                    break;
+
                                         
 
 

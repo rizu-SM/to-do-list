@@ -17,13 +17,12 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.SignUpController">
     <children>
-        <BorderPane AnchorPane.topAnchor="16.0" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0"
-                    style="-fx-background-color: white; -fx-background-radius: 10;">
+        <BorderPane style="-fx-background-color: white; -fx-background-radius: 10;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <center>
                 <HBox spacing="0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
 
                     <!-- Left side with image -->
-                    <StackPane prefWidth="400.0" style="-fx-padding: 20;" HBox.hgrow="ALWAYS">
+                    <StackPane style="-fx-padding: 20;" HBox.hgrow="ALWAYS">
                         <ImageView fitHeight="400.0" fitWidth="400.0" preserveRatio="true">
                             <image>
                                 <Image url="@images/weaver_Enterprise-Mobility.png" />

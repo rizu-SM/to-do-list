@@ -5,9 +5,14 @@ import java.io.IOException;
 import Controller.AuthController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 public class SignUpController {
 
@@ -74,7 +79,16 @@ public class SignUpController {
     public void afficherSignInForm(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(getClass().getResource("/view/SignIn.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(new Scene(root));
+
+        double width = stage.getScene().getWidth();
+        double height = stage.getScene().getHeight();
+        
+        // Create new scene with the same dimensions
+        Scene scene = new Scene(root, width, height);
+        
+        // Set window properties
+        stage.setResizable(false);
+        stage.setScene(scene);
         stage.show();
     }
 }

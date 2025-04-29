@@ -18,12 +18,12 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.MainController">
     <children>
-        <BorderPane style="-fx-background-color: white; -fx-background-radius: 10;" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="16.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="16.0">
+        <BorderPane style="-fx-background-color: white; -fx-background-radius: 10;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <center>
                 <HBox spacing="0" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
                     
                     <!-- Login form container -->
-                    <VBox alignment="CENTER" maxWidth="500.0" minWidth="300.0" spacing="20" style="-fx-padding: 30;" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                    <VBox alignment="CENTER" spacing="20" style="-fx-padding: 30;" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
 
                         <!-- Title -->
                         <Text style="-fx-font-weight: bold;" text="Sign In">
@@ -69,7 +69,7 @@
                     </VBox>
          
                     <!-- Image area -->
-                    <StackPane maxWidth="500.0" minWidth="300.0" style="-fx-padding: 20;" HBox.hgrow="ALWAYS">
+                    <StackPane style="-fx-padding: 20;" HBox.hgrow="ALWAYS">
                         <ImageView fitHeight="321.0" fitWidth="429.0" preserveRatio="true" smooth="true">
                             <image>
                                 <Image url="@images/Milnbank-Rent-Vector.png" />

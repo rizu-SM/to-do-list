@@ -17,6 +17,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import java.io.IOException;
 
 public class NewTaskController {
     @FXML private TextField titleField;
@@ -31,8 +32,32 @@ public class NewTaskController {
 
 	  @FXML
 	  public void initialize() {
-		  category.getItems().addAll("Personal", "Work", "Chores", "Religious", "Others");
-		  category.setValue("Personal");
+        // Use CategoryManager for categories
+        CategoryManager categoryManager = CategoryManager.getInstance();
+        category.setItems(categoryManager.getCategories());
+        category.setValue(categoryManager.getCategories().get(0));
+
+        // Set up priority checkbox listeners for mutual exclusivity
+        extremePriority.setOnAction(e -> {
+            if (extremePriority.isSelected()) {
+                moderatePriority.setSelected(false);
+                lowPriority.setSelected(false);
+            }
+        });
+
+        moderatePriority.setOnAction(e -> {
+            if (moderatePriority.isSelected()) {
+                extremePriority.setSelected(false);
+                lowPriority.setSelected(false);
+            }
+        });
+
+        lowPriority.setOnAction(e -> {
+            if (lowPriority.isSelected()) {
+                extremePriority.setSelected(false);
+                moderatePriority.setSelected(false);
+            }
+        });
 	  }
 
     @FXML
@@ -76,7 +101,7 @@ public class NewTaskController {
         
         // Si des erreurs sont trouvées, afficher l'alerte
         if (errorMessage.length() > 0) {
-            Alert alert = new Alert(AlertType.ERROR);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Form Error");
             alert.setHeaderText("Please complete all required fields");
             alert.setContentText(errorMessage.toString());
@@ -84,13 +109,49 @@ public class NewTaskController {
             return;
         }
         
-        // Si tout est valide, procéder à la sauvegarde et retourner au dashboard
+        try {
+            // Get task information
         String title = titleField.getText();
         String description = descriptionArea.getText();
-        String selectedCategory = category.getValue();
-        // ... autres champs
+            String category = this.category.getValue();
+            
+            // Determine priority
+            String priority;
+            if (extremePriority.isSelected()) {
+                priority = "High";
+            } else if (moderatePriority.isSelected()) {
+                priority = "Medium";
+            } else {
+                priority = "Low";
+            }
 
-        // Après avoir sauvegardé, retourner au tableau de bord
-        goBackToDashboard(event);
+            // Add the task to the static list in DashboardController
+            DashboardController.getAllTasks().add(0, new Model.Task(title, description, priority, "Not Started"));
+
+            // Navigate back to dashboard
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
+                Parent dashboardRoot = loader.load();
+                
+                Scene scene = ((Node) event.getSource()).getScene();
+                scene.setRoot(dashboardRoot);
+                
+            } catch (IOException e) {
+                e.printStackTrace();
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Navigation Error");
+                alert.setHeaderText("Could not return to dashboard");
+                alert.setContentText("An error occurred while trying to navigate back.");
+                alert.showAndWait();
+            }
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            Alert alert = new Alert(AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Could not create task");
+            alert.setContentText("An error occurred while trying to save the task.");
+            alert.showAndWait();
+        }
     }
 }
