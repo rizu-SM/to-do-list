@@ -1,5 +1,13 @@
 package view;
 
+import javafx.scene.control.Label;
+import Controller.TaskController;
+import Model.DatabaseManager;
+import Model.Task;
+import Model.User;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
@@ -17,6 +25,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.layout.BorderPane;
 import java.io.IOException;
+import java.lang.classfile.Label;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,7 +44,49 @@ public class MyTasksController extends BaseController implements Initializable {
     private DatePicker dateFilter;
     
     private List<Task> allTasks;
+    private TaskController taskController = new TaskController();
+    private User loggedInUser;
+    public void setLoggedInUser(User user) {
+        this.loggedInUser = user;
+    }
 
+    public List<Task> getTasksByUserId(int userId) {
+        return DatabaseManager.getTasksByUserId(userId); // Assurez-vous que cette méthode fonctionne correctement
+    }
+
+    public void loadUserTasks(int userId) {
+        tasksContainer.getChildren().clear();
+
+        List<Task> tasks = taskController.getTasksByUserId(userId);
+
+        if (tasks == null || tasks.isEmpty()) {
+            Label noTasksLabel = new Label("No tasks available.");
+            noTasksLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #888;");
+            tasksContainer.getChildren().add(noTasksLabel);
+            return;
+        }
+
+        for (Task task : tasks) {
+            VBox taskCard = new VBox();
+            taskCard.setSpacing(10);
+            taskCard.setStyle("-fx-background-color: #f4f4f4; -fx-padding: 10; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-background-radius: 5;");
+
+            Label titleLabel = new Label(task.getTitre());
+            titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
+            Label descriptionLabel = new Label(task.getDescription());
+            descriptionLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
+
+            Label dateLabel = new Label("Due: " + task.getDateLimite());
+            dateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888;");
+
+            Label statusLabel = new Label("Status: " + task.getStatut());
+            statusLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888;");
+
+            taskCard.getChildren().addAll(titleLabel, descriptionLabel, dateLabel, statusLabel);
+            tasksContainer.getChildren().add(taskCard);
+        }
+    }
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         updateUserInfo();
@@ -45,12 +96,12 @@ public class MyTasksController extends BaseController implements Initializable {
 
     private void setupFilters() {
         // Setup priority filter
-        priorityFilter.getItems().addAll("All Priorities", "High", "Medium", "Low");
+        priorityFilter.getItems().addAll("All Priorities", "Haute", "Moyenne", "Basse");
         priorityFilter.setValue("All Priorities");
         priorityFilter.setOnAction(e -> applyFilters());
 
         // Setup status filter
-        statusFilter.getItems().addAll("All Statuses", "Not Started", "In Progress", "Completed");
+        statusFilter.getItems().addAll("All Statuses", "À faire", "En cours", "Terminé");
         statusFilter.setValue("All Statuses");
         statusFilter.setOnAction(e -> applyFilters());
 
@@ -84,17 +135,17 @@ public class MyTasksController extends BaseController implements Initializable {
 
     private boolean filterByPriority(Task task) {
         String priority = priorityFilter.getValue();
-        return priority.equals("All Priorities") || task.getPriority().equals(priority);
+        return priority.equals("All Priorities") || task.getPriorite().equals(priority);
     }
 
     private boolean filterByStatus(Task task) {
         String status = statusFilter.getValue();
-        return status.equals("All Statuses") || task.getStatus().equals(status);
+        return status.equals("All Statuses") || task.getStatut().equals(status);
     }
 
     private boolean filterByDate(Task task) {
         LocalDate selectedDate = dateFilter.getValue();
-        return selectedDate == null || task.getCreatedDate().equals(selectedDate);
+        return selectedDate == null || task.getDateLimite().equals(selectedDate);
     }
 
     private void displayFilteredTasks(List<Task> tasks) {
@@ -109,8 +160,8 @@ public class MyTasksController extends BaseController implements Initializable {
         card.setSpacing(10);
         
         // Date header
-        String dateStr = task.getCreatedDate().format(DateTimeFormatter.ofPattern("dd MMMM"));
-        Label dateLabel = new Label(dateStr + (task.getCreatedDate().equals(java.time.LocalDate.now()) ? " • Today" : ""));
+        String dateStr = task.getDateLimite().format(DateTimeFormatter.ofPattern("dd MMMM"));
+        Label dateLabel = new Label(dateStr + (task.getDateLimite().equals(java.time.LocalDate.now()) ? " • Today" : ""));
         dateLabel.getStyleClass().add("task-date");
 
         // Title with options
@@ -119,7 +170,7 @@ public class MyTasksController extends BaseController implements Initializable {
         titleBox.setAlignment(Pos.CENTER_LEFT);
         titleBox.getStyleClass().add("task-title-box");
 
-        Label titleLabel = new Label(task.getTitle());
+        Label titleLabel = new Label(task.getTitre());
         titleLabel.getStyleClass().add("task-title");
         
         Region spacer = new Region();
@@ -127,14 +178,14 @@ public class MyTasksController extends BaseController implements Initializable {
         
         // Create status options
         ComboBox<String> statusComboBox = new ComboBox<>();
-        statusComboBox.getItems().addAll("Not Started", "In Progress", "Completed");
-        statusComboBox.setValue(task.getStatus() != null ? task.getStatus() : "Not Started");
+        statusComboBox.getItems().addAll("À faire", "En cours", "Terminé");
+        statusComboBox.setValue(task.getStatut() != null ? task.getStatut() : "À faire");
         statusComboBox.getStyleClass().add("status-combo-box");
         
         // Handle status change
         statusComboBox.setOnAction(event -> {
             String newStatus = statusComboBox.getValue();
-            task.setStatus(newStatus);
+            task.setStatut(newStatus);
             updateTaskStatus(statusComboBox, newStatus);
         });
         
@@ -158,15 +209,15 @@ public class MyTasksController extends BaseController implements Initializable {
         detailsBox.setSpacing(15);
         detailsBox.getStyleClass().add("task-details");
 
-        Label priorityLabel = new Label("Priority: " + task.getPriority());
+        Label priorityLabel = new Label("Priority: " + task.getPriorite());
         priorityLabel.getStyleClass().add("task-priority");
 
-        // Created date
-        Label createdLabel = new Label("Created on " + task.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        createdLabel.getStyleClass().add("task-created-date");
+        // Due date
+        Label dueDateLabel = new Label("Due on " + task.getDateLimite().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        dueDateLabel.getStyleClass().add("task-due-date");
 
-        detailsBox.getChildren().addAll(priorityLabel, createdLabel);
-        HBox.setHgrow(createdLabel, Priority.ALWAYS);
+        detailsBox.getChildren().addAll(priorityLabel, dueDateLabel);
+        HBox.setHgrow(dueDateLabel, Priority.ALWAYS);
 
         // Add all elements to card
         card.getChildren().addAll(dateLabel, titleBox, descLabel, detailsBox);
@@ -194,13 +245,13 @@ public class MyTasksController extends BaseController implements Initializable {
         
         // Add appropriate style class based on status
         switch (status) {
-            case "Not Started":
+            case "À faire":
                 statusComboBox.getStyleClass().add("status-not-started");
                 break;
-            case "In Progress":
+            case "En cours":
                 statusComboBox.getStyleClass().add("status-in-progress");
                 break;
-            case "Completed":
+            case "Terminé":
                 statusComboBox.getStyleClass().add("status-completed");
                 break;
         }
@@ -218,4 +269,4 @@ public class MyTasksController extends BaseController implements Initializable {
             showError("Error loading new task view");
         }
     }
-} 
+}

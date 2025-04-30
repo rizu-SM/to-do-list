@@ -5,6 +5,10 @@ import Model.User;
 public class UserSession {
     private static UserSession instance;
     private User currentUser;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String fullName;
     
     private UserSession() {}
     
@@ -18,31 +22,53 @@ public class UserSession {
     public void setUser(User user) {
         this.currentUser = user;
     }
-    
-    public String getFullName() {
-        if (currentUser != null) {
-            return currentUser.getNom() + " " + currentUser.getPrenom();
-        }
-        return "";
-    }
-    
-    public String getEmail() {
-        if (currentUser != null) {
-            return currentUser.getEmail();
-        }
-        return "";
-    }
-    
-    public String getFirstName() {
-        if (currentUser != null) {
-            return currentUser.getPrenom();
-        }
-        return "";
-    }
-    
+
     public User getCurrentUser() {
         return currentUser;
     }
+
+    public void setCurrentUser(User user) {
+        this.currentUser = user;
+    }
+    
+    public void setUserInfo(String firstName, String lastName, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.fullName = firstName + " " + lastName;
+    }
+    
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+        String[] parts = fullName.split(" ", 2);
+        if (parts.length > 0) {
+            this.firstName = parts[0];
+        }
+        if (parts.length > 1) {
+            this.lastName = parts[1];
+        }
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
+    }
+    
+    public String getFirstName() {
+        return firstName;
+    }
+    
+    public String getLastName() {
+        return lastName;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public String getFullName() {
+        return fullName;
+    }
+    
     
     public void clearSession() {
         currentUser = null;

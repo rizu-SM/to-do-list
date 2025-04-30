@@ -1,5 +1,5 @@
 package view;
-
+import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import util.UserSession;
 import Model.Task;
+import Model.User;
+import Controller.TaskController;
+
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -41,13 +44,14 @@ public class DashboardController extends BaseController implements Initializable
     @FXML private VBox taskStatusContainer;
     @FXML private PieChart taskStatusChart;
     @FXML private VBox completedTaskContainer;
-    @FXML private VBox taskContainer;
     @FXML private Button addTaskButton;
     
     // Ajout des labels pour les informations utilisateur
     @FXML private Label userNameLabel;
     @FXML private Label userEmailLabel;
     @FXML private Text userNameText;
+    private User loggedInUser;
+    @FXML private Label welcomeLabel;
 
     // Static list to store all tasks
     private static List<Task> allTasks = new ArrayList<>();
@@ -57,8 +61,107 @@ public class DashboardController extends BaseController implements Initializable
         return allTasks;
     }
 
+    public void setLoggedInUser(User user) {
+        this.loggedInUser = user;
+    
+        // Mettre à jour le message de bienvenue
+        if (welcomeLabel != null) {
+            welcomeLabel.setText("Welcome Back, " + user.getNom() + " 👋");
+        }
+    }
+
+    @FXML
+    private VBox taskContainer;
+
+    @FXML
+    private void handleDashboardButton(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard.fxml"));
+            Parent root = loader.load();
+    
+            DashboardController dashboardController = loader.getController();
+            dashboardController.setLoggedInUser(loggedInUser); // Assurez-vous que l'utilisateur est défini
+            dashboardController.reloadTasks(); // Recharge les tâches
+    
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Failed to load the dashboard.");
+        }
+    }
+
+
+    private TaskController taskController = new TaskController();
+
+    public void loadUserTasks(int userId) {
+        taskContainer.getChildren().clear();
+    
+        List<Task> tasks = taskController.getTasksByUserId(userId);
+    
+        if (tasks == null || tasks.isEmpty()) {
+            Label noTasksLabel = new Label("No tasks available.");
+            noTasksLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #888;");
+            taskContainer.getChildren().add(noTasksLabel);
+            return;
+        }
+    
+        for (Task task : tasks) {
+            VBox taskCard = new VBox();
+            taskCard.setSpacing(10);
+            taskCard.setStyle("-fx-background-color: #f4f4f4; -fx-padding: 10; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-background-radius: 5;");
+    
+            Label titleLabel = new Label(task.getTitre());
+            titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+    
+            Label descriptionLabel = new Label(task.getDescription());
+            descriptionLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
+    
+            Label dateLabel = new Label("Due: " + task.getDateLimite());
+            dateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888;");
+    
+            Label statusLabel = new Label("Status: " + task.getStatut());
+            statusLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888;");
+    
+            taskCard.getChildren().addAll(titleLabel, descriptionLabel, dateLabel, statusLabel);
+            taskContainer.getChildren().add(taskCard);
+        }
+    }
+
+    public void reloadTasks() {
+        if (loggedInUser != null) {
+            loadUserTasks(loggedInUser.getId());
+        }
+    }
+
+    @FXML
+    private void showDashboard(ActionEvent event) {
+        try {
+            // Recharger le tableau de bord
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard.fxml"));
+            Parent root = loader.load();
+
+            // Obtenir le contrôleur du tableau de bord
+            DashboardController dashboardController = loader.getController();
+            dashboardController.setLoggedInUser(loggedInUser); // Définir l'utilisateur connecté
+            dashboardController.reloadTasks(); // Recharger les tâches
+
+            // Mettre à jour la scène
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Failed to load the dashboard.");
+        }
+    }
     @FXML
     private VBox taskStatsContainer;
+
+    private int userCoins = 0;
+    @FXML
+    private Label coinsAmount;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -163,8 +266,8 @@ public class DashboardController extends BaseController implements Initializable
     // Method to create a task card
     private void createTaskCard(Task task) {
         // Create date header
-        String dateStr = task.getCreatedDate().format(DateTimeFormatter.ofPattern("dd MMMM"));
-        Label dateLabel = new Label(dateStr + (task.getCreatedDate().equals(LocalDate.now()) ? " • Today" : ""));
+        String dateStr = task.getDateLimite().format(DateTimeFormatter.ofPattern("dd MMMM"));
+        Label dateLabel = new Label(dateStr + (task.getDateLimite().equals(LocalDate.now()) ? " • Today" : ""));
         dateLabel.getStyleClass().add("task-date");
 
         // Create title with options menu
@@ -172,7 +275,7 @@ public class DashboardController extends BaseController implements Initializable
         titleBox.setSpacing(10);
         titleBox.getStyleClass().add("task-title-box");
 
-        Label titleLabel = new Label(task.getTitle());
+        Label titleLabel = new Label(task.getTitre());
             titleLabel.getStyleClass().add("task-title");
 
         javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
@@ -181,19 +284,19 @@ public class DashboardController extends BaseController implements Initializable
         // Create status ComboBox
         ComboBox<String> statusComboBox = new ComboBox<>();
         statusComboBox.getItems().addAll("Not Started", "In Progress", "Completed");
-        statusComboBox.setValue(task.getStatus());
+        statusComboBox.setValue(task.getStatut());
         statusComboBox.getStyleClass().add("status-combo-box");
         
         // Handle status change
         statusComboBox.setOnAction(event -> {
             String newStatus = statusComboBox.getValue();
-            task.setStatus(newStatus);
+            task.setStatut(newStatus);
             updateTaskStatus(statusComboBox, newStatus);
             updateTaskStatistics();
         });
         
         // Set initial status style
-        updateTaskStatus(statusComboBox, task.getStatus());
+        updateTaskStatus(statusComboBox, task.getStatut());
 
         // Create delete button
         Button deleteButton = new Button("🗑");
@@ -204,7 +307,7 @@ public class DashboardController extends BaseController implements Initializable
 
         // Description
         Label descLabel = new Label(task.getDescription());
-            descLabel.getStyleClass().add("task-desc");
+        descLabel.getStyleClass().add("task-desc");
         descLabel.setWrapText(true);
 
         // Status and Priority row
@@ -212,15 +315,34 @@ public class DashboardController extends BaseController implements Initializable
         detailsBox.setSpacing(15);
         detailsBox.getStyleClass().add("task-details");
 
-        Label priorityLabel = new Label("Priority: " + task.getPriority());
+        Label priorityLabel = new Label("Priority: " + task.getPriorite());
         priorityLabel.getStyleClass().add("task-priority");
 
-        // Created date
-        Label createdLabel = new Label("Created on " + task.getCreatedDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        createdLabel.getStyleClass().add("task-created-date");
+        Label statusLabel = new Label(task.getStatut());
+        String statusClass = task.getStatut().toLowerCase().replace(" ", "-");
+        statusLabel.getStyleClass().addAll("task-status", "status-" + statusClass);
+
+        // Due date label
+        Label createdLabel = new Label("Due on " + task.getDateLimite().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        createdLabel.getStyleClass().add("task-due-date");
 
         detailsBox.getChildren().addAll(priorityLabel, createdLabel);
         HBox.setHgrow(createdLabel, Priority.ALWAYS);
+
+        // Status change handling
+        if ("Terminé".equals(task.getStatut())) {
+            statusLabel.setDisable(true);
+        } else {
+            statusLabel.setOnMouseClicked(event -> {
+                if (!"Terminé".equals(task.getStatut())) {
+                    task.setStatut("Terminé");
+                    statusLabel.setText("Terminé");
+                    statusLabel.getStyleClass().setAll("task-status", "status-terminé");
+                    addCoins(task);
+                    statusLabel.setDisable(true);
+                }
+            });
+        }
 
         // Main task card
         VBox taskCard = new VBox(10);
@@ -229,7 +351,7 @@ public class DashboardController extends BaseController implements Initializable
 
         // Add task card to container
         taskContainer.getChildren().add(taskCard);
-        }
+    }
 
     private void confirmAndDeleteTask(Task task) {
         Alert confirmDialog = new Alert(Alert.AlertType.CONFIRMATION);
@@ -289,7 +411,7 @@ public class DashboardController extends BaseController implements Initializable
 
     public void afficheNewTask(ActionEvent e) {
         try {
-            // Vérifier que le fichier FXML existe
+         
             URL fxmlUrl = getClass().getResource("/view/NewTask.fxml");
             if (fxmlUrl == null) {
                 throw new IOException("Fichier NewTask.fxml non trouvé dans le chemin /view/");
@@ -322,22 +444,22 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private void showDashboard(ActionEvent event) {
         try {
+            // Recharger le tableau de bord
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard.fxml"));
-            Parent dashboardRoot = loader.load();
-            
-            // Obtenir la scène actuelle
-            Scene currentScene = ((Node) event.getSource()).getScene();
-            
-            // Remplacer la scène entière
-            currentScene.setRoot(dashboardRoot);
-            
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Impossible de charger le tableau de bord");
-            alert.setContentText("Détails de l'erreur : " + ex.getMessage());
-            alert.showAndWait();
+            Parent root = loader.load();
+
+            // Obtenir le contrôleur du tableau de bord
+            DashboardController dashboardController = loader.getController();
+            dashboardController.setLoggedInUser(loggedInUser); // Définir l'utilisateur connecté
+            dashboardController.reloadTasks(); // Recharger les tâches
+
+            // Mettre à jour la scène
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(new Scene(root));
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Failed to load the dashboard.");
         }
     }
 
@@ -375,21 +497,14 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private void handleLogout(ActionEvent event) {
         try {
-            // Load the sign in page
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignIn.fxml"));
-            Parent signInRoot = loader.load();
-            
-            // Get the current stage
+            Parent root = FXMLLoader.load(getClass().getResource("FirstPgae.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             
             // Store current window dimensions
             double currentWidth = stage.getWidth();
             double currentHeight = stage.getHeight();
             
-            // Create a new scene with the sign in page
-            Scene scene = new Scene(signInRoot);
-            
-            // Set the new scene
+            Scene scene = new Scene(root);
             stage.setScene(scene);
             
             // Restore window dimensions
@@ -397,14 +512,9 @@ public class DashboardController extends BaseController implements Initializable
             stage.setHeight(currentHeight);
             
             stage.show();
-            
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Could not load sign in page");
-            alert.setContentText("Details: " + ex.getMessage());
-            alert.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Error during logout");
         }
     }
 
@@ -457,31 +567,9 @@ public class DashboardController extends BaseController implements Initializable
             // Replace only the center content
             borderPane.setCenter(notesRoot);
             
-            // Update button styles
-            Node sourceButton = (Node) event.getSource();
-            if (sourceButton.getParent() instanceof VBox) {
-                VBox sidebar = (VBox) sourceButton.getParent();
-                
-                // Reset all buttons to default style
-                sidebar.getChildren().forEach(node -> {
-                    if (node instanceof Button) {
-                        node.getStyleClass().remove("sidebar-button-selected");
-                        node.getStyleClass().add("sidebar-button");
-                    }
-                });
-                
-                // Set the Notes button to selected
-                sourceButton.getStyleClass().remove("sidebar-button");
-                sourceButton.getStyleClass().add("sidebar-button-selected");
-            }
-            
         } catch (IOException e) {
             e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Navigation Error");
-            alert.setContentText("Could not load the Notes page. Please try again.");
-            alert.showAndWait();
+            showError("Error loading notes view");
         }
     }
 
@@ -491,38 +579,58 @@ public class DashboardController extends BaseController implements Initializable
             // Get the current BorderPane
             BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
             
-            // Load the MyTasks.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyTasks.fxml"));
-            Parent myTasksRoot = loader.load();
+            // Load the NewTask.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/NewTask.fxml"));
+            Parent newTaskRoot = loader.load();
             
             // Replace only the center content
-            borderPane.setCenter(myTasksRoot);
-            
-            // Update button styles
-            Node sourceButton = (Node) event.getSource();
-            if (sourceButton.getParent() instanceof VBox) {
-                VBox sidebar = (VBox) sourceButton.getParent();
-                
-                // Reset all buttons to default style
-                sidebar.getChildren().forEach(node -> {
-                    if (node instanceof Button) {
-                        node.getStyleClass().remove("sidebar-button-selected");
-                        node.getStyleClass().add("sidebar-button");
-                    }
-                });
-                
-                // Set the My Task button to selected
-                sourceButton.getStyleClass().remove("sidebar-button");
-                sourceButton.getStyleClass().add("sidebar-button-selected");
-            }
+            borderPane.setCenter(newTaskRoot);
             
         } catch (IOException e) {
             e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Navigation Error");
-            alert.setContentText("Could not load the My Tasks page. Please try again.");
-            alert.showAndWait();
+            showError("Error loading new task view");
+        }
+    }
+
+    @FXML
+    private void showSettings(ActionEvent event) {
+        try {
+            // Get the current BorderPane
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            
+            // Load the Settings.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
+            Parent settingsRoot = loader.load();
+            
+            // Replace only the center content
+            borderPane.setCenter(settingsRoot);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Error loading settings");
+        }
+    }
+
+    @FXML
+    private void showMyTasks(ActionEvent event) {
+        try {
+            // Charger le fichier FXML pour la page My Tasks
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyTasks.fxml"));
+            Parent myTasksRoot = loader.load();
+
+            // Obtenir le BorderPane principal
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+
+            // Remplacer uniquement le contenu central
+            borderPane.setCenter(myTasksRoot);
+
+            // Passer l'utilisateur connecté au contrôleur MyTasksController
+            MyTasksController myTasksController = loader.getController();
+            myTasksController.setLoggedInUser(loggedInUser);
+            myTasksController.loadUserTasks(loggedInUser.getId());
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Failed to load the My Tasks page.");
         }
     }
 
@@ -541,9 +649,9 @@ public class DashboardController extends BaseController implements Initializable
         taskStatsContainer.getChildren().add(titleLabel);
 
         int totalTasks = allTasks.size();
-        int completedTasks = (int) allTasks.stream().filter(task -> task.getStatus().equals("Completed")).count();
-        int inProgressTasks = (int) allTasks.stream().filter(task -> task.getStatus().equals("In Progress")).count();
-        int notStartedTasks = (int) allTasks.stream().filter(task -> task.getStatus().equals("Not Started")).count();
+        int completedTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("Completed")).count();
+        int inProgressTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("In Progress")).count();
+        int notStartedTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("Not Started")).count();
 
         createStatusRow("Completed", completedTasks, totalTasks, "completed-progress");
         createStatusRow("In Progress", inProgressTasks, totalTasks, "in-progress-progress");
@@ -569,17 +677,65 @@ public class DashboardController extends BaseController implements Initializable
         taskStatsContainer.getChildren().add(statusRow);
     }
 
+    private void addCoins(Task task) {
+        // Determine coins based on priority
+        int coinsEarned = calculateCoinsForTask(task);
+        userCoins += coinsEarned;
+        updateCoinsDisplay();
+        showCoinRewardNotification(coinsEarned);
+    }
+
+    private int calculateCoinsForTask(Task task) {
+        String priority = task.getPriorite().toLowerCase();
+        switch (priority) {
+            case "haute":
+                return 30;
+            case "moyenne":
+                return 20;
+            case "basse":
+                return 10;
+            default:
+                return 10;
+        }
+    }
+
+    private void showCoinRewardNotification(int amount) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Coins Earned!");
+        alert.setHeaderText(null);
+        alert.setContentText("Congratulations! You earned " + amount + " coins for completing a task! 🎉");
+        alert.show();
+    }
+
+    private void updateCoinsDisplay() {
+        if (coinsAmount != null) {
+            coinsAmount.setText(String.valueOf(userCoins));
+            System.out.println("Updating coins display: " + userCoins);
+        } else {
+            System.out.println("coinsAmount label is null!");
+        }
+    }
+
     // Method to add a new task
-    public void addTask(String title, String description, String priority, String status) {
-        Task newTask = new Task(title, description, priority, status);
+    public void addTask(String titre, String description, String priorite, LocalDate dateLimite) {
+        int userId = UserSession.getInstance().getCurrentUser().getId();
+        Task newTask = new Task(userId, titre, description, dateLimite, "À faire", priorite, "General");
         allTasks.add(0, newTask);
         displayAllTasks();
-        updateTaskStatistics();
     }
 
     public void refreshTasks() {
         // ... existing refresh code ...
         updateTaskStatistics();
+    }
+
+    @Override
+    protected void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }
 

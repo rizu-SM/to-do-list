@@ -1057,3 +1057,31 @@
     -fx-background-color: transparent;
     -fx-padding: 0;
 }
+
+/* Coins Display */
+.coins-container {
+    -fx-background-color: linear-gradient(to right, #FFD700, #FFA500);
+    -fx-background-radius: 20px;
+    -fx-padding: 8px 15px;
+    -fx-spacing: 8px;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+    -fx-min-height: 35px;
+}
+
+.coins-icon {
+    -fx-fill: white;
+    -fx-font-size: 16px;
+}
+
+.coins-amount {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.coins-label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-opacity: 0.9;
+}

@@ -146,13 +146,13 @@
                 <padding>
                     <Insets top="40" />
                 </padding>
-                <Label text="Send an invite to a new member" styleClass="title-label"/>
-                <TextField fx:id="emailField" promptText="Email" styleClass="text-field"/>
+            <Label text="Send an invite to a new member" styleClass="title-label"/>
+            <TextField fx:id="emailField" promptText="Email" styleClass="text-field"/>
                 <Button fx:id="sendInviteButton" onAction="#handleSendInvite" styleClass="modern-button-base" text="Send Invite">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
                 <Label fx:id="statusLabel" styleClass="status-label" wrapText="true"/>
 
                 <!-- Invited Members List Card -->

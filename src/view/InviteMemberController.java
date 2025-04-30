@@ -5,7 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.net.URL;
 import java.util.ResourceBundle;
-
+import Controller.TaskController;
+import Model.User;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -59,6 +60,40 @@ public class InviteMemberController extends BaseController implements Initializa
     private Label invitedCountLabel;
 
     private List<String> invitedEmails = new ArrayList<>();
+    private TaskController taskController = new TaskController();
+
+    @FXML
+    public void initialize() {
+        loadInvitedMembers();
+    }
+
+    private void loadInvitedMembers() {
+    try {
+        // Récupérer l'utilisateur connecté
+        User currentUser = UserSession.getInstance().getCurrentUser();
+        if (currentUser == null) {
+            System.out.println("No user is currently logged in.");
+            return;
+        }
+
+        // Appeler la méthode getInvitedUsers() avec l'ID de l'utilisateur connecté
+        int ownerId = currentUser.getId();
+        List<User> invitedUsers = taskController.getInvitedUsers(ownerId);
+
+        // Mettre à jour le compteur des membres invités
+        invitedCountLabel.setText("(" + invitedUsers.size() + ")");
+
+        // Ajouter chaque utilisateur invité au conteneur
+        invitedMembersContainer.getChildren().clear(); // Nettoyer les anciens éléments
+        for (User user : invitedUsers) {
+            Label userLabel = new Label(user.getFullName() + " (" + user.getEmail() + ")");
+            userLabel.getStyleClass().add("invited-member-label"); // Ajouter une classe CSS si nécessaire
+            invitedMembersContainer.getChildren().add(userLabel);
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -118,16 +153,6 @@ public class InviteMemberController extends BaseController implements Initializa
         statusLabel.setText("Invitation sent successfully!");
     }
 
-    private void loadInvitedMembers() {
-        // Clear existing items
-        invitedMembersContainer.getChildren().clear();
-        
-        // Add each invited member to the UI
-        for (String email : invitedEmails) {
-            addInvitedMemberToUI(email);
-        }
-        updateInvitedCount();
-    }
 
     private void addInvitedMemberToUI(String email) {
         HBox memberItem = new HBox();
@@ -152,142 +177,24 @@ public class InviteMemberController extends BaseController implements Initializa
     }
 
     @FXML
-    private void handleDashboardButton(ActionEvent event) {
+    private void handleBackToDashboard(ActionEvent event) {
         try {
-            Node source = (Node) event.getSource();
-            Stage stage = (Stage) source.getScene().getWindow();
-            
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Parent dashboardRoot = loader.load();
-            
-            Scene scene = new Scene(dashboardRoot);
-            stage.setScene(scene);
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Error loading dashboard");
-        }
-    }
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard.fxml"));
+            Parent root = loader.load();
 
-    @FXML
-    private void showNewTask(ActionEvent event) {
-        try {
-            // Load the main layout that contains the navigation
-            FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Parent mainRoot = mainLoader.load();
-            BorderPane mainBorderPane = (BorderPane) mainRoot;
+            DashboardController dashboardController = loader.getController();
+            User currentUser = UserSession.getInstance().getCurrentUser();
+            if (currentUser != null) {
+                dashboardController.setLoggedInUser(currentUser);
+            } else {
+                System.out.println("No user is currently logged in when returning to dashboard.");
+            }
 
-            // Load the NewTask content
-            FXMLLoader contentLoader = new FXMLLoader(getClass().getResource("/view/NewTask.fxml"));
-            Parent newTaskContent = contentLoader.load();
-
-            // Set the NewTask content in the center of the BorderPane
-            mainBorderPane.setCenter(newTaskContent);
-
-            // Update the scene
-            Scene scene = new Scene(mainBorderPane);
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
+            stage.setScene(new Scene(root));
             stage.show();
         } catch (IOException e) {
             e.printStackTrace();
-            showError("Error loading new task view");
-        }
-    }
-
-    @FXML
-    private void showNotes(ActionEvent event) {
-        try {
-            // Load the main layout that contains the navigation
-            FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Parent mainRoot = mainLoader.load();
-            BorderPane mainBorderPane = (BorderPane) mainRoot;
-
-            // Load the Notes content
-            FXMLLoader contentLoader = new FXMLLoader(getClass().getResource("/view/Notes.fxml"));
-            Parent notesContent = contentLoader.load();
-
-            // Set the Notes content in the center of the BorderPane
-            mainBorderPane.setCenter(notesContent);
-
-            // Update the scene
-            Scene scene = new Scene(mainBorderPane);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showError("Error loading notes view");
-        }
-    }
-
-    @FXML
-    private void handleTaskCategoriesButton(ActionEvent event) {
-        try {
-            // Load the main layout that contains the navigation
-            FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Parent mainRoot = mainLoader.load();
-            BorderPane mainBorderPane = (BorderPane) mainRoot;
-
-            // Load the TaskCategories content
-            FXMLLoader contentLoader = new FXMLLoader(getClass().getResource("/view/TaskCategories.fxml"));
-            Parent categoriesContent = contentLoader.load();
-
-            // Set the TaskCategories content in the center of the BorderPane
-            mainBorderPane.setCenter(categoriesContent);
-
-            // Update the scene
-            Scene scene = new Scene(mainBorderPane);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showError("Error loading task categories view");
-        }
-    }
-
-    @FXML
-    private void handleSettingsButton(ActionEvent event) {
-        try {
-            // Load the main layout that contains the navigation
-            FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Parent mainRoot = mainLoader.load();
-            BorderPane mainBorderPane = (BorderPane) mainRoot;
-            
-            // Load the Settings content
-            FXMLLoader contentLoader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
-            Parent settingsContent = contentLoader.load();
-            
-            // Set the Settings content in the center of the BorderPane
-            mainBorderPane.setCenter(settingsContent);
-
-            // Update the scene
-            Scene scene = new Scene(mainBorderPane);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showError("Error loading settings view");
-        }
-    }
-
-    @FXML
-    private void handleLogoutButton(ActionEvent event) {
-        try {
-            Node source = (Node) event.getSource();
-            Stage stage = (Stage) source.getScene().getWindow();
-            
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignIn.fxml"));
-            Parent signInRoot = loader.load();
-            
-            Scene scene = new Scene(signInRoot);
-            stage.setScene(scene);
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Error during logout");
         }
     }
 

@@ -348,3 +348,56 @@
     -fx-spacing: 10;
     -fx-alignment: CENTER_LEFT;
 }
+
+/* Progress Indicators */
+.progress-indicator {
+    -fx-min-width: 100px;
+    -fx-min-height: 100px;
+    -fx-max-width: 100px;
+    -fx-max-height: 100px;
+    -fx-progress-color: #FF6B6B;
+}
+
+.progress-indicator .percentage {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+#completedProgress {
+    -fx-progress-color: #4CAF50;  /* Green */
+}
+
+#inProgressProgress {
+    -fx-progress-color: #2196F3;  /* Blue */
+}
+
+#notStartedProgress {
+    -fx-progress-color: #F44336;  /* Red */
+}
+
+/* Coins Display */
+.coins-container {
+    -fx-background-color: linear-gradient(to right, #FFD700, #FFA500);
+    -fx-background-radius: 20px;
+    -fx-padding: 8px 15px;
+    -fx-spacing: 5px;
+    -fx-alignment: center;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);
+}
+
+.coins-icon {
+    -fx-fill: white;
+    -fx-font-size: 18px;
+}
+
+.coins-amount {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+.coins-label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-opacity: 0.9;
+}

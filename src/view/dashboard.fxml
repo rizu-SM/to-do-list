@@ -32,7 +32,7 @@
             </TextFlow>
             
             <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <TextField fx:id="searchField" promptText="Search your task here..." styleClass="search-field" />
+                <TextField fx:id="searchField" promptText="Search your task here..." styleClass="search-field" />
                 <Button styleClass="icon-button">
                     <graphic>
                         <ImageView fitWidth="15" fitHeight="15">
@@ -43,6 +43,14 @@
                         <Cursor fx:constant="HAND" />
                     </cursor>
                 </Button>
+
+                <!-- Coins Display -->
+                <HBox fx:id="coinsContainer" styleClass="coins-container">
+                    <Text styleClass="coins-icon" text="🪙"/>
+                    <Label fx:id="coinsAmount" styleClass="coins-amount" text="0"/>
+                    <Label styleClass="coins-label" text="coins"/>
+                </HBox>
+
                 <Button styleClass="icon-button">
                     <graphic>
                         <ImageView fitWidth="15" fitHeight="15">
@@ -84,35 +92,35 @@
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </VBox.margin>
                 </Label>
-                <Button styleClass="sidebar-button" text="🏠 Dashboard" onAction="#showDashboard">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
-                <Button styleClass="sidebar-button" text="📝 My Task" onAction="#showNewTask">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
-                <Button styleClass="sidebar-button" text="📝 Notes" onAction="#showNotes">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
-                <Button styleClass="sidebar-button" text="⚙ Settings" onAction="#openSettings">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
+            <Button styleClass="sidebar-button" text="🏠 Dashboard" onAction="#showDashboard">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button styleClass="sidebar-button" text="📝 My Task" onAction="#showMyTasks">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button styleClass="sidebar-button" text="📝 Notes" onAction="#showNotes">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button styleClass="sidebar-button" text="⚙ Settings" onAction="#openSettings">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
                 <Region VBox.vgrow="ALWAYS" />
                 <Button styleClass="sidebar-button" text="🚪 Logout" onAction="#handleLogout">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
                     <VBox.margin>
                         <Insets bottom="20.0" />
                     </VBox.margin>
-                </Button>
+            </Button>
             </children>
             <padding>
                 <Insets top="10" />
@@ -120,6 +128,7 @@
         </VBox>
     </left>
 
+<Button text="Dashboard" onAction="#handleDashboardButton" />
     <!-- Main Content -->
     <center>
         <VBox spacing="20" styleClass="main-content">
@@ -129,7 +138,7 @@
 
             <!-- Welcome Section -->
             <HBox alignment="CENTER_LEFT" spacing="20">
-                <Text text="Welcome back, " styleClass="welcome-text"/>
+                <Label fx:id="welcomeLabel" text="Welcome Back" styleClass="welcome-text" />
                 <Text fx:id="userNameText" styleClass="welcome-text"/>
                 <Text text="👋" styleClass="welcome-text"/>
                 <Region HBox.hgrow="ALWAYS" />
@@ -141,29 +150,29 @@
                 <!-- Tasks List -->
                 <VBox spacing="15" HBox.hgrow="ALWAYS">
                     <HBox spacing="25" alignment="CENTER_LEFT">
-                        <Label styleClass="section-title" text="📌 To-Do List" />
+    <Label styleClass="section-title" text="📌 To-Do List" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Button fx:id="addTaskButton" onAction="#afficheNewTask" styleClass="add-task-button" text="+ Add Task" />
-                    </HBox>
+    <Button fx:id="addTaskButton" onAction="#afficheNewTask" styleClass="add-task-button" text="+ Add Task" />
+</HBox>
 
-                    <ScrollPane fitToWidth="true" styleClass="task-scrollpane" VBox.vgrow="ALWAYS">
+        <ScrollPane fitToWidth="true" styleClass="task-scrollpane" VBox.vgrow="ALWAYS">
                         <VBox fx:id="taskContainer" spacing="15">
-                            <padding>
-                                <Insets top="10" right="10" bottom="10" left="10"/>
-                            </padding>
-                            <!-- Task cards will be added here dynamically, without delete and status buttons -->
-                        </VBox>
-                    </ScrollPane>
-                </VBox>
-                
-                <!-- Task Status & Completed Task -->
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    <!-- Task cards will be added here dynamically -->
+</VBox>
+</ScrollPane>
+    </VBox>
+    
+    <!-- Task Status & Completed Task -->
                 <VBox fx:id="taskStatusContainer" minWidth="300" maxWidth="300" spacing="20">
                     <!-- Task Statistics -->
                     <VBox minWidth="250" maxWidth="250" styleClass="task-stats-container">
                         <padding>
                             <Insets top="15" right="15" bottom="15" left="15"/>
                         </padding>
-                        <Label styleClass="section-title" text="📊 Task Status" />
+            <Label styleClass="section-title" text="📊 Task Status" />
                         <VBox fx:id="taskStatsContainer" styleClass="task-stats-container" spacing="25" alignment="CENTER">
                             <padding>
                                 <Insets top="15" />
@@ -190,18 +199,18 @@
                                 </VBox>
                             </HBox>
                         </VBox>
-                    </VBox>
+        </VBox>
 
                     <!-- Completed Tasks Section -->
-                    <VBox styleClass="completed-task">
+        <VBox styleClass="completed-task">
                         <padding>
                             <Insets top="10" right="20" bottom="20" left="20"/>
                         </padding>
-                        <Label styleClass="section-title" text="✅ Completed Task" />
-                        <VBox fx:id="completedTaskContainer" spacing="10" />
-                    </VBox>
-                </VBox>
-            </HBox>
+            <Label styleClass="section-title" text="✅ Completed Task" />
+            <VBox fx:id="completedTaskContainer" spacing="10" />
+        </VBox>
+    </VBox>
+</HBox>
         </VBox>
     </center>
 

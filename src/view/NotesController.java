@@ -51,13 +51,24 @@ public class NotesController extends BaseController implements Initializable {
     @FXML
     private VBox notesContainer;
 
-    // Temporary storage for notes (replace with database later)
-    private static List<Model.Note> notes = new ArrayList<>();
+    // Static list to store all notes
+    private static List<Note> allNotes = new ArrayList<>();
+
+    // Public static method to access notes
+    public static List<Note> getAllNotes() {
+        return allNotes;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         updateUserInfo();
-        loadNotes();
+        System.out.println("NotesController initialized");
+        if (notesContainer == null) {
+            System.out.println("Error: notesContainer is null");
+        } else {
+            System.out.println("notesContainer is properly initialized");
+            loadNotes();
+        }
     }
 
     @FXML
@@ -118,98 +129,103 @@ public class NotesController extends BaseController implements Initializable {
 
     private void loadNotes() {
         notesContainer.getChildren().clear();
+        int currentUserId = UserSession.getInstance().getCurrentUser().getId();
         
-        for (Model.Note note : notes) {
-            createNoteCard(note);
+        // Add debug label if no notes exist
+        if (allNotes.isEmpty()) {
+            Label emptyLabel = new Label("No notes found. Create a new note!");
+            emptyLabel.getStyleClass().add("empty-notes-label");
+            notesContainer.getChildren().add(emptyLabel);
+            return;
+        }
+
+        System.out.println("Loading notes for user: " + currentUserId);
+        System.out.println("Total notes in system: " + allNotes.size());
+        
+        // Filter notes for current user
+        for (Note note : allNotes) {
+            if (note.getUserId() == currentUserId) {
+                System.out.println("Creating card for note: " + note.getTitre());
+                createNoteCard(note);
+            }
         }
     }
 
-    private void createNoteCard(Model.Note note) {
-        // Create card container
-        VBox card = new VBox();
-        card.getStyleClass().add("note-card");
-        card.setSpacing(10);
-        
+    private void createNoteCard(Note note) {
+        if (note == null) {
+            System.out.println("Error: Attempting to create card for null note");
+            return;
+        }
+
+        VBox noteCard = new VBox();
+        noteCard.getStyleClass().add("note-card");
+        noteCard.setSpacing(10);
+        noteCard.setPadding(new javafx.geometry.Insets(10));
+        noteCard.setStyle("-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 0);");
+
         // Title
-        Label titleLabel = new Label(note.getTitle());
+        Label titleLabel = new Label(note.getTitre());
         titleLabel.getStyleClass().add("note-title");
-        
+        titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+
         // Description
         Label descLabel = new Label(note.getDescription());
         descLabel.getStyleClass().add("note-description");
         descLabel.setWrapText(true);
-        
-        // Date
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMM dd, yyyy HH:mm");
-        Label dateLabel = new Label(note.getCreationTime().format(formatter));
-        dateLabel.getStyleClass().add("note-date");
-        
+        descLabel.setStyle("-fx-font-size: 14px;");
+
         // Actions container
-        HBox actions = new HBox();
-        actions.setSpacing(10);
-        actions.getStyleClass().add("note-actions");
-        
+        HBox actionsBox = new HBox();
+        actionsBox.getStyleClass().add("note-actions");
+        actionsBox.setSpacing(10);
+        actionsBox.setAlignment(Pos.CENTER_RIGHT);
+
         Button deleteButton = new Button("Delete");
         deleteButton.getStyleClass().add("delete-button");
+        deleteButton.setStyle("-fx-background-color: #ff4444; -fx-text-fill: white;");
+        deleteButton.setOnAction(e -> deleteNote(note));
+
+        actionsBox.getChildren().add(deleteButton);
+
+        noteCard.getChildren().addAll(titleLabel, descLabel, actionsBox);
+        notesContainer.getChildren().add(noteCard);
         
-        // Add delete functionality
-        deleteButton.setOnAction(e -> {
-            notes.remove(note);
-            loadNotes();
-        });
-        
-        actions.getChildren().add(deleteButton);
-        
-        // Add all elements to card
-        card.getChildren().addAll(titleLabel, descLabel, dateLabel, actions);
-        
-        // Add card to container
-        notesContainer.getChildren().add(card);
+        System.out.println("Note card created - Title: " + note.getTitre() + ", Description: " + note.getDescription());
     }
 
     @FXML
     private void createNewNote(ActionEvent event) {
         try {
-            Node source = (Node) event.getSource();
-            Stage stage = (Stage) source.getScene().getWindow();
+            // Get the current BorderPane
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
             
-            // Store current window dimensions
-            double currentWidth = stage.getWidth();
-            double currentHeight = stage.getHeight();
-            
-            // Load the main layout that contains the navigation
-            FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Parent mainRoot = mainLoader.load();
-            BorderPane mainBorderPane = (BorderPane) mainRoot;
-
             // Load the NewNote content
-            FXMLLoader contentLoader = new FXMLLoader(getClass().getResource("/view/NewNote.fxml"));
-            Parent newNoteContent = contentLoader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/NewNote.fxml"));
+            Parent newNoteContent = loader.load();
 
-            // Set the NewNote content in the center of the BorderPane
-            mainBorderPane.setCenter(newNoteContent);
-
-            // Get controller and set callback using lambda with fully qualified type
-            NewNoteController controller = contentLoader.getController();
-            Consumer<Model.Note> callback = (Model.Note note) -> {
-                notes.add(note);
+            // Get controller and set callback
+            NewNoteController controller = loader.getController();
+            controller.setOnSaveCallback(note -> {
+                allNotes.add(note);
                 loadNotes();
-            };
-            controller.setOnSaveCallback(callback);
+            });
+
+            // Replace the center content
+            borderPane.setCenter(newNoteContent);
             
-            // Create new scene with the new note view and preserve window size
-            Scene scene = new Scene(mainBorderPane);
-            stage.setScene(scene);
-            
-            // Restore window dimensions
-            stage.setWidth(currentWidth);
-            stage.setHeight(currentHeight);
-            
-            stage.show();
         } catch (IOException e) {
             e.printStackTrace();
             showError("Error loading new note view");
         }
+    }
+
+    private void editNote(Note note) {
+        // TODO: Implement edit functionality
+    }
+
+    private void deleteNote(Note note) {
+        allNotes.remove(note);
+        loadNotes();
     }
 
     @FXML
@@ -294,34 +310,16 @@ public class NotesController extends BaseController implements Initializable {
             // Get the current BorderPane
             BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
             
-            // Load the NotesContent.fxml (contains only the main content)
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/NotesContent.fxml"));
-            Parent notesContent = loader.load();
+            // Load the Notes.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Notes.fxml"));
+            Parent notesRoot = loader.load();
             
             // Replace only the center content
-            borderPane.setCenter(notesContent);
+            borderPane.setCenter(notesRoot);
             
-            // Update button styles in the sidebar
-            Node sourceButton = (Node) event.getSource();
-            if (sourceButton.getParent() instanceof VBox) {
-                VBox sidebar = (VBox) sourceButton.getParent();
-                
-                // Reset all buttons to default style
-                sidebar.getChildren().forEach(node -> {
-                    if (node instanceof Button) {
-                        node.getStyleClass().remove("sidebar-button-selected");
-                        node.getStyleClass().add("sidebar-button");
-                    }
-                });
-                
-                // Set the Notes button to selected
-                sourceButton.getStyleClass().remove("sidebar-button");
-                sourceButton.getStyleClass().add("sidebar-button-selected");
-            }
-            
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
-            showError("Error loading notes");
+            showError("Error loading notes view");
         }
     }
 

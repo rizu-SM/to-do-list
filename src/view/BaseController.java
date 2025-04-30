@@ -28,6 +28,19 @@ public class BaseController {
         }
     }
 
+    protected void updateUserInfo(String fullName, String email) {
+        UserSession session = UserSession.getInstance();
+        session.setFullName(fullName);
+        session.setEmail(email);
+        
+        if (userNameLabel != null) {
+            userNameLabel.setText(fullName);
+        }
+        if (userEmailLabel != null) {
+            userEmailLabel.setText(email);
+        }
+    }
+
     protected void showError(String message) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
         alert.setTitle("Error");

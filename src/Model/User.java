@@ -46,6 +46,9 @@ public class User {
     public String getEmail() { return email; }
     public String getMotdepass() { return motdepass; }
     public int getCoin() { return coin; }
+    public String getFullName() {
+        return nom + " " + lastName;
+    }
     
     public void setCoin(int coin) { this.coin = coin; }
     public void setNom(String nom) { this.nom = nom; }

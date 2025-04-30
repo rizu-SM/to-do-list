@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.Cursor?>
+
+<VBox spacing="20" styleClass="main-content" stylesheets="@style.css"
+      xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="view.MyTasksController">
+    
+    <padding>
+        <Insets top="20" right="20" bottom="20" left="20"/>
+    </padding>
+
+    <!-- Header -->
+    <HBox alignment="CENTER_LEFT" spacing="10">
+        <Text text="My Tasks" styleClass="section-title">
+            <font>
+                <Font name="System Bold" size="24.0"/>
+            </font>
+        </Text>
+        <Region HBox.hgrow="ALWAYS" />
+        <Button text="+ Add New Task" onAction="#createNewTask" styleClass="add-task-button">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+    </HBox>
+
+    <!-- Filter Section -->
+    <HBox spacing="15" styleClass="filter-section">
+        <!-- Priority Filter -->
+        <VBox spacing="5">
+            <Label text="Priority" styleClass="filter-label"/>
+            <ComboBox fx:id="priorityFilter" promptText="All Priorities" styleClass="filter-combo-box"/>
+        </VBox>
+
+        <!-- Status Filter -->
+        <VBox spacing="5">
+            <Label text="Status" styleClass="filter-label"/>
+            <ComboBox fx:id="statusFilter" promptText="All Statuses" styleClass="filter-combo-box"/>
+        </VBox>
+
+        <!-- Date Filter -->
+        <VBox spacing="5">
+            <Label text="Date" styleClass="filter-label"/>
+            <DatePicker fx:id="dateFilter" promptText="Select Date" styleClass="filter-date-picker"/>
+        </VBox>
+
+        <!-- Clear Filters Button -->
+        <Button fx:id="clearFiltersButton" text="Clear Filters" onAction="#clearFilters" 
+                styleClass="clear-filters-button">
+            <cursor>
+                <Cursor fx:constant="HAND"/>
+            </cursor>
+        </Button>
+    </HBox>
+
+    <!-- Tasks Container with ScrollPane -->
+    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="scroll-pane">
+        <VBox fx:id="tasksContainer" spacing="15" styleClass="tasks-container">
+            <padding>
+                <Insets top="10" right="10" bottom="10" left="10"/>
+            </padding>
+        </VBox>
+    </ScrollPane>
+</VBox>

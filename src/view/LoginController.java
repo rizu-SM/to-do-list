@@ -8,6 +8,7 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import Model.User;
 import Controller.AuthController;
+import util.UserSession;
 
 public class LoginController {
     @FXML private TextField emailField;
@@ -24,16 +25,18 @@ public class LoginController {
         User user = authController.login(email, password);
         if (user != null) {
             try {
-                // Charger le dashboard
+                // Set user info in UserSession
+                UserSession.getInstance().setUser(user);
+                
+                // Load the dashboard
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("dashboard.fxml"));
                 Parent dashboard = loader.load();
 
-                // Obtenir le contrôleur et initialiser l'utilisateur
+                // Get the controller and initialize
                 DashboardController dashboardController = loader.getController();
-                dashboardController.setCurrentUserId(user.getId());
-                dashboardController.updateUserInfo(user.getNom(), user.getEmail());
+                dashboardController.updateUserInfo();
 
-                // Afficher le dashboard
+                // Show the dashboard
                 Stage stage = (Stage) emailField.getScene().getWindow();
                 Scene scene = new Scene(dashboard);
                 stage.setScene(scene);

@@ -70,52 +70,49 @@ public class MainController {
     }
 
     @FXML
-    public void afficherDashboard(ActionEvent event) {
-        String email = emailField.getText();
-        String password = passwordField.getText();
+public void afficherDashboard(ActionEvent event) {
+    String email = emailField.getText();
+    String password = passwordField.getText();
 
-        if (email.isEmpty() || password.isEmpty()) {
-            showAlert("Error", "Please fill in all fields.", Alert.AlertType.WARNING);
-            return;
-        }
-
-        // Use AuthController.login to check if the user exists
-        User user = AuthController.login(email, password);
-
-        if (user != null) {
-            try {
-                // Set user info in UserSession
-                UserSession.getInstance().setUser(user);
-                
-                // Load the dashboard
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-                Parent root = loader.load();
-                
-                // Get the dashboard controller
-                DashboardController dashboardController = loader.getController();
-                dashboardController.updateUserInfo();
-                
-                stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                
-                // Get the current window dimensions
-                double width = stage.getScene().getWidth();
-                double height = stage.getScene().getHeight();
-                
-                // Create new scene with the same dimensions
-                Scene scene = new Scene(root, width, height);
-                
-                // Set window properties
-                stage.setResizable(false);
-                stage.setScene(scene);
-                stage.show();
-            } catch (Exception e) {
-                e.printStackTrace();
-                showAlert("Error", "Failed to load the dashboard.", Alert.AlertType.ERROR);
-            }
-        } else {
-            showAlert("Login Failed", "Invalid email or password.", Alert.AlertType.WARNING);
-        }
+    if (email.isEmpty() || password.isEmpty()) {
+        showAlert("Error", "Please fill in all fields.", Alert.AlertType.WARNING);
+        return;
     }
+
+    User user = AuthController.login(email, password);
+
+    if (user != null) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard.fxml"));
+            Parent root = loader.load();
+
+            DashboardController dashboardController = loader.getController();
+            dashboardController.setLoggedInUser(user);
+
+            // Charger les tâches de l'utilisateur
+            dashboardController.loadUserTasks(user.getId());
+
+            // Obtenir la fenêtre actuelle
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+            // Définir une nouvelle scène
+            Scene scene = new Scene(root);
+
+            // Restaurer la taille précédente ou définir une taille fixe
+            stage.setWidth(1024); // Largeur fixe
+            stage.setHeight(768); // Hauteur fixe
+
+            // Appliquer la nouvelle scène
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load the dashboard.", Alert.AlertType.ERROR);
+        }
+    } else {
+        showAlert("Login Failed", "Invalid email or password.", Alert.AlertType.WARNING);
+    }
+}
 	
 
     private void showAlert(String title, String message, Alert.AlertType alertType) {

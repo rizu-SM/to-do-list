@@ -11,7 +11,7 @@ import javafx.scene.layout.BorderPane;
 import Model.Note;
 import java.io.IOException;
 import java.util.function.Consumer;
-import java.time.LocalDateTime;
+import util.UserSession;
 
 public class NewNoteController {
     @FXML
@@ -20,9 +20,9 @@ public class NewNoteController {
     @FXML
     private TextArea descriptionArea;
     
-    private Consumer<Model.Note> onSaveCallback;
+    private Consumer<Note> onSaveCallback;
     
-    public void setOnSaveCallback(Consumer<Model.Note> callback) {
+    public void setOnSaveCallback(Consumer<Note> callback) {
         this.onSaveCallback = callback;
     }
     
@@ -36,8 +36,13 @@ public class NewNoteController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Notes.fxml"));
             Parent notesRoot = loader.load();
             
+            // Get the controller and ensure it loads notes
+            NotesController notesController = loader.getController();
+            
             // Replace only the center content
             borderPane.setCenter(notesRoot);
+            
+            System.out.println("Returning to notes view - Total notes: " + NotesController.getAllNotes().size());
             
         } catch (IOException e) {
             e.printStackTrace();
@@ -47,22 +52,36 @@ public class NewNoteController {
     
     @FXML
     private void handleSaveButton(ActionEvent event) {
-        String title = titleField.getText().trim();
+        String titre = titleField.getText().trim();
         String description = descriptionArea.getText().trim();
         
-        if (title.isEmpty()) {
+        if (titre.isEmpty()) {
             showError("Please enter a title for your note");
             return;
         }
         
-        // Create new note with current time
-        Model.Note note = new Model.Note(title, description, LocalDateTime.now());
-        if (onSaveCallback != null) {
-            onSaveCallback.accept(note);
+        try {
+            // Get current user ID
+            int userId = UserSession.getInstance().getCurrentUser().getId();
+            
+            // Create new note with user ID
+            Note note = new Note(userId, titre, description);
+            
+            // Add note to the static list
+            NotesController.getAllNotes().add(note);
+            
+            // Notify callback if present
+            if (onSaveCallback != null) {
+                onSaveCallback.accept(note);
+            }
+            
+            // Return to notes view
+            handleBackButton(event);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("Error saving note: " + e.getMessage());
         }
-        
-        // Return to notes view
-        handleBackButton(event);
     }
     
     private void showError(String message) {
