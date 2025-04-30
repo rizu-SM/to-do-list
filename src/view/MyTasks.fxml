@@ -45,6 +45,12 @@
             <ComboBox fx:id="statusFilter" promptText="All Statuses" styleClass="filter-combo-box"/>
         </VBox>
 
+        <!-- Category Filter -->
+        <VBox spacing="5">
+            <Label text="Category" styleClass="filter-label"/>
+            <ComboBox fx:id="categoryFilter" promptText="All Categories" styleClass="filter-combo-box"/>
+        </VBox>
+
         <!-- Date Filter -->
         <VBox spacing="5">
             <Label text="Date" styleClass="filter-label"/>
@@ -68,4 +74,4 @@
             </padding>
         </VBox>
     </ScrollPane>
-</VBox>
+</VBox> 

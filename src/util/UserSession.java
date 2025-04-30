@@ -21,6 +21,12 @@ public class UserSession {
     
     public void setUser(User user) {
         this.currentUser = user;
+        if (user != null) {
+            this.firstName = user.getPrenom();
+            this.lastName = user.getNom();
+            this.email = user.getEmail();
+            this.fullName = user.getPrenom() + " " + user.getNom();
+        }
     }
 
     public User getCurrentUser() {

@@ -32,7 +32,7 @@
             </TextFlow>
             
             <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">
-                <TextField fx:id="searchField" promptText="Search your task here..." styleClass="search-field" />
+            <TextField fx:id="searchField" promptText="Search your task here..." styleClass="search-field" />
                 <Button styleClass="icon-button">
                     <graphic>
                         <ImageView fitWidth="15" fitHeight="15">
@@ -61,7 +61,7 @@
                         <Cursor fx:constant="HAND" />
                     </cursor>
                 </Button>
-                <Button styleClass="icon-button">
+                <Button styleClass="icon-button" onAction="#showNotifications">
                     <graphic>
                         <ImageView fitWidth="15" fitHeight="15">
                             <Image url="@images/notification.png" />
@@ -107,7 +107,12 @@
                     <Cursor fx:constant="HAND" />
                 </cursor>
             </Button>
-            <Button styleClass="sidebar-button" text="⚙ Settings" onAction="#openSettings">
+            <Button styleClass="sidebar-button" text="🔔 Notifications" onAction="#showNotifications">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button styleClass="sidebar-button" text="⚙️ Settings" onAction="#openSettings">
                 <cursor>
                     <Cursor fx:constant="HAND" />
                 </cursor>
@@ -128,7 +133,6 @@
         </VBox>
     </left>
 
-<Button text="Dashboard" onAction="#handleDashboardButton" />
     <!-- Main Content -->
     <center>
         <VBox spacing="20" styleClass="main-content">
@@ -138,12 +142,12 @@
 
             <!-- Welcome Section -->
             <HBox alignment="CENTER_LEFT" spacing="20">
-                <Label fx:id="welcomeLabel" text="Welcome Back" styleClass="welcome-text" />
+                <Text text="Welcome back, " styleClass="welcome-text"/>
                 <Text fx:id="userNameText" styleClass="welcome-text"/>
                 <Text text="👋" styleClass="welcome-text"/>
                 <Region HBox.hgrow="ALWAYS" />
                 <Button fx:id="inviteButton" styleClass="invite-button" text="+ Invite" onAction="#handleInviteButton" />
-            </HBox>
+</HBox>
             
             <!-- Tasks Section -->
             <HBox spacing="20" VBox.vgrow="ALWAYS">
@@ -157,11 +161,11 @@
 
         <ScrollPane fitToWidth="true" styleClass="task-scrollpane" VBox.vgrow="ALWAYS">
                         <VBox fx:id="taskContainer" spacing="15">
-    <padding>
-        <Insets top="10" right="10" bottom="10" left="10"/>
-    </padding>
-    <!-- Task cards will be added here dynamically -->
-</VBox>
+                            <padding>
+                                <Insets top="10" right="10" bottom="10" left="10"/>
+                            </padding>
+                            <!-- Task cards will be added here dynamically, without delete and status buttons -->
+                        </VBox>
 </ScrollPane>
     </VBox>
     

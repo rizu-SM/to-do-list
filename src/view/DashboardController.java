@@ -1,5 +1,5 @@
 package view;
-import javafx.scene.control.Label;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -20,9 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import util.UserSession;
 import Model.Task;
-import Model.User;
 import Controller.TaskController;
-
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -44,14 +42,13 @@ public class DashboardController extends BaseController implements Initializable
     @FXML private VBox taskStatusContainer;
     @FXML private PieChart taskStatusChart;
     @FXML private VBox completedTaskContainer;
+    @FXML private VBox taskContainer;
     @FXML private Button addTaskButton;
     
     // Ajout des labels pour les informations utilisateur
     @FXML private Label userNameLabel;
     @FXML private Label userEmailLabel;
     @FXML private Text userNameText;
-    private User loggedInUser;
-    @FXML private Label welcomeLabel;
 
     // Static list to store all tasks
     private static List<Task> allTasks = new ArrayList<>();
@@ -61,101 +58,6 @@ public class DashboardController extends BaseController implements Initializable
         return allTasks;
     }
 
-    public void setLoggedInUser(User user) {
-        this.loggedInUser = user;
-    
-        // Mettre à jour le message de bienvenue
-        if (welcomeLabel != null) {
-            welcomeLabel.setText("Welcome Back, " + user.getNom() + " 👋");
-        }
-    }
-
-    @FXML
-    private VBox taskContainer;
-
-    @FXML
-    private void handleDashboardButton(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard.fxml"));
-            Parent root = loader.load();
-    
-            DashboardController dashboardController = loader.getController();
-            dashboardController.setLoggedInUser(loggedInUser); // Assurez-vous que l'utilisateur est défini
-            dashboardController.reloadTasks(); // Recharge les tâches
-    
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showError("Failed to load the dashboard.");
-        }
-    }
-
-
-    private TaskController taskController = new TaskController();
-
-    public void loadUserTasks(int userId) {
-        taskContainer.getChildren().clear();
-    
-        List<Task> tasks = taskController.getTasksByUserId(userId);
-    
-        if (tasks == null || tasks.isEmpty()) {
-            Label noTasksLabel = new Label("No tasks available.");
-            noTasksLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #888;");
-            taskContainer.getChildren().add(noTasksLabel);
-            return;
-        }
-    
-        for (Task task : tasks) {
-            VBox taskCard = new VBox();
-            taskCard.setSpacing(10);
-            taskCard.setStyle("-fx-background-color: #f4f4f4; -fx-padding: 10; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-background-radius: 5;");
-    
-            Label titleLabel = new Label(task.getTitre());
-            titleLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-    
-            Label descriptionLabel = new Label(task.getDescription());
-            descriptionLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
-    
-            Label dateLabel = new Label("Due: " + task.getDateLimite());
-            dateLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888;");
-    
-            Label statusLabel = new Label("Status: " + task.getStatut());
-            statusLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: #888;");
-    
-            taskCard.getChildren().addAll(titleLabel, descriptionLabel, dateLabel, statusLabel);
-            taskContainer.getChildren().add(taskCard);
-        }
-    }
-
-    public void reloadTasks() {
-        if (loggedInUser != null) {
-            loadUserTasks(loggedInUser.getId());
-        }
-    }
-
-    @FXML
-    private void showDashboard(ActionEvent event) {
-        try {
-            // Recharger le tableau de bord
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard.fxml"));
-            Parent root = loader.load();
-
-            // Obtenir le contrôleur du tableau de bord
-            DashboardController dashboardController = loader.getController();
-            dashboardController.setLoggedInUser(loggedInUser); // Définir l'utilisateur connecté
-            dashboardController.reloadTasks(); // Recharger les tâches
-
-            // Mettre à jour la scène
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showError("Failed to load the dashboard.");
-        }
-    }
     @FXML
     private VBox taskStatsContainer;
 
@@ -187,6 +89,10 @@ public class DashboardController extends BaseController implements Initializable
             // Enable vertical growth
             VBox.setVgrow(taskContainer, Priority.ALWAYS);
             
+            // Load all tasks from database
+            TaskController taskController = new TaskController();
+            allTasks = taskController.getTasksByUserId(UserSession.getInstance().getCurrentUser().getId());
+            
             // Display all existing tasks
             displayAllTasks();
         }
@@ -199,7 +105,7 @@ public class DashboardController extends BaseController implements Initializable
 
             taskStatusChart.getData().addAll(completed, inProgress, pending);
 
-         // Appliquer les couleurs une fois que les nodes sont créés
+            // Appliquer les couleurs une fois que les nodes sont créés
             taskStatusChart.getData().forEach(data -> {
                 data.nodeProperty().addListener((obs, oldNode, newNode) -> {
                     if (newNode != null) {
@@ -239,16 +145,6 @@ public class DashboardController extends BaseController implements Initializable
         if (userNameText != null) {
             userNameText.setText(session.getFirstName());
         }
-        
-        // Update welcome message in the main content area
-        if (toDoListContainer != null && toDoListContainer.getParent() instanceof HBox) {
-            HBox mainContent = (HBox) toDoListContainer.getParent();
-            mainContent.lookupAll(".welcome-text").forEach(node -> {
-                if (node instanceof Label) {
-                    ((Label) node).setText("Welcome Back, " + session.getFirstName() + " 👋");
-                }
-            });
-        }
     }
 
     private String formatDay(String day) {
@@ -270,40 +166,13 @@ public class DashboardController extends BaseController implements Initializable
         Label dateLabel = new Label(dateStr + (task.getDateLimite().equals(LocalDate.now()) ? " • Today" : ""));
         dateLabel.getStyleClass().add("task-date");
 
-        // Create title with options menu
+        // Create title
         HBox titleBox = new HBox();
         titleBox.setSpacing(10);
         titleBox.getStyleClass().add("task-title-box");
 
         Label titleLabel = new Label(task.getTitre());
-            titleLabel.getStyleClass().add("task-title");
-
-        javafx.scene.layout.Region spacer = new javafx.scene.layout.Region();
-        HBox.setHgrow(spacer, Priority.ALWAYS);
-        
-        // Create status ComboBox
-        ComboBox<String> statusComboBox = new ComboBox<>();
-        statusComboBox.getItems().addAll("Not Started", "In Progress", "Completed");
-        statusComboBox.setValue(task.getStatut());
-        statusComboBox.getStyleClass().add("status-combo-box");
-        
-        // Handle status change
-        statusComboBox.setOnAction(event -> {
-            String newStatus = statusComboBox.getValue();
-            task.setStatut(newStatus);
-            updateTaskStatus(statusComboBox, newStatus);
-            updateTaskStatistics();
-        });
-        
-        // Set initial status style
-        updateTaskStatus(statusComboBox, task.getStatut());
-
-        // Create delete button
-        Button deleteButton = new Button("🗑");
-        deleteButton.getStyleClass().add("delete-task-button");
-        deleteButton.setOnAction(e -> confirmAndDeleteTask(task));
-        
-        titleBox.getChildren().addAll(titleLabel, spacer, statusComboBox, deleteButton);
+        titleLabel.getStyleClass().add("task-title");
 
         // Description
         Label descLabel = new Label(task.getDescription());
@@ -318,31 +187,16 @@ public class DashboardController extends BaseController implements Initializable
         Label priorityLabel = new Label("Priority: " + task.getPriorite());
         priorityLabel.getStyleClass().add("task-priority");
 
-        Label statusLabel = new Label(task.getStatut());
+        Label statusLabel = new Label("Status: " + task.getStatut());
         String statusClass = task.getStatut().toLowerCase().replace(" ", "-");
         statusLabel.getStyleClass().addAll("task-status", "status-" + statusClass);
 
         // Due date label
-        Label createdLabel = new Label("Due on " + task.getDateLimite().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        createdLabel.getStyleClass().add("task-due-date");
+        Label dueDateLabel = new Label("Due on " + task.getDateLimite().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        dueDateLabel.getStyleClass().add("task-due-date");
 
-        detailsBox.getChildren().addAll(priorityLabel, createdLabel);
-        HBox.setHgrow(createdLabel, Priority.ALWAYS);
-
-        // Status change handling
-        if ("Terminé".equals(task.getStatut())) {
-            statusLabel.setDisable(true);
-        } else {
-            statusLabel.setOnMouseClicked(event -> {
-                if (!"Terminé".equals(task.getStatut())) {
-                    task.setStatut("Terminé");
-                    statusLabel.setText("Terminé");
-                    statusLabel.getStyleClass().setAll("task-status", "status-terminé");
-                    addCoins(task);
-                    statusLabel.setDisable(true);
-                }
-            });
-        }
+        detailsBox.getChildren().addAll(priorityLabel, statusLabel, dueDateLabel);
+        HBox.setHgrow(dueDateLabel, Priority.ALWAYS);
 
         // Main task card
         VBox taskCard = new VBox(10);
@@ -444,22 +298,22 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private void showDashboard(ActionEvent event) {
         try {
-            // Recharger le tableau de bord
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard.fxml"));
-            Parent root = loader.load();
-
-            // Obtenir le contrôleur du tableau de bord
-            DashboardController dashboardController = loader.getController();
-            dashboardController.setLoggedInUser(loggedInUser); // Définir l'utilisateur connecté
-            dashboardController.reloadTasks(); // Recharger les tâches
-
-            // Mettre à jour la scène
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            e.printStackTrace();
-            showError("Failed to load the dashboard.");
+            Parent dashboardRoot = loader.load();
+            
+            // Obtenir la scène actuelle
+            Scene currentScene = ((Node) event.getSource()).getScene();
+            
+            // Remplacer la scène entière
+            currentScene.setRoot(dashboardRoot);
+            
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erreur");
+            alert.setHeaderText("Impossible de charger le tableau de bord");
+            alert.setContentText("Détails de l'erreur : " + ex.getMessage());
+            alert.showAndWait();
         }
     }
 
@@ -497,7 +351,8 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private void handleLogout(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("FirstPgae.fxml"));
+            // Use the correct path to FirstPage.fxml
+            Parent root = FXMLLoader.load(getClass().getResource("/view/FirstPage.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             
             // Store current window dimensions
@@ -614,23 +469,48 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private void showMyTasks(ActionEvent event) {
         try {
-            // Charger le fichier FXML pour la page My Tasks
+            // Get the current BorderPane
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            
+            // Load the MyTasks.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyTasks.fxml"));
             Parent myTasksRoot = loader.load();
-
-            // Obtenir le BorderPane principal
-            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
-
-            // Remplacer uniquement le contenu central
+            
+            // Get the controller and set the current user
+            MyTasksController controller = loader.getController();
+            UserSession session = UserSession.getInstance();
+            if (session.getCurrentUser() != null) {
+                controller.setUser(session.getCurrentUser());
+            } else {
+                showError("No user logged in");
+                return;
+            }
+            
+            // Replace only the center content
             borderPane.setCenter(myTasksRoot);
-
-            // Passer l'utilisateur connecté au contrôleur MyTasksController
-            MyTasksController myTasksController = loader.getController();
-            myTasksController.setLoggedInUser(loggedInUser);
-            myTasksController.loadUserTasks(loggedInUser.getId());
+            
         } catch (IOException e) {
             e.printStackTrace();
-            showError("Failed to load the My Tasks page.");
+            showError("Error loading my tasks view");
+        }
+    }
+
+    @FXML
+    private void showNotifications(ActionEvent event) {
+        try {
+            // Get the current BorderPane
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            
+            // Load the Notifications.fxml
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("Notifications.fxml"));
+            Parent notificationsRoot = loader.load();
+            
+            // Replace only the center content
+            borderPane.setCenter(notificationsRoot);
+            
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Error loading notifications");
         }
     }
 
@@ -718,14 +598,38 @@ public class DashboardController extends BaseController implements Initializable
 
     // Method to add a new task
     public void addTask(String titre, String description, String priorite, LocalDate dateLimite) {
-        int userId = UserSession.getInstance().getCurrentUser().getId();
-        Task newTask = new Task(userId, titre, description, dateLimite, "À faire", priorite, "General");
-        allTasks.add(0, newTask);
-        displayAllTasks();
+        Task newTask = new Task(
+            UserSession.getInstance().getCurrentUser().getId(),
+            titre,
+            description,
+            dateLimite,
+            "À faire",
+            priorite,
+            "Default"
+        );
+        
+        // Add task to the database first
+        TaskController taskController = new TaskController();
+        if (taskController.addTask(newTask)) {
+            // If task was added successfully, refresh all tasks from database
+            refreshTasks();
+        } else {
+            showError("Failed to add task");
+        }
     }
 
     public void refreshTasks() {
-        // ... existing refresh code ...
+        // Clear existing tasks
+        taskContainer.getChildren().clear();
+        
+        // Reload all tasks from the database
+        TaskController taskController = new TaskController();
+        allTasks = taskController.getTasksByUserId(UserSession.getInstance().getCurrentUser().getId());
+        
+        // Display all tasks
+        displayAllTasks();
+        
+        // Update task statistics
         updateTaskStatistics();
     }
 

@@ -12,6 +12,7 @@ import Model.Note;
 import java.io.IOException;
 import java.util.function.Consumer;
 import util.UserSession;
+import Controller.NoteController;
 
 public class NewNoteController {
     @FXML
@@ -21,6 +22,11 @@ public class NewNoteController {
     private TextArea descriptionArea;
     
     private Consumer<Note> onSaveCallback;
+    private NoteController noteController;
+    
+    public NewNoteController() {
+        this.noteController = new NoteController();
+    }
     
     public void setOnSaveCallback(Consumer<Note> callback) {
         this.onSaveCallback = callback;
@@ -36,13 +42,8 @@ public class NewNoteController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Notes.fxml"));
             Parent notesRoot = loader.load();
             
-            // Get the controller and ensure it loads notes
-            NotesController notesController = loader.getController();
-            
             // Replace only the center content
             borderPane.setCenter(notesRoot);
-            
-            System.out.println("Returning to notes view - Total notes: " + NotesController.getAllNotes().size());
             
         } catch (IOException e) {
             e.printStackTrace();
@@ -66,17 +67,20 @@ public class NewNoteController {
             
             // Create new note with user ID
             Note note = new Note(userId, titre, description);
+            System.out.println("Creating new note with title: " + titre);
             
-            // Add note to the static list
-            NotesController.getAllNotes().add(note);
-            
-            // Notify callback if present
-            if (onSaveCallback != null) {
-                onSaveCallback.accept(note);
+            // Use NoteController to add the note
+            if (noteController.addNote(note)) {
+                // Notify callback if present
+                if (onSaveCallback != null) {
+                    onSaveCallback.accept(note);
+                }
+                
+                // Return to notes view
+                handleBackButton(event);
+            } else {
+                showError("Error saving note to database");
             }
-            
-            // Return to notes view
-            handleBackButton(event);
             
         } catch (Exception e) {
             e.printStackTrace();

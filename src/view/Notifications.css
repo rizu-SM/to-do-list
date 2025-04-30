@@ -1,0 +1,45 @@
+.section-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-fill: #2c3e50;
+}
+
+.no-notifications-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #7f8c8d;
+    -fx-padding: 20;
+}
+
+#notificationsContainer {
+    -fx-background-color: #f8f9fa;
+    -fx-padding: 15;
+    -fx-spacing: 15;
+}
+
+.modern-scroll-pane {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.modern-scroll-pane .viewport {
+    -fx-background-color: transparent;
+}
+
+.modern-scroll-pane .scroll-bar:vertical {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+
+.modern-scroll-pane .scroll-bar:vertical .track {
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+
+.modern-scroll-pane .scroll-bar:vertical .thumb {
+    -fx-background-color: #bdc3c7;
+    -fx-background-radius: 4;
+}
+
+.modern-scroll-pane .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #95a5a6;
+} 

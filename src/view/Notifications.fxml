@@ -5,10 +5,10 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.Text?>
 
-<VBox spacing="20" styleClass="main-content" stylesheets="@Notes.css"
+<VBox spacing="20" styleClass="main-content" stylesheets="@Notifications.css"
       xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="view.NotesController">
+      fx:controller="view.NotificationsController">
     
     <padding>
         <Insets top="20" right="20" bottom="20" left="20"/>
@@ -16,18 +16,16 @@
 
     <!-- Header -->
     <HBox alignment="CENTER_LEFT" spacing="20">
-        <Text text="📝 My Notes" styleClass="section-title"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button text="+ New Note" onAction="#handleNewNoteButton" styleClass="new-note-button"/>
+        <Text text="🔔 Notifications" styleClass="section-title"/>
     </HBox>
 
-    <!-- Notes Container -->
+    <!-- Notifications Container -->
     <ScrollPane fitToWidth="true" styleClass="modern-scroll-pane" VBox.vgrow="ALWAYS">
-        <ListView fx:id="notesListView" styleClass="notes-list">
+        <VBox fx:id="notificationsContainer" spacing="15" styleClass="notifications-container">
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>
-        </ListView>
+        </VBox>
     </ScrollPane>
 
 </VBox> 
