@@ -1,13 +1,13 @@
 package Controller;
 
+import Model.DatabaseManager;
 import Model.Task;
 import Model.User;
-import Model.DatabaseManager;
-import java.util.List;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 
 
 public class TaskController {
@@ -155,5 +155,9 @@ public class TaskController {
 
         // Mettre à jour la tâche dans la base de données
         return DatabaseManager.updateTask(task);
+    }
+
+    public int getCoinCountForUser(int userId) {
+        return DatabaseManager.getCoinCountForUser(userId); // Delegate to DatabaseManager
     }
 }

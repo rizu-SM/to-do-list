@@ -47,7 +47,7 @@ public class User {
     public String getMotdepass() { return motdepass; }
     public int getCoin() { return coin; }
     public String getFullName() {
-        return nom + " " + lastName;
+        return nom + " " + prenom;
     }
     
     public void setCoin(int coin) { this.coin = coin; }

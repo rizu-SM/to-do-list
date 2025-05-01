@@ -21,6 +21,7 @@ import java.util.List;
 import util.UserSession;
 import Model.Task;
 import Controller.TaskController;
+import Model.DatabaseManager;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -69,6 +70,13 @@ public class DashboardController extends BaseController implements Initializable
     public void initialize(URL location, ResourceBundle resources) {
         // Update user info from session
         updateUserInfo();
+
+        // Load user's coins from session
+        UserSession session = UserSession.getInstance();
+        if (session != null && session.getCurrentUser() != null) {
+            userCoins = session.getCurrentUser().getCoin();
+            updateCoinsDisplay();
+        }
 
         // Display current date
         LocalDate today = LocalDate.now();
@@ -498,19 +506,35 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private void showNotifications(ActionEvent event) {
         try {
+            System.out.println("=== Starting showNotifications ===");
             // Get the current BorderPane
             BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            System.out.println("Got BorderPane");
             
             // Load the Notifications.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("Notifications.fxml"));
+            System.out.println("Loading Notifications.fxml...");
+            URL resourceUrl = getClass().getResource("/view/Notifications.fxml");
+            System.out.println("Resource URL: " + resourceUrl);
+            
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            System.out.println("Created FXMLLoader");
+            
             Parent notificationsRoot = loader.load();
+            System.out.println("Loaded FXML");
             
             // Replace only the center content
             borderPane.setCenter(notificationsRoot);
+            System.out.println("Set center content");
+            System.out.println("=== Finished showNotifications ===");
             
         } catch (IOException e) {
+            System.out.println("Error in showNotifications: " + e.getMessage());
             e.printStackTrace();
             showError("Error loading notifications");
+        } catch (Exception e) {
+            System.out.println("Unexpected error in showNotifications: " + e.getMessage());
+            e.printStackTrace();
+            showError("Unexpected error loading notifications");
         }
     }
 
@@ -561,6 +585,13 @@ public class DashboardController extends BaseController implements Initializable
         // Determine coins based on priority
         int coinsEarned = calculateCoinsForTask(task);
         userCoins += coinsEarned;
+        
+        // Update coins in session
+        UserSession session = UserSession.getInstance();
+        if (session != null && session.getCurrentUser() != null) {
+            session.getCurrentUser().setCoin(userCoins);
+        }
+        
         updateCoinsDisplay();
         showCoinRewardNotification(coinsEarned);
     }
@@ -590,9 +621,6 @@ public class DashboardController extends BaseController implements Initializable
     private void updateCoinsDisplay() {
         if (coinsAmount != null) {
             coinsAmount.setText(String.valueOf(userCoins));
-            System.out.println("Updating coins display: " + userCoins);
-        } else {
-            System.out.println("coinsAmount label is null!");
         }
     }
 

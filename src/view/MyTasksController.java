@@ -1,5 +1,6 @@
 package view;
 
+import util.UserSession;
 import java.net.URL;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDate;
@@ -30,6 +31,9 @@ import javafx.collections.ObservableList;
 import javafx.scene.control.cell.PropertyValueFactory;
 import Model.User;
 import Controller.TaskController;
+import util.UserSession;
+import Model.DatabaseManager;
+import javafx.application.Platform;
 
 public class MyTasksController extends BaseController implements Initializable {
     @FXML
@@ -70,6 +74,10 @@ public class MyTasksController extends BaseController implements Initializable {
     private Button logoutButton;
     @FXML
     private Label welcomeLabel;
+    @FXML
+    private Label coinLabel; // Ensure this is linked to the coin display label in your FXML file.
+    @FXML
+    private Label coinsAmount; // Correspond à l'fx:id dans le fichier FXML
     
     private List<Task> allTasks;
     private ObservableList<Task> taskList;
@@ -194,26 +202,100 @@ public class MyTasksController extends BaseController implements Initializable {
         statusComboBox.setValue(task.getStatut() != null ? task.getStatut() : "À faire");
         statusComboBox.getStyleClass().add("status-combo-box");
         
+        // If task is already completed, disable the ComboBox
+        if (task.getStatut().equals("Terminé")) {
+            statusComboBox.setDisable(true);
+        }
+        
         // Handle status change
         statusComboBox.setOnAction(event -> {
             String newStatus = statusComboBox.getValue();
-            task.setStatut(newStatus);
-            updateTaskStatus(statusComboBox, newStatus);
+            String oldStatus = task.getStatut();
             
-            // Save the status change to the backend
-            if (taskController == null) {
-                taskController = new TaskController();
+            // Don't process if status hasn't changed
+            if (oldStatus.equals(newStatus)) {
+                return;
             }
-            if (taskController.editTask(task)) {
-                System.out.println("Task status updated successfully");
-                // Refresh the task list to ensure consistency
-                allTasks = taskController.getTasksByUserId(currentUser.getId());
-                displayFilteredTasks(allTasks);
+
+            // If changing to "Terminé", use the special completion method
+            if (newStatus.equals("Terminé")) {
+                TaskController taskController = new TaskController();
+                User currentUser = UserSession.getInstance().getCurrentUser();
+                boolean success = taskController.completeTask(task, currentUser);
+                
+                if (success) {
+                    System.out.println("Task completed successfully: " + task.getTitre());
+                    // Update the UI to reflect the change
+                    updateTaskStatus(statusComboBox, newStatus);
+                    // Disable the ComboBox after completion
+                    statusComboBox.setDisable(true);
+                    
+                    // Update the coin display in the dashboard
+                    try {
+                        // Get the current stage
+                        Stage stage = (Stage) statusComboBox.getScene().getWindow();
+                        // Get the root node
+                        BorderPane root = (BorderPane) stage.getScene().getRoot();
+                        // Get the top bar
+                        HBox topBar = (HBox) root.getTop();
+                        
+                        // Find the coins container in the top bar
+                        for (Node node : topBar.getChildren()) {
+                            if (node instanceof HBox) {
+                                HBox hbox = (HBox) node;
+                                for (Node child : hbox.getChildren()) {
+                                    if (child instanceof HBox && child.getStyleClass().contains("coins-container")) {
+                                        HBox coinsContainer = (HBox) child;
+                                        // Find the coins amount label
+                                        for (Node coinNode : coinsContainer.getChildren()) {
+                                            if (coinNode instanceof Label && coinNode.getStyleClass().contains("coins-amount")) {
+                                                Label coinsLabel = (Label) coinNode;
+                                                // Get the updated coin count from the database
+                                                int updatedCoins = DatabaseManager.getCoinCountForUser(currentUser.getId());
+                                                // Update the label
+                                                Platform.runLater(() -> {
+                                                    coinsLabel.setText(String.valueOf(updatedCoins));
+                                                });
+                                                break;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Error updating coin display: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                    
+                    // Show success message with coin update
+                    showSuccess("Task completed! Your coins have been updated.");
+                } else {
+                    System.out.println("Failed to complete task");
+                    // Revert back to old status
+                    statusComboBox.setValue(oldStatus);
+                    showError("Failed to complete task. The task might be already completed.");
+                }
+                return;
+            }
+
+            // Update task status for other status changes
+            task.setStatut(newStatus);
+            
+            // Save to database using TaskController
+            boolean success = taskController.editTask(task);
+            
+            if (success) {
+                System.out.println("Task status updated successfully: " + task.getTitre() + " -> " + newStatus);
+                // Update the UI to reflect the change
+                updateTaskStatus(statusComboBox, newStatus);
             } else {
-                System.out.println("Failed to update task status");
+                System.out.println("Failed to update task status in database");
+                // Revert back to old status
+                task.setStatut(oldStatus);
+                statusComboBox.setValue(oldStatus);
                 showError("Failed to update task status");
-                // Revert the status change if it failed
-                statusComboBox.setValue(task.getStatut());
             }
         });
         
@@ -362,7 +444,28 @@ public class MyTasksController extends BaseController implements Initializable {
 
     @FXML
     private void handleUpdateTask() {
-        Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
+        // Get the selected task from the task card
+        Task selectedTask = null;
+        for (Node node : tasksContainer.getChildren()) {
+            if (node instanceof VBox) {
+                VBox card = (VBox) node;
+                // Check if this card is selected (you might want to add a selection mechanism)
+                if (card.getStyleClass().contains("selected")) {
+                    // Extract task information from the card
+                    HBox titleBox = (HBox) card.getChildren().get(1);
+                    Label titleLabel = (Label) titleBox.getChildren().get(0);
+                    String title = titleLabel.getText();
+                    
+                    // Find the task in allTasks that matches this title
+                    selectedTask = allTasks.stream()
+                        .filter(task -> task.getTitre().equals(title))
+                        .findFirst()
+                        .orElse(null);
+                    break;
+                }
+            }
+        }
+
         if (selectedTask == null) {
             showError("Please select a task to update");
             return;
@@ -372,6 +475,7 @@ public class MyTasksController extends BaseController implements Initializable {
             return;
         }
 
+        // Update task with new values
         selectedTask.setTitre(titleField.getText());
         selectedTask.setDescription(descriptionField.getText());
         selectedTask.setDateLimite(dueDatePicker.getValue());
@@ -379,7 +483,7 @@ public class MyTasksController extends BaseController implements Initializable {
         selectedTask.setStatut(statusFilter.getValue());
 
         if (taskController.editTask(selectedTask)) {
-            loadTasks();
+            loadTasks(); // Reload all tasks to reflect changes
             clearForm();
             showSuccess("Task updated successfully!");
         } else {
@@ -468,4 +572,17 @@ public class MyTasksController extends BaseController implements Initializable {
             welcomeLabel.setText("Welcome, " + currentUser.getPrenom() + " " + currentUser.getNom());
         }
     }
-} 
+
+    private void updateCoinDisplay() {
+        User currentUser = UserSession.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            int updatedCoinCount = taskController.getCoinCountForUser(currentUser.getId());
+            coinsAmount.setText(String.valueOf(updatedCoinCount)); // Utilisez coinsAmount ici
+            System.out.println("Coin count updated: " + updatedCoinCount);
+        }
+    }
+
+    public int getCoinCountForUser(int userId) {
+        return DatabaseManager.getCoinCountForUser(userId); // Delegate to DatabaseManager
+    }
+}

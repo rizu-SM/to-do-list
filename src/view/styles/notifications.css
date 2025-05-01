@@ -1,0 +1,46 @@
+.notification-card {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 2);
+    -fx-padding: 12px;
+    -fx-spacing: 10px;
+    -fx-min-height: 60px;
+    -fx-max-width: 600px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+}
+
+.notification-card:hover {
+    -fx-background-color: #f8f9fa;
+    -fx-cursor: hand;
+}
+
+.notification-icon {
+    -fx-font-size: 24px;
+    -fx-padding: 8px;
+    -fx-background-color: #f0f0f0;
+    -fx-background-radius: 50%;
+    -fx-min-width: 40px;
+    -fx-min-height: 40px;
+    -fx-alignment: center;
+}
+
+.notification-message {
+    -fx-font-size: 14px;
+    -fx-font-weight: normal;
+    -fx-text-fill: #333333;
+    -fx-wrap-text: true;
+}
+
+.notification-date {
+    -fx-font-size: 12px;
+    -fx-text-fill: #666666;
+}
+
+.no-notifications-label {
+    -fx-font-size: 16px;
+    -fx-text-fill: #666666;
+    -fx-padding: 20px;
+    -fx-alignment: center;
+} 

@@ -5,15 +5,14 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.List;
-import java.sql.Types;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Random;
-import java.sql.Statement;  // Add this with your other imports
 
 public class DatabaseManager {
     private static final String URL = "jdbc:mysql://localhost:3306/project?characterEncoding=UTF-8";
@@ -115,7 +114,7 @@ public class DatabaseManager {
             ResultSet rs = stmt.executeQuery();
             
             //Quand tu exécutes stmt.executeQuery() on obtient tableau contenant les resultat de la requet sql
-            //si rs.next return true ca veut dire  Il y a une ligne dans le résultat, donc l’utilisateur existe dans la base de données.
+            //si rs.next return true ca veut dire  Il y a une ligne dans le résultat, donc l'utilisateur existe dans la base de données.
             if (rs.next()) {
                 return new User(
                     rs.getInt("id"),
@@ -376,7 +375,7 @@ public class DatabaseManager {
     }
 
     
- // Récupérer les notes d’un utilisateur
+ // Récupérer les notes d'un utilisateur
     public static List<Note> getNotesByUserId(int userId) {
         List<Note> notes = new ArrayList<>();
         String query = "SELECT * FROM notes WHERE user_id = ?";
@@ -498,6 +497,8 @@ public class DatabaseManager {
                        "WHERE statut = 'À faire' " +
                        "AND date_limite <= DATE_ADD(CURDATE(), INTERVAL 3 DAY)";
 
+        System.out.println("[DEBUG] Requête SQL: " + query);
+
         class TaskReminder {
             int taskId, userId;
             String titre, statut, dateLimite;
@@ -516,6 +517,8 @@ public class DatabaseManager {
              PreparedStatement stmt = conn.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
             
+            System.out.println("[DEBUG] Exécution de la requête...");
+            
             while (rs.next()) {
                 reminders.add(new TaskReminder(
                     rs.getInt("id"),
@@ -524,7 +527,12 @@ public class DatabaseManager {
                     rs.getString("statut"),
                     rs.getString("date_limite")
                 ));
+                System.out.println("[DEBUG] Tâche trouvée: " + rs.getString("titre") + 
+                                 " (ID: " + rs.getInt("id") + 
+                                 ", Date limite: " + rs.getString("date_limite") + ")");
             }
+
+            System.out.println("[DEBUG] Nombre total de tâches trouvées: " + reminders.size());
 
         } catch (SQLException e) {
             System.err.println("[ERREUR] Problème lors de la lecture des rappels : " + e.getMessage());
@@ -534,6 +542,7 @@ public class DatabaseManager {
         // Envoi des notifications après la fermeture du ResultSet
         for (TaskReminder r : reminders) {
             String message = "RAPPEL: \"" + r.titre + "\" (" + r.statut + ") - échéance: " + r.dateLimite;
+            System.out.println("[DEBUG] Envoi de notification pour la tâche: " + r.titre);
             addNotification(r.userId, r.taskId, "Rappel", message);
         }
 
@@ -544,7 +553,7 @@ public class DatabaseManager {
     public static void startTaskNotificationScheduler() {
         Timer timer = new Timer();
         // 2 heures = 2 * 60 * 60 * 1000 = 7200000 ms
-        final long interval = 7200000;
+        final long interval = 10000;
         
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -728,5 +737,20 @@ public class DatabaseManager {
             System.out.println("Erreur lors de la récupération de l'ID utilisateur : " + e.getMessage());
         }
         return -1;
+    }
+
+    public static int getCoinCountForUser(int userId) {
+        String query = "SELECT coin FROM users WHERE id = ?";
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt("coin"); // Fetch the coin value
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0; // Default to 0 if no coin count is found or an error occurs
     }
 }

@@ -74,4 +74,7 @@
             </padding>
         </VBox>
     </ScrollPane>
-</VBox> 
+
+    <!-- Coins Amount Label -->
+    <Label fx:id="coinsAmount" text="0" />
+</VBox>
