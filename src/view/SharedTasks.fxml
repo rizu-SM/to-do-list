@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="view.SharedTasksController"
+            stylesheets="@../view/style.css">
+    
+    <!-- Top Bar -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="top-bar">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+            <TextFlow>
+                <Text styleClass="title-red" text="Shared"/>
+                <Text styleClass="title-black" text=" Tasks"/>
+            </TextFlow>
+            
+            <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">
+                <TextField fx:id="searchField" promptText="Search shared tasks..." styleClass="search-field"/>
+                <Button styleClass="icon-button">
+                    <graphic>
+                        <ImageView fitWidth="15" fitHeight="15">
+                            <Image url="@images/loupe.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+            </HBox>
+            
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Label fx:id="dayLabel" styleClass="day-label"/>
+                <Label fx:id="dateLabel" styleClass="date-label"/>
+            </HBox>
+        </HBox>
+    </top>
+    
+    <!-- Sidebar -->
+    <left>
+        <VBox prefHeight="400.0" prefWidth="200.0" style="-fx-background-color: #FF6B6B;">
+            <children>
+                <Label text="To-Do List" textFill="WHITE">
+                    <font>
+                        <Font size="24.0"/>
+                    </font>
+                    <VBox.margin>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                    </VBox.margin>
+                </Label>
+                <Button styleClass="sidebar-button" text="🏠 Dashboard" onAction="#showDashboard"/>
+                <Button styleClass="sidebar-button" text="📝 My Task" onAction="#showMyTasks"/>
+                <Button styleClass="sidebar-button" text="📝 Notes" onAction="#showNotes"/>
+                <Button styleClass="sidebar-button" text="🔔 Notifications" onAction="#showNotifications"/>
+                <Button styleClass="sidebar-button" text="⚙️ Settings" onAction="#openSettings"/>
+                <Region VBox.vgrow="ALWAYS"/>
+                <Button styleClass="sidebar-button" text="🚪 Logout" onAction="#handleLogout">
+                    <VBox.margin>
+                        <Insets bottom="20.0"/>
+                    </VBox.margin>
+                </Button>
+            </children>
+            <padding>
+                <Insets top="10"/>
+            </padding>
+        </VBox>
+    </left>
+    
+    <!-- Main Content -->
+    <center>
+        <VBox spacing="20" styleClass="main-content">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            
+            <!-- Header Section -->
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <Button text="← Back" onAction="#handleBackButton" 
+                        style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-padding: 8 15;"/>
+                <Label fx:id="headerText" style="-fx-font-size: 24px; -fx-font-weight: bold;"/>
+            </HBox>
+            
+            <!-- Tasks Container -->
+            <ScrollPane fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
+                <VBox fx:id="tasksContainer" spacing="15" style="-fx-background-color: transparent;">
+                    <!-- Tasks will be added here dynamically -->
+                </VBox>
+            </ScrollPane>
+        </VBox>
+    </center>
+</BorderPane> 

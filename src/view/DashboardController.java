@@ -60,6 +60,42 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
+    private void handleIncomingInvitationsButton(ActionEvent event) {
+        try {
+            // Load the incoming invitations page
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/IncomingInvitations.fxml"));
+            Parent incomingInvitationsRoot = loader.load();
+            
+            // Get the current stage
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            
+            // Store current window dimensions
+            double currentWidth = stage.getWidth();
+            double currentHeight = stage.getHeight();
+            
+            // Create a new scene with the incoming invitations page
+            Scene scene = new Scene(incomingInvitationsRoot);
+            
+            // Set the new scene
+            stage.setScene(scene);
+            
+            // Restore window dimensions
+            stage.setWidth(currentWidth);
+            stage.setHeight(currentHeight);
+            
+            stage.show();
+            
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Could not load incoming invitations page");
+            alert.setContentText("Details: " + ex.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    @FXML
     private VBox taskStatsContainer;
 
     private int userCoins = 0;
@@ -76,6 +112,9 @@ public class DashboardController extends BaseController implements Initializable
         if (session != null && session.getCurrentUser() != null) {
             userCoins = session.getCurrentUser().getCoin();
             updateCoinsDisplay();
+            System.out.println("Current user ID: " + session.getCurrentUser().getId());
+        } else {
+            System.out.println("No current user found in session");
         }
 
         // Display current date
@@ -99,7 +138,9 @@ public class DashboardController extends BaseController implements Initializable
             
             // Load all tasks from database
             TaskController taskController = new TaskController();
+            System.out.println("Loading tasks for user ID: " + UserSession.getInstance().getCurrentUser().getId());
             allTasks = taskController.getTasksByUserId(UserSession.getInstance().getCurrentUser().getId());
+            System.out.println("Loaded " + allTasks.size() + " tasks");
             
             // Display all existing tasks
             displayAllTasks();
@@ -359,25 +400,28 @@ public class DashboardController extends BaseController implements Initializable
     @FXML
     private void handleLogout(ActionEvent event) {
         try {
-            // Use the correct path to FirstPage.fxml
-            Parent root = FXMLLoader.load(getClass().getResource("/view/FirstPage.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            // Clear the user session
+            UserSession.getInstance().clearSession();
             
-            // Store current window dimensions
-            double currentWidth = stage.getWidth();
-            double currentHeight = stage.getHeight();
+            // Load the SignIn view
+            URL resourceUrl = getClass().getResource("SignIn.fxml");
+            if (resourceUrl == null) {
+                throw new IOException("Could not find SignIn.fxml");
+            }
             
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
+            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            Parent root = loader.load();
             
-            // Restore window dimensions
-            stage.setWidth(currentWidth);
-            stage.setHeight(currentHeight);
-            
-            stage.show();
+            // Get the current scene and update it
+            Scene scene = ((Node) event.getSource()).getScene();
+            if (scene != null) {
+                scene.setRoot(root);
+            } else {
+                throw new IOException("Could not get current scene");
+            }
         } catch (IOException e) {
             e.printStackTrace();
-            showError("Error during logout");
+            showError("Error during logout: " + e.getMessage());
         }
     }
 
@@ -545,21 +589,32 @@ public class DashboardController extends BaseController implements Initializable
             Label noTasksLabel = new Label("No tasks available");
             noTasksLabel.getStyleClass().add("task-status-title");
             taskStatsContainer.getChildren().add(noTasksLabel);
+            System.out.println("No tasks found in allTasks list");
             return;
         }
 
-        Label titleLabel = new Label("Task Status");
+        Label titleLabel = new Label("Statut des tâches");
         titleLabel.getStyleClass().add("task-status-title");
         taskStatsContainer.getChildren().add(titleLabel);
 
         int totalTasks = allTasks.size();
-        int completedTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("Completed")).count();
-        int inProgressTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("In Progress")).count();
-        int notStartedTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("Not Started")).count();
+        System.out.println("Total tasks: " + totalTasks);
+        
+        // Debug: Print all task statuses
+        System.out.println("All task statuses:");
+        allTasks.forEach(task -> System.out.println("Task: " + task.getTitre() + " - Status: " + task.getStatut() + " (raw: " + task.getStatut() + ")"));
 
-        createStatusRow("Completed", completedTasks, totalTasks, "completed-progress");
-        createStatusRow("In Progress", inProgressTasks, totalTasks, "in-progress-progress");
-        createStatusRow("Not Started", notStartedTasks, totalTasks, "not-started-progress");
+        int completedTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("Terminé")).count();
+        int inProgressTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("En cours")).count();
+        int notStartedTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("À faire")).count();
+
+        System.out.println("Completed tasks: " + completedTasks);
+        System.out.println("In progress tasks: " + inProgressTasks);
+        System.out.println("Not started tasks: " + notStartedTasks);
+
+        createStatusRow("Terminé", completedTasks, totalTasks, "completed-progress");
+        createStatusRow("En cours", inProgressTasks, totalTasks, "in-progress-progress");
+        createStatusRow("À faire", notStartedTasks, totalTasks, "not-started-progress");
     }
 
     private void createStatusRow(String status, int count, int total, String styleClass) {
@@ -571,6 +626,7 @@ public class DashboardController extends BaseController implements Initializable
         
         ProgressIndicator progressIndicator = new ProgressIndicator();
         double percentage = total > 0 ? (double) count / total : 0;
+        System.out.println("Status: " + status + " - Count: " + count + " - Total: " + total + " - Percentage: " + percentage);
         progressIndicator.setProgress(percentage);
         progressIndicator.getStyleClass().add(styleClass);
         

@@ -553,7 +553,7 @@ public class DatabaseManager {
     public static void startTaskNotificationScheduler() {
         Timer timer = new Timer();
         // 2 heures = 2 * 60 * 60 * 1000 = 7200000 ms
-        final long interval = 10000;
+        final long interval = 7200000;
         
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
@@ -752,5 +752,41 @@ public class DatabaseManager {
             e.printStackTrace();
         }
         return 0; // Default to 0 if no coin count is found or an error occurs
+    }
+
+    public static boolean isInvitationAccepted(int viewerId, int ownerId) {
+        String query = "SELECT accepted FROM task_shares WHERE owner_id = ? AND viewer_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, ownerId);
+            stmt.setInt(2, viewerId);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getBoolean("accepted");
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking invitation status: " + e.getMessage());
+        }
+        return false;
+    }
+
+    public static boolean acceptInvitation(int viewerId, int ownerId) {
+        String query = "UPDATE task_shares SET accepted = true WHERE owner_id = ? AND viewer_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setInt(1, ownerId);
+            stmt.setInt(2, viewerId);
+            int rowsUpdated = stmt.executeUpdate();
+            
+            if (rowsUpdated > 0) {
+                // Ajouter une notification pour le propriétaire
+                addNotification(ownerId, "Invitation Accepted", 
+                    "Your task sharing invitation has been accepted.");
+                return true;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error accepting invitation: " + e.getMessage());
+        }
+        return false;
     }
 }

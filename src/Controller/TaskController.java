@@ -63,14 +63,12 @@ public class TaskController {
             return false;
         }
         
-        //about this try catch version :  handling errors AND automatically closing resources 
-        //closing resources is the think uniq in this forme
         try (Connection conn = DatabaseManager.getConnection()) {
             // Vérifier si la tâche est déjà terminée
             String checkStatusQuery = "SELECT statut FROM tasks WHERE id = ?";
             try (PreparedStatement stmtCheckStatus = conn.prepareStatement(checkStatusQuery)) {
                 stmtCheckStatus.setInt(1, task.getId());
-                System.out.println("Exécution de la requête : SELECT statut FROM tasks WHERE id = " + task.getId()); // Debugging
+                System.out.println("Exécution de la requête : SELECT statut FROM tasks WHERE id = " + task.getId());
                 ResultSet rs = stmtCheckStatus.executeQuery();
                 if (rs.next()) {
                     System.out.println("verify"); 
@@ -78,37 +76,51 @@ public class TaskController {
                     System.out.println("Statut actuel de la tâche : " + currentStatus);
                     if ("Terminé".equalsIgnoreCase(currentStatus)) {
                         System.out.println("Cette tâche est déjà terminée.");
-                        return false; // La tâche est déjà terminée, on ne fait rien
+                        return false;
                     }
                 } else {
-                    System.out.println("Aucune tâche trouvée avec l'ID : " + task.getId()); // Debugging
+                    System.out.println("Aucune tâche trouvée avec l'ID : " + task.getId());
                     return false;
                 }
             }
 
-            // Si la tâche n'est pas encore terminée, on la marque comme terminée et on ajoute les coins
-            conn.setAutoCommit(false); //When we use this, changes are not saved until you call conn.commit();
-            //This allows multiple operations to be grouped into a single transaction.
-            //qo in our case task status and user coins happen together
+            conn.setAutoCommit(false);
 
-            try (PreparedStatement stmtTask = conn.prepareStatement("UPDATE tasks SET statut = 'Terminé' WHERE id = ?");
-                 PreparedStatement stmtUser = conn.prepareStatement("UPDATE users SET coin = ? WHERE id = ?")) {
+            try {
+                // 1. Get current coin balance from database
+                String getCoinsQuery = "SELECT coin FROM users WHERE id = ?";
+                int currentCoins = 0;
+                try (PreparedStatement stmtGetCoins = conn.prepareStatement(getCoinsQuery)) {
+                    stmtGetCoins.setInt(1, user.getId());
+                    ResultSet rs = stmtGetCoins.executeQuery();
+                    if (rs.next()) {
+                        currentCoins = rs.getInt("coin");
+                    }
+                }
 
-                // Mettre à jour le statut de la tâche
-                stmtTask.setInt(1, task.getId());
-                stmtTask.executeUpdate();
+                // 2. Update task status
+                try (PreparedStatement stmtTask = conn.prepareStatement("UPDATE tasks SET statut = 'Terminé' WHERE id = ?")) {
+                    stmtTask.setInt(1, task.getId());
+                    stmtTask.executeUpdate();
+                }
 
-                // Mettre à jour les coins de l'utilisateur
-                int newCoinBalance = user.getCoin() + task.getCoinsForTask();
-                stmtUser.setInt(1, newCoinBalance);
-                stmtUser.setInt(2, user.getId());
-                stmtUser.executeUpdate();
+                // 3. Update user's coins
+                int coinsToAdd = task.getCoinsForTask();
+                int newCoinBalance = currentCoins + coinsToAdd;
+                try (PreparedStatement stmtUser = conn.prepareStatement("UPDATE users SET coin = ? WHERE id = ?")) {
+                    stmtUser.setInt(1, newCoinBalance);
+                    stmtUser.setInt(2, user.getId());
+                    stmtUser.executeUpdate();
+                }
 
-                conn.commit(); // saving changes and valide transaction
-                System.out.println("Tâche terminée, " + task.getCoinsForTask() + " coins ajoutés !");
+                // 4. Update the user object in memory
+                user.setCoin(newCoinBalance);
+
+                conn.commit();
+                System.out.println("Tâche terminée, " + coinsToAdd + " coins ajoutés ! Nouveau solde : " + newCoinBalance);
                 return true;
             } catch (SQLException e) {
-                conn.rollback(); // Annuler la transaction en cas d'erreur
+                conn.rollback();
                 System.out.println("Erreur SQL : " + e.getMessage());
                 return false;
             }
@@ -159,5 +171,13 @@ public class TaskController {
 
     public int getCoinCountForUser(int userId) {
         return DatabaseManager.getCoinCountForUser(userId); // Delegate to DatabaseManager
+    }
+
+    public boolean isInvitationAccepted(int viewerId, int ownerId) {
+        return DatabaseManager.isInvitationAccepted(viewerId, ownerId);
+    }
+
+    public boolean acceptInvitation(int viewerId, int ownerId) {
+        return DatabaseManager.acceptInvitation(viewerId, ownerId);
     }
 }

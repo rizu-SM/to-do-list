@@ -5,6 +5,11 @@ import javafx.scene.control.Label;
 import util.UserSession;
 import javafx.stage.Stage;
 import javafx.scene.control.ProgressIndicator;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.Node;
+import java.io.IOException;
 
 public class BaseController {
     @FXML
@@ -67,5 +72,25 @@ public class BaseController {
         completedPercent.setText((int)(completedRatio * 100) + "%");
         inProgressPercent.setText((int)(inProgressRatio * 100) + "%");
         notStartedPercent.setText((int)(notStartedRatio * 100) + "%");
+    }
+
+    @FXML
+    protected void handleLogout(javafx.event.ActionEvent event) {
+        try {
+            // Clear the user session
+            UserSession.getInstance().clearSession();
+            
+            // Load the SignIn view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("SignIn.fxml"));
+            Parent root = loader.load();
+            
+            // Get the current scene and update it
+            Scene scene = ((Node) event.getSource()).getScene();
+            if (scene != null) {
+                scene.setRoot(root);
+            }
+        } catch (IOException e) {
+            showError("Failed to logout: " + e.getMessage());
+        }
     }
 } 

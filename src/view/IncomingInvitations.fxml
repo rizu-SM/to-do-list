@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.Cursor?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane stylesheets="@../view/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.IncomingInvitationsController">
+
+    <!-- Top Bar -->
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="top-bar">
+            <padding>
+                <Insets top="10" right="20" bottom="10" left="20"/>
+            </padding>
+            <TextFlow>
+                <Text styleClass="title-red" text="Incoming"/>
+                <Text styleClass="title-black" text=" Invitations"/>
+            </TextFlow>
+            
+            <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">
+                <TextField fx:id="searchField" promptText="Search invitations..." styleClass="search-field"/>
+                <Button styleClass="icon-button">
+                    <graphic>
+                        <ImageView fitWidth="15" fitHeight="15">
+                            <Image url="@images/loupe.png"/>
+                        </ImageView>
+                    </graphic>
+                </Button>
+
+                <!-- Coins Display -->
+                <HBox styleClass="coins-container">
+                    <Label fx:id="coinsAmount" styleClass="coins-amount" text="0"/>
+                    <Label styleClass="coins-label" text=" coins"/>
+                </HBox>
+            </HBox>
+        </HBox>
+    </top>
+
+    <!-- Sidebar -->
+    <left>
+        <VBox prefHeight="400.0" prefWidth="200.0" style="-fx-background-color: #FF6B6B;">
+            <children>
+                <Label text="To-Do List" textFill="WHITE">
+                    <font>
+                        <Font size="24.0" />
+                    </font>
+                    <VBox.margin>
+                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                    </VBox.margin>
+                </Label>
+                <Button styleClass="sidebar-button" text="🏠 Dashboard" onAction="#showDashboard">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="sidebar-button" text="📝 My Task" onAction="#showMyTasks">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="sidebar-button" text="📝 Notes" onAction="#showNotes">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="sidebar-button" text="🔔 Notifications" onAction="#showNotifications">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="sidebar-button" text="⚙️ Settings" onAction="#openSettings">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Region VBox.vgrow="ALWAYS" />
+                <Button styleClass="sidebar-button" text="🚪 Logout" onAction="#handleLogout">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                    <VBox.margin>
+                        <Insets bottom="20.0" />
+                    </VBox.margin>
+                </Button>
+            </children>
+            <padding>
+                <Insets top="10" />
+            </padding>
+        </VBox>
+    </left>
+
+    <!-- Main Content -->
+    <center>
+        <VBox spacing="20" styleClass="main-content">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+
+            <!-- Welcome Section -->
+            <HBox alignment="CENTER_LEFT" spacing="20">
+                <Label text="Welcome back, " styleClass="welcome-text"/>
+                <Label fx:id="userNameLabel" styleClass="welcome-text"/>
+                <Text text="👋" styleClass="welcome-emoji"/>
+            </HBox>
+            
+            <!-- Invitations Section -->
+            <VBox spacing="15" styleClass="invitations-section">
+                <Label text="📨 Incoming Invitations" styleClass="section-title"/>
+                
+                <ScrollPane fitToWidth="true" styleClass="invitations-scrollpane" VBox.vgrow="ALWAYS">
+                    <VBox fx:id="invitationsContainer" styleClass="invitations-list">
+                        <!-- Invitation cards will be added here dynamically -->
+                    </VBox>
+                </ScrollPane>
+            </VBox>
+        </VBox>
+    </center>
+
+</BorderPane> 

@@ -146,7 +146,32 @@
                 <Text fx:id="userNameText" styleClass="welcome-text"/>
                 <Text text="👋" styleClass="welcome-text"/>
                 <Region HBox.hgrow="ALWAYS" />
-                <Button fx:id="inviteButton" styleClass="invite-button" text="+ Invite" onAction="#handleInviteButton" />
+                <Button fx:id="inviteButton" onAction="#handleInviteButton" styleClass="invite-button" text="Invite Member">
+                    <graphic>
+                        <ImageView>
+                            <Image url="@../assets/invite.png" />
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets top="10" bottom="10" />
+                    </VBox.margin>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button fx:id="incomingInvitationsButton" onAction="#handleIncomingInvitationsButton" styleClass="invite-button" text="Incoming Invitations">
+                    <graphic>
+                        <ImageView>
+                            <Image url="@../assets/invite.png" />
+                        </ImageView>
+                    </graphic>
+                    <VBox.margin>
+                        <Insets top="10" bottom="10" />
+                    </VBox.margin>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
 </HBox>
             
             <!-- Tasks Section -->

@@ -5,6 +5,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.List;
+import java.util.ArrayList;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -26,8 +28,8 @@ import util.UserSession;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.HBox;
 import javafx.geometry.Pos;
-import java.util.ArrayList;
-import java.util.List;
+import Controller.TaskController;
+import Model.User;
 
 public class InviteMemberController extends BaseController implements Initializable {
 
@@ -58,10 +60,14 @@ public class InviteMemberController extends BaseController implements Initializa
     @FXML
     private Label invitedCountLabel;
 
+    private TaskController taskController;
     private List<String> invitedEmails = new ArrayList<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        // Initialize TaskController
+        taskController = new TaskController();
+        
         // Set current date
         LocalDate today = LocalDate.now();
         dayLabel.setText(formatDay(today.getDayOfWeek().toString()));
@@ -94,33 +100,51 @@ public class InviteMemberController extends BaseController implements Initializa
     private void handleSendInvite() {
         String email = emailField.getText().trim();
         if (email.isEmpty()) {
-            statusLabel.setText("Please enter an email address");
+            showStatusMessage("Please enter an email address", false);
             return;
         }
         
         if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            statusLabel.setText("Please enter a valid email address");
+            showStatusMessage("Please enter a valid email address", false);
             return;
         }
 
         if (invitedEmails.contains(email)) {
-            statusLabel.setText("This email has already been invited");
+            showStatusMessage("This email has already been invited", false);
             return;
         }
 
-        // Add to list and update UI
-        invitedEmails.add(email);
-        addInvitedMemberToUI(email);
-        updateInvitedCount();
-        
-        // Clear the input field and status
-            emailField.clear();
-        statusLabel.setText("Invitation sent successfully!");
+        try {
+            // Share tasks with the invited user
+            if (taskController.shareTasksWithUserByEmail(UserSession.getInstance().getCurrentUser().getId(), email)) {
+                // Add to list and update UI
+                invitedEmails.add(email);
+                addInvitedMemberToUI(email);
+                updateInvitedCount();
+                
+                // Clear the input field and status
+                emailField.clear();
+                showStatusMessage("Invitation sent successfully!", true);
+        } else {
+                showStatusMessage("No user found with this email address", false);
+            }
+        } catch (Exception e) {
+            showStatusMessage("Error sending invitation: " + e.getMessage(), false);
+        }
     }
 
     private void loadInvitedMembers() {
         // Clear existing items
         invitedMembersContainer.getChildren().clear();
+        
+        // Get invited users from backend
+        List<User> invitedUsers = taskController.getInvitedUsers(UserSession.getInstance().getCurrentUser().getId());
+        invitedEmails.clear();
+        
+        // Convert User objects to email strings
+        for (User user : invitedUsers) {
+            invitedEmails.add(user.getEmail());
+        }
         
         // Add each invited member to the UI
         for (String email : invitedEmails) {
@@ -142,9 +166,14 @@ public class InviteMemberController extends BaseController implements Initializa
         Button deleteButton = new Button("×");
         deleteButton.getStyleClass().add("delete-invite-button");
         deleteButton.setOnAction(e -> {
-            invitedEmails.remove(email);
-            invitedMembersContainer.getChildren().remove(memberItem);
-            updateInvitedCount();
+            if (taskController.removeInvitationByEmail(UserSession.getInstance().getCurrentUser().getId(), email)) {
+                invitedEmails.remove(email);
+                invitedMembersContainer.getChildren().remove(memberItem);
+                updateInvitedCount();
+                statusLabel.setText("Invitation removed successfully!");
+            } else {
+                statusLabel.setText("Failed to remove invitation. Please try again.");
+            }
         });
 
         memberItem.getChildren().addAll(emailLabel, deleteButton);
@@ -293,12 +322,8 @@ public class InviteMemberController extends BaseController implements Initializa
 
     private void showStatusMessage(String message, boolean isSuccess) {
         statusLabel.setText(message);
-        if (isSuccess) {
-            statusLabel.setTextFill(Color.GREEN);
-        } else {
-            statusLabel.setTextFill(Color.RED);
+        statusLabel.setTextFill(isSuccess ? Color.GREEN : Color.RED);
         }
-    }
 
     @Override
     protected void showError(String message) {

@@ -58,6 +58,17 @@ public class User {
     public void ajouterCoins(int coins) {
         this.coin += coins;
     }
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", nom='" + nom + '\'' +
+                ", prenom='" + prenom + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + motdepass + '\'' +
+                ", coins=" + coin +
+                '}';
+    }
 }
 
 
