@@ -10,8 +10,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import util.UserSession;
+import Model.User;
+import Controller.AuthController;
 
 public class SettingsController {
     @FXML private TextField firstNameField;
@@ -22,6 +27,9 @@ public class SettingsController {
     @FXML private Button updateInfoButton;
     @FXML private Label messageLabel;
     @FXML private Hyperlink goBackLink;
+    @FXML private RadioButton maleRadio;
+    @FXML private RadioButton femaleRadio;
+    @FXML private ToggleGroup genderGroup;
 
     // Référence au contrôleur du dashboard
     private DashboardController dashboardController;
@@ -37,36 +45,74 @@ public class SettingsController {
     }
 
     private void loadUserInfo() {
-        // TODO: Charger les informations depuis une base de données ou un fichier
-        // Pour l'instant, on met des valeurs par défaut
-        firstNameField.setText("Sundar");
-        lastNameField.setText("Gurung");
-        emailField.setText("sundargurung360@gmail.com");
-        contactField.setText("");
-        positionField.setText("");
+        User currentUser = UserSession.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            firstNameField.setText(currentUser.getPrenom());
+            lastNameField.setText(currentUser.getNom());
+            emailField.setText(currentUser.getEmail());
+        }
     }
 
     @FXML
     private void handleUpdateInfo(ActionEvent event) {
-        // Vérifier que les champs requis sont remplis
-        if (firstNameField.getText().trim().isEmpty() || 
-            lastNameField.getText().trim().isEmpty() || 
-            emailField.getText().trim().isEmpty()) {
-            messageLabel.setTextFill(javafx.scene.paint.Color.RED);
-            messageLabel.setText("Please fill in all required fields (First Name, Last Name, Email)");
-            return;
-        }
+        System.out.println("clicked");
+        try {
+            // Get the current user from UserSession
+            User currentUser = UserSession.getInstance().getCurrentUser();
+            if (currentUser == null) {
+                showError("No user is currently logged in");
+                return;
+            }
 
-        // TODO: Sauvegarder les informations dans une base de données ou un fichier
-        
-        // Mettre à jour le dashboard
-        if (dashboardController != null) {
-            String fullName = firstNameField.getText() + " " + lastNameField.getText();
-            dashboardController.updateUserInfo(fullName, emailField.getText());
-        }
+            // Get values from the form fields
+            String nom = lastNameField.getText();
+            String prenom = firstNameField.getText();
+            String email = emailField.getText();
+            
+            // Get gender from radio buttons
+            char sex = maleRadio.isSelected() ? 'M' : 'F';
 
+            // Validate input
+            if (nom.isEmpty() || prenom.isEmpty() || email.isEmpty()) {
+                showError("Please fill in all fields");
+                return;
+            }
+
+            // Create an instance of AuthController
+            AuthController authController = new AuthController();
+
+            // Call the updateProfile method with the correct parameters
+            boolean success = authController.updateProfile(currentUser.getId(), nom, prenom, email, sex);
+
+            if (success) {
+                // Update the current user's information in the session
+                currentUser.setNom(nom);
+                currentUser.setPrenom(prenom);
+                currentUser.setEmail(email);
+                currentUser.setSex(sex);
+                
+                showSuccess("Profile updated successfully!");
+                // Update the welcome label with new user info
+                if (dashboardController != null) {
+                    dashboardController.updateUserInfo();
+                }
+            } else {
+                showError("Failed to update profile");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("An error occurred while updating profile");
+        }
+    }
+
+    private void showSuccess(String message) {
         messageLabel.setTextFill(javafx.scene.paint.Color.GREEN);
-        messageLabel.setText("Information updated successfully!");
+        messageLabel.setText(message);
+    }
+
+    private void showError(String message) {
+        messageLabel.setTextFill(javafx.scene.paint.Color.RED);
+        messageLabel.setText(message);
     }
 
     @FXML
@@ -87,4 +133,4 @@ public class SettingsController {
             messageLabel.setText("Error returning to dashboard: " + e.getMessage());
         }
     }
-} 
+}

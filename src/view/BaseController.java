@@ -14,7 +14,7 @@ import java.io.IOException;
 public class BaseController {
     @FXML
     protected Label userNameLabel;
-    
+
     @FXML
     protected Label userEmailLabel;
 
@@ -23,7 +23,7 @@ public class BaseController {
     @FXML
     private Label completedPercent, inProgressPercent, notStartedPercent;
 
-    protected void updateUserInfo() {
+    public void updateUserInfo() {
         UserSession session = UserSession.getInstance();
         if (userNameLabel != null) {
             userNameLabel.setText(session.getFullName());
@@ -37,7 +37,7 @@ public class BaseController {
         UserSession session = UserSession.getInstance();
         session.setFullName(fullName);
         session.setEmail(email);
-        
+
         if (userNameLabel != null) {
             userNameLabel.setText(fullName);
         }
@@ -46,7 +46,7 @@ public class BaseController {
         }
     }
 
-    protected void showError(String message) {
+    public void showError(String message) {
         javafx.scene.control.Alert alert = new javafx.scene.control.Alert(javafx.scene.control.Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
@@ -79,11 +79,11 @@ public class BaseController {
         try {
             // Clear the user session
             UserSession.getInstance().clearSession();
-            
+
             // Load the SignIn view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("SignIn.fxml"));
             Parent root = loader.load();
-            
+
             // Get the current scene and update it
             Scene scene = ((Node) event.getSource()).getScene();
             if (scene != null) {
@@ -93,4 +93,4 @@ public class BaseController {
             showError("Failed to logout: " + e.getMessage());
         }
     }
-} 
+}

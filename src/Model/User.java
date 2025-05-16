@@ -54,6 +54,7 @@ public class User {
     public void setNom(String nom) { this.nom = nom; }
     public void setPrenom(String prenom) { this.prenom = prenom; }
     public void setSex(char sex) { this.sex = sex; }
+    public void setEmail(String email) { this.email = email; }
 
     public void ajouterCoins(int coins) {
         this.coin += coins;

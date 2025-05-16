@@ -215,7 +215,7 @@ public class SharedTasksController extends BaseController {
     }
     
     @FXML
-    private void handleLogout(javafx.event.ActionEvent event) {
+    protected void handleLogout(javafx.event.ActionEvent event) {
         try {
             // Clear the user session
             UserSession.getInstance().clearSession();

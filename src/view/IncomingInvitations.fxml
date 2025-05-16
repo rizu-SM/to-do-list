@@ -17,7 +17,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane stylesheets="@../view/style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.IncomingInvitationsController">
+<BorderPane stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.IncomingInvitationsController">
 
     <!-- Top Bar -->
     <top>
@@ -38,13 +38,43 @@
                             <Image url="@images/loupe.png"/>
                         </ImageView>
                     </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
                 </Button>
 
                 <!-- Coins Display -->
-                <HBox styleClass="coins-container">
+                <HBox fx:id="coinsContainer" styleClass="coins-container">
+                    <Text styleClass="coins-icon" text="🪙"/>
                     <Label fx:id="coinsAmount" styleClass="coins-amount" text="0"/>
-                    <Label styleClass="coins-label" text=" coins"/>
+                    <Label styleClass="coins-label" text="coins"/>
                 </HBox>
+
+                <Button styleClass="icon-button">
+                    <graphic>
+                        <ImageView fitWidth="15" fitHeight="15">
+                            <Image url="@images/calendar.png" />
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="icon-button" onAction="#showNotifications">
+                    <graphic>
+                        <ImageView fitWidth="15" fitHeight="15">
+                            <Image url="@images/notification.png" />
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Label fx:id="dayLabel" styleClass="day-label" />
+                <Label fx:id="dateLabel" styleClass="date-label" />
             </HBox>
         </HBox>
     </top>
@@ -111,9 +141,9 @@
 
             <!-- Welcome Section -->
             <HBox alignment="CENTER_LEFT" spacing="20">
-                <Label text="Welcome back, " styleClass="welcome-text"/>
-                <Label fx:id="userNameLabel" styleClass="welcome-text"/>
-                <Text text="👋" styleClass="welcome-emoji"/>
+                <Text text="Welcome back, " styleClass="welcome-text"/>
+                <Text fx:id="userNameText" styleClass="welcome-text"/>
+                <Text text="👋" styleClass="welcome-text"/>
             </HBox>
             
             <!-- Invitations Section -->

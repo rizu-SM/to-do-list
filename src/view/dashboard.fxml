@@ -112,7 +112,7 @@
                     <Cursor fx:constant="HAND" />
                 </cursor>
             </Button>
-            <Button styleClass="sidebar-button" text="⚙️ Settings" onAction="#openSettings">
+            <Button styleClass="sidebar-button" text="⚙️ Settings" onAction="#showSettings">
                 <cursor>
                     <Cursor fx:constant="HAND" />
                 </cursor>

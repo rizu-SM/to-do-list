@@ -789,4 +789,38 @@ public class DatabaseManager {
         }
         return false;
     }
+
+    // Méthode pour mettre à jour les informations d'un utilisateur
+    public static boolean updateUserInfo(int userId, String nom, String prenom, String email, char sex) {
+        String query = "UPDATE users SET nom = ?, prenom = ?, email = ?, sex = ? WHERE id = ?";
+        
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+            
+            // Set user parameters
+            stmt.setString(1, nom);
+            stmt.setString(2, prenom);
+            stmt.setString(3, email);
+            stmt.setString(4, String.valueOf(sex));
+            stmt.setInt(5, userId);
+            
+            // Execute the update
+            int affectedRows = stmt.executeUpdate();
+            
+            if (affectedRows > 0) {
+                // Add a notification for the user
+                String message = String.format(
+                    "Vos informations ont été mises à jour avec succès. Nouveau nom: %s %s",
+                    prenom, nom
+                );
+                addNotification(userId, "Mise à jour du profil", message);
+                return true;
+            }
+            return false;
+            
+        } catch (SQLException e) {
+            System.out.println("Erreur lors de la mise à jour des informations utilisateur : " + e.getMessage());
+            return false;
+        }
+    }
 }

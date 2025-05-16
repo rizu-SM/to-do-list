@@ -25,48 +25,61 @@
 
     <!-- Top Bar -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="10" styleClass="top-bar">
+        <HBox alignment="CENTER_LEFT" spacing="15" styleClass="top-bar">
             <padding>
                 <Insets top="10" right="20" bottom="10" left="20"/>
             </padding>
             <TextFlow>
-                <Text styleClass="title-red" text="Dash" />
-                <Text styleClass="title-black" text="board" />
+                <Text styleClass="title-red" text="Invite"/>
+                <Text styleClass="title-black" text=" Members"/>
             </TextFlow>
-            <TextField fx:id="searchField" promptText="Search your task here..." styleClass="search-field" />
-            <Button styleClass="icon-button">
-                <graphic>
-                    <ImageView fitWidth="15" fitHeight="15">
-                        <Image url="@images/loupe.png" />
-                    </ImageView>
-                </graphic>
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-            </Button>
-            <Button styleClass="icon-button">
-                <graphic>
-                    <ImageView fitWidth="15" fitHeight="15">
-                        <Image url="@images/calendar.png" />
-                    </ImageView>
-                </graphic>
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-            </Button>
-            <Button styleClass="icon-button">
-                <graphic>
-                    <ImageView fitWidth="15" fitHeight="15">
-                        <Image url="@images/notification.png" />
-                    </ImageView>
-                </graphic>
-                <cursor>
-                    <Cursor fx:constant="HAND" />
-                </cursor>
-            </Button>
-            <Region HBox.hgrow="ALWAYS" />
-            <Label fx:id="dayLabel" styleClass="day-label" />
-            <Label fx:id="dateLabel" styleClass="date-label" />
+            
+            <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">
+                <TextField fx:id="searchField" promptText="Search members..." styleClass="search-field"/>
+                <Button styleClass="icon-button">
+                    <graphic>
+                        <ImageView fitWidth="15" fitHeight="15">
+                            <Image url="@images/loupe.png"/>
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+
+                <!-- Coins Display -->
+                <HBox fx:id="coinsContainer" styleClass="coins-container">
+                    <Text styleClass="coins-icon" text="🪙"/>
+                    <Label fx:id="coinsAmount" styleClass="coins-amount" text="0"/>
+                    <Label styleClass="coins-label" text="coins"/>
+                </HBox>
+
+                <Button styleClass="icon-button">
+                    <graphic>
+                        <ImageView fitWidth="15" fitHeight="15">
+                            <Image url="@images/calendar.png" />
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="icon-button" onAction="#showNotifications">
+                    <graphic>
+                        <ImageView fitWidth="15" fitHeight="15">
+                            <Image url="@images/notification.png" />
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+            </HBox>
+
+            <HBox spacing="10" alignment="CENTER_RIGHT">
+                <Label fx:id="dayLabel" styleClass="day-label" />
+                <Label fx:id="dateLabel" styleClass="date-label" />
+            </HBox>
         </HBox>
     </top>
 
@@ -82,22 +95,12 @@
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </VBox.margin>
                 </Label>
-                <Label fx:id="userNameLabel" styleClass="user-name">
-                    <VBox.margin>
-                        <Insets left="20.0" bottom="5.0" />
-                    </VBox.margin>
-                </Label>
-                <Label fx:id="userEmailLabel" styleClass="user-email">
-                    <VBox.margin>
-                        <Insets left="20.0" bottom="20.0" />
-                    </VBox.margin>
-                </Label>
-                <Button styleClass="sidebar-button" text="🏠 Dashboard" onAction="#handleDashboardButton">
+                <Button styleClass="sidebar-button" text="🏠 Dashboard" onAction="#showDashboard">
                     <cursor>
                         <Cursor fx:constant="HAND" />
                     </cursor>
                 </Button>
-                <Button styleClass="sidebar-button" text="📝 My Task" onAction="#showNewTask">
+                <Button styleClass="sidebar-button" text="📝 My Task" onAction="#showMyTasks">
                     <cursor>
                         <Cursor fx:constant="HAND" />
                     </cursor>
@@ -107,13 +110,18 @@
                         <Cursor fx:constant="HAND" />
                     </cursor>
                 </Button>
-                <Button styleClass="sidebar-button" text="⚙ Settings" onAction="#handleSettingsButton">
+                <Button styleClass="sidebar-button" text="🔔 Notifications" onAction="#showNotifications">
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+                <Button styleClass="sidebar-button" text="⚙️ Settings" onAction="#openSettings">
                     <cursor>
                         <Cursor fx:constant="HAND" />
                     </cursor>
                 </Button>
                 <Region VBox.vgrow="ALWAYS" />
-                <Button styleClass="sidebar-button" text="🚪 Logout" onAction="#handleLogoutButton">
+                <Button styleClass="sidebar-button" text="🚪 Logout" onAction="#handleLogout">
                     <cursor>
                         <Cursor fx:constant="HAND" />
                     </cursor>
@@ -137,8 +145,9 @@
 
             <!-- Welcome Section -->
             <HBox alignment="CENTER_LEFT" spacing="20">
-                <Label text="Invite New Member" styleClass="welcome-text"/>
-                <Region HBox.hgrow="ALWAYS" />
+                <Text text="Welcome back, " styleClass="welcome-text"/>
+                <Text fx:id="userNameText" styleClass="welcome-text"/>
+                <Text text="👋" styleClass="welcome-text"/>
             </HBox>
 
             <!-- Invite Form Section -->
@@ -146,13 +155,13 @@
                 <padding>
                     <Insets top="40" />
                 </padding>
-            <Label text="Send an invite to a new member" styleClass="title-label"/>
-            <TextField fx:id="emailField" promptText="Email" styleClass="text-field"/>
+                <Label text="Send an invite to a new member" styleClass="title-label"/>
+                <TextField fx:id="emailField" promptText="Email" styleClass="text-field"/>
                 <Button fx:id="sendInviteButton" onAction="#handleSendInvite" styleClass="modern-button-base" text="Send Invite">
-               <cursor>
-                  <Cursor fx:constant="HAND" />
-               </cursor>
-            </Button>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
                 <Label fx:id="statusLabel" styleClass="status-label" wrapText="true"/>
 
                 <!-- Invited Members List Card -->

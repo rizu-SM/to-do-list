@@ -72,26 +72,23 @@ public class NotesController extends BaseController implements Initializable {
     }
 
     @FXML
-    private void handleLogout(ActionEvent event) {
+    protected void handleLogout(javafx.event.ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/view/FirstPage.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            
-            // Store current window dimensions
-            double currentWidth = stage.getWidth();
-            double currentHeight = stage.getHeight();
-            
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-            
-            // Restore window dimensions
-            stage.setWidth(currentWidth);
-            stage.setHeight(currentHeight);
-            
-            stage.show();
+            // Clear the user session
+            UserSession.getInstance().clearSession();
+
+            // Load the SignIn view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignIn.fxml"));
+            Parent root = loader.load();
+
+            // Get the current scene and update it
+            Scene scene = ((Node) event.getSource()).getScene();
+            if (scene != null) {
+                scene.setRoot(root);
+            }
         } catch (IOException e) {
             e.printStackTrace();
-            showError("Error during logout");
+            showError("Failed to logout: " + e.getMessage());
         }
     }
 

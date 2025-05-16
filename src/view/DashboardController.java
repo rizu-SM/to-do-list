@@ -289,26 +289,45 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    private void openSettings(ActionEvent event) {
+    private void showSettings(ActionEvent event) {
         try {
+            System.out.println("=== Loading Settings Page (showSettings) ===");
+            System.out.println("Getting BorderPane...");
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            if (borderPane == null) {
+                System.out.println("ERROR: BorderPane is null!");
+                return;
+            }
+            
+            System.out.println("Creating FXMLLoader for Settings.fxml");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
+            
+            System.out.println("Loading FXML...");
             Parent settingsRoot = loader.load();
             
-            // Obtenir le contrôleur des paramètres
+            System.out.println("Getting SettingsController...");
             SettingsController settingsController = loader.getController();
+            if (settingsController == null) {
+                System.out.println("ERROR: SettingsController is null!");
+                return;
+            }
+            System.out.println("SettingsController obtained successfully");
+            
+            System.out.println("Setting dashboard controller...");
             settingsController.setDashboardController(this);
             
-            // Remplacer le contenu actuel par les paramètres
-            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            System.out.println("Setting center content...");
             borderPane.setCenter(settingsRoot);
+            System.out.println("=== Settings Page Loaded Successfully ===");
             
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Erreur");
-            alert.setHeaderText("Impossible de charger les paramètres");
-            alert.setContentText("Détails de l'erreur : " + ex.getMessage());
-            alert.showAndWait();
+        } catch (IOException e) {
+            System.out.println("ERROR loading settings: " + e.getMessage());
+            e.printStackTrace();
+            showError("Error loading settings");
+        } catch (Exception e) {
+            System.out.println("UNEXPECTED ERROR loading settings: " + e.getMessage());
+            e.printStackTrace();
+            showError("Unexpected error loading settings");
         }
     }
 
@@ -398,30 +417,23 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @FXML
-    private void handleLogout(ActionEvent event) {
+    protected void handleLogout(javafx.event.ActionEvent event) {
         try {
             // Clear the user session
             UserSession.getInstance().clearSession();
-            
+
             // Load the SignIn view
-            URL resourceUrl = getClass().getResource("SignIn.fxml");
-            if (resourceUrl == null) {
-                throw new IOException("Could not find SignIn.fxml");
-            }
-            
-            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignIn.fxml"));
             Parent root = loader.load();
-            
+
             // Get the current scene and update it
             Scene scene = ((Node) event.getSource()).getScene();
             if (scene != null) {
                 scene.setRoot(root);
-            } else {
-                throw new IOException("Could not get current scene");
             }
         } catch (IOException e) {
             e.printStackTrace();
-            showError("Error during logout: " + e.getMessage());
+            showError("Failed to logout: " + e.getMessage());
         }
     }
 
@@ -496,25 +508,6 @@ public class DashboardController extends BaseController implements Initializable
         } catch (IOException e) {
             e.printStackTrace();
             showError("Error loading new task view");
-        }
-    }
-
-    @FXML
-    private void showSettings(ActionEvent event) {
-        try {
-            // Get the current BorderPane
-            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
-            
-            // Load the Settings.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
-            Parent settingsRoot = loader.load();
-            
-            // Replace only the center content
-            borderPane.setCenter(settingsRoot);
-            
-        } catch (IOException e) {
-            e.printStackTrace();
-            showError("Error loading settings");
         }
     }
 
@@ -718,7 +711,7 @@ public class DashboardController extends BaseController implements Initializable
     }
 
     @Override
-    protected void showError(String message) {
+    public void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);

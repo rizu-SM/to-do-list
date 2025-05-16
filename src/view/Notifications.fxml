@@ -4,6 +4,10 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.text.TextFlow?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.text.Font?>
 
 <VBox spacing="20" styleClass="main-content" stylesheets="@Notifications.css"
       xmlns="http://javafx.com/javafx"
@@ -14,14 +18,19 @@
         <Insets top="20" right="20" bottom="20" left="20"/>
     </padding>
 
-    <!-- Header -->
-    <HBox alignment="CENTER_LEFT" spacing="20">
-        <Text text="🔔 Notifications" styleClass="section-title"/>
+    <!-- Header Section -->
+    <HBox alignment="CENTER_LEFT" spacing="20" styleClass="header-section">
+        <TextFlow>
+            <Text styleClass="title-red" text="🔔 "/>
+            <Text styleClass="title-black" text="Notifications"/>
+        </TextFlow>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button text="Mark All as Read" styleClass="mark-read-button"/>
     </HBox>
 
     <!-- Notifications Container -->
     <ScrollPane fitToWidth="true" styleClass="modern-scroll-pane" VBox.vgrow="ALWAYS">
-        <VBox fx:id="notificationsContainer" spacing="15" styleClass="notifications-container">
+        <VBox fx:id="notificationsContainer" spacing="15" styleClass="notifications-container" alignment="CENTER">
             <padding>
                 <Insets top="10" right="10" bottom="10" left="10"/>
             </padding>

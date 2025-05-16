@@ -303,20 +303,23 @@ public class InviteMemberController extends BaseController implements Initializa
     }
 
     @FXML
-    private void handleLogoutButton(ActionEvent event) {
+    protected void handleLogout(javafx.event.ActionEvent event) {
         try {
-            Node source = (Node) event.getSource();
-            Stage stage = (Stage) source.getScene().getWindow();
-            
+            // Clear the user session
+            UserSession.getInstance().clearSession();
+
+            // Load the SignIn view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignIn.fxml"));
-            Parent signInRoot = loader.load();
-            
-            Scene scene = new Scene(signInRoot);
-            stage.setScene(scene);
-            stage.show();
-        } catch (Exception e) {
+            Parent root = loader.load();
+
+            // Get the current scene and update it
+            Scene scene = ((Node) event.getSource()).getScene();
+            if (scene != null) {
+                scene.setRoot(root);
+            }
+        } catch (IOException e) {
             e.printStackTrace();
-            showError("Error during logout");
+            showError("Failed to logout: " + e.getMessage());
         }
     }
 

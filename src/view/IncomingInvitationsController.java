@@ -22,16 +22,47 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.io.IOException;
 import javafx.scene.layout.BorderPane;
-import view.SharedTasksController;
+import javafx.scene.text.Text;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class IncomingInvitationsController extends BaseController implements Initializable {
     @FXML private VBox invitationsContainer;
+    @FXML private Text userNameText;
+    @FXML private Label dayLabel;
+    @FXML private Label dateLabel;
+    @FXML private Label coinsAmount;
     private TaskController taskController;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         taskController = new TaskController();
         loadIncomingInvitations();
+        updateUserInfo();
+        updateDateTime();
+        updateCoins();
+    }
+
+    @Override
+    public void updateUserInfo() {
+        super.updateUserInfo();
+        User currentUser = UserSession.getInstance().getCurrentUser();
+        if (currentUser != null && userNameText != null) {
+            userNameText.setText(currentUser.getPrenom() + " " + currentUser.getNom());
+        }
+    }
+
+    private void updateDateTime() {
+        LocalDateTime now = LocalDateTime.now();
+        dayLabel.setText(now.format(DateTimeFormatter.ofPattern("EEEE")));
+        dateLabel.setText(now.format(DateTimeFormatter.ofPattern("MMM dd, yyyy")));
+    }
+
+    private void updateCoins() {
+        User currentUser = UserSession.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            coinsAmount.setText(String.valueOf(currentUser.getCoin()));
+        }
     }
 
     private BorderPane getRootBorderPane(Node source) {
@@ -39,7 +70,7 @@ public class IncomingInvitationsController extends BaseController implements Ini
     }
 
     @FXML
-    private void showNotifications(javafx.event.ActionEvent event) {
+    public void showNotifications(javafx.event.ActionEvent event) {
         try {
             // Load only the center content of Notifications view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Notifications.fxml"));
@@ -61,7 +92,7 @@ public class IncomingInvitationsController extends BaseController implements Ini
     }
 
     @FXML
-    private void showDashboard(javafx.event.ActionEvent event) {
+    public void showDashboard(javafx.event.ActionEvent event) {
         try {
             // Load only the center content of Dashboard view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
@@ -83,7 +114,7 @@ public class IncomingInvitationsController extends BaseController implements Ini
     }
 
     @FXML
-    private void showMyTasks(javafx.event.ActionEvent event) {
+    public void showMyTasks(javafx.event.ActionEvent event) {
         try {
             // Load only the center content of MyTasks view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyTasks.fxml"));
@@ -105,7 +136,7 @@ public class IncomingInvitationsController extends BaseController implements Ini
     }
 
     @FXML
-    private void showNotes(javafx.event.ActionEvent event) {
+    public void showNotes(javafx.event.ActionEvent event) {
         try {
             // Load only the center content of Notes view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Notes.fxml"));
@@ -127,7 +158,7 @@ public class IncomingInvitationsController extends BaseController implements Ini
     }
 
     @FXML
-    private void openSettings(javafx.event.ActionEvent event) {
+    public void openSettings(javafx.event.ActionEvent event) {
         try {
             // Load only the center content of Settings view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
@@ -149,7 +180,7 @@ public class IncomingInvitationsController extends BaseController implements Ini
     }
 
     @FXML
-    private void handleLogout(javafx.event.ActionEvent event) {
+    public void handleLogout(javafx.event.ActionEvent event) {
         try {
             UserSession.getInstance().clearSession();
             // For logout, we want to completely change the scene
@@ -198,57 +229,74 @@ public class IncomingInvitationsController extends BaseController implements Ini
         HBox buttonBox = new HBox(10);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         
+        Button acceptButton = new Button("Accept");
+        acceptButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 8 15;");
+        
+        Button deleteButton = new Button("Delete");
+        deleteButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-padding: 8 15;");
+        
         Button viewTasksButton = new Button("View Tasks");
         viewTasksButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-padding: 8 15;");
-        viewTasksButton.setOnAction(e -> handleViewTasks(owner));
+        viewTasksButton.setVisible(false);
         
-        buttonBox.getChildren().add(viewTasksButton);
-        HBox.setHgrow(infoBox, Priority.ALWAYS);
+        buttonBox.getChildren().addAll(acceptButton, deleteButton, viewTasksButton);
+        
+        acceptButton.setOnAction(e -> {
+            // Hide accept and delete buttons
+            acceptButton.setVisible(false);
+            deleteButton.setVisible(false);
+            // Show view tasks button
+            viewTasksButton.setVisible(true);
+        });
+        
+        deleteButton.setOnAction(e -> {
+            // Remove the invitation from database
+            if (taskController.removeInvitationByEmail(UserSession.getInstance().getCurrentUser().getId(), owner.getEmail())) {
+                // Remove the card from the UI
+                invitationsContainer.getChildren().remove(card);
+                
+                // If no more invitations, show the "no invitations" message
+                if (invitationsContainer.getChildren().isEmpty()) {
+                    Label noInvitationsLabel = new Label("No incoming invitations");
+                    noInvitationsLabel.getStyleClass().add("no-invitations-label");
+                    invitationsContainer.getChildren().add(noInvitationsLabel);
+                }
+            } else {
+                showError("Failed to delete invitation");
+            }
+        });
+        
+        viewTasksButton.setOnAction(e -> {
+            try {
+                // Load the SharedTasks view
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SharedTasks.fxml"));
+                Parent root = loader.load();
+                
+                // Get the controller and set the owner info
+                SharedTasksController controller = loader.getController();
+                controller.setTaskOwner(owner);
+                
+                // Get the current scene and set the new root
+                Scene scene = invitationsContainer.getScene();
+                scene.setRoot(root);
+            } catch (IOException ex) {
+                ex.printStackTrace();
+                showError("Failed to load shared tasks: " + ex.getMessage());
+            }
+        });
+        
         card.getChildren().addAll(infoBox, buttonBox);
+        HBox.setHgrow(infoBox, Priority.ALWAYS);
+        
         invitationsContainer.getChildren().add(card);
     }
 
-    private void handleViewTasks(User owner) {
-        try {
-            System.out.println("Loading SharedTasks.fxml for user: " + owner.getEmail());
-            
-            // Load the SharedTasks view
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SharedTasks.fxml"));
-            if (loader.getLocation() == null) {
-                throw new IOException("Could not find SharedTasks.fxml");
-            }
-            
-            Parent sharedTasksRoot = loader.load();
-            
-            // Get the controller and set the task owner
-            SharedTasksController controller = loader.getController();
-            controller.setTaskOwner(owner);
-            
-            // Get the current stage
-            Stage stage = (Stage) invitationsContainer.getScene().getWindow();
-            
-            // Create a new scene with the shared tasks view
-            Scene scene = new Scene(sharedTasksRoot);
-            stage.setScene(scene);
-            stage.show();
-            
-        } catch (IOException ex) {
-            System.err.println("Error loading SharedTasks.fxml: " + ex.getMessage());
-            ex.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Could not load shared tasks");
-            alert.setContentText("Details: " + ex.getMessage());
-            alert.showAndWait();
-        }
-    }
-
     @Override
-    protected void showError(String message) {
+    public void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
     }
-} 
+}

@@ -48,4 +48,27 @@ public class AuthController {
     public User getLoggedInUser() {
         return loggedInUser;
     }
+
+    // Méthode pour mettre à jour le profil utilisateur
+    public boolean updateProfile(int userId, String nom, String prenom, String email, char sex) {
+        if (!ValidationUtil.isValidEmail(email)) {
+            System.out.println("Email invalide : " + email);
+            return false;
+        }
+
+        boolean success = DatabaseManager.updateUserInfo(userId, nom, prenom, email, sex);
+        if (success && loggedInUser != null && loggedInUser.getId() == userId) {
+            // Mettre à jour l'utilisateur connecté
+            loggedInUser = new User(
+                userId,
+                nom,
+                prenom,
+                sex,
+                email,
+                loggedInUser.getMotdepass(),
+                loggedInUser.getCoin()
+            );
+        }
+        return success;
+    }
 }
