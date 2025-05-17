@@ -1,0 +1,115 @@
+/* SignUp Page Styles */
+
+.root {
+    -fx-background-color: linear-gradient(to bottom right, #fa7f59, #ebdf53);
+}
+
+
+.signup-container {
+    -fx-background-color: linear-gradient(to bottom right, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.75));
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 20, 0.2, 0, 4);
+    -fx-padding: 40;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(255, 255, 255, 0.3);
+    -fx-border-width: 1.5;
+    -fx-background-insets: 0;
+    -fx-max-width: 460;
+    -fx-max-height: 600;
+}
+
+
+/* Title styling */
+.title {
+    -fx-font-size: 30px;
+    -fx-font-weight: bold;
+    -fx-fill: #ff7043;
+    -fx-padding: 0 0 25 0;
+    -fx-effect: dropshadow(gaussian, rgba(255,112,67,0.3), 6, 0, 0, 1);
+}
+
+/* Input fields */
+.input-field {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 12;
+    -fx-border-color: #fff176;
+    -fx-border-radius: 12;
+    -fx-border-width: 1.5;
+    -fx-padding: 12;
+    -fx-font-size: 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.04), 4, 0, 0, 0);
+}
+
+.input-field:focused {
+    -fx-border-color: #ff7043;
+    -fx-border-width: 2;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(255,112,67,0.25), 9, 0, 0, 0);
+}
+
+/* SignUp button */
+.signup-button {
+    -fx-background-color: linear-gradient(to right, #fff176, #ff7043);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-background-radius: 12;
+    -fx-padding: 12 30;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(255,112,67,0.35), 12, 0, 0, 0);
+}
+
+.signup-button:hover {
+    -fx-background-color: linear-gradient(to right, #ff7043, #fff176);
+    -fx-effect: dropshadow(gaussian, rgba(255,112,67,0.45), 15, 0, 0, 0);
+}
+
+/* Error message */
+.error-label {
+    -fx-text-fill: #d32f2f;
+    -fx-font-size: 13px;
+    -fx-padding: 6 0 0 0;
+}
+
+/* Links */
+.hyperlink {
+    -fx-text-fill: #ff7043;
+    -fx-underline: false;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #fbc02d;
+    -fx-underline: true;
+}
+
+/* Image container */
+
+
+/* Checkbox styling */
+.check-box {
+    -fx-text-fill: #555;
+    -fx-font-size: 14px;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #fff176;
+    -fx-border-radius: 4;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #ff7043;
+    -fx-border-color: #ff7043;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+/* Text styling */
+.text {
+    -fx-fill: #555;
+    -fx-font-size: 14px;
+}

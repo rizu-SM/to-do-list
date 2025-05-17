@@ -142,7 +142,24 @@ public class DashboardController extends BaseController implements Initializable
             allTasks = taskController.getTasksByUserId(UserSession.getInstance().getCurrentUser().getId());
             System.out.println("Loaded " + allTasks.size() + " tasks");
             
-            // Display all existing tasks
+            // Debug: Print all tasks before filtering
+            System.out.println("\n=== All Tasks Before Filtering ===");
+            allTasks.forEach(task -> System.out.println("Task: " + task.getTitre() + " - Status: " + task.getStatut()));
+            
+            // Filter out completed tasks
+            allTasks = allTasks.stream()
+                .filter(task -> {
+                    boolean isActive = !task.getStatut().equals("Terminé");
+                    System.out.println("Filtering task: " + task.getTitre() + " - Status: " + task.getStatut() + " - Is Active: " + isActive);
+                    return isActive;
+                })
+                .collect(java.util.stream.Collectors.toList());
+            
+            // Debug: Print filtered tasks
+            System.out.println("\n=== Active Tasks After Filtering ===");
+            allTasks.forEach(task -> System.out.println("Active Task: " + task.getTitre() + " - Status: " + task.getStatut()));
+            
+            // Display filtered tasks
             displayAllTasks();
         }
 
@@ -203,7 +220,9 @@ public class DashboardController extends BaseController implements Initializable
     // Method to display all tasks
     private void displayAllTasks() {
         taskContainer.getChildren().clear();
+        System.out.println("\n=== Displaying Tasks ===");
         for (Task task : allTasks) {
+            System.out.println("Displaying task: " + task.getTitre() + " - Status: " + task.getStatut());
             createTaskCard(task);
         }
     }
@@ -703,7 +722,24 @@ public class DashboardController extends BaseController implements Initializable
         TaskController taskController = new TaskController();
         allTasks = taskController.getTasksByUserId(UserSession.getInstance().getCurrentUser().getId());
         
-        // Display all tasks
+        // Debug: Print all tasks before filtering
+        System.out.println("\n=== All Tasks Before Filtering (Refresh) ===");
+        allTasks.forEach(task -> System.out.println("Task: " + task.getTitre() + " - Status: " + task.getStatut()));
+        
+        // Filter out completed tasks
+        allTasks = allTasks.stream()
+            .filter(task -> {
+                boolean isActive = !task.getStatut().equals("Terminé");
+                System.out.println("Filtering task: " + task.getTitre() + " - Status: " + task.getStatut() + " - Is Active: " + isActive);
+                return isActive;
+            })
+            .collect(java.util.stream.Collectors.toList());
+        
+        // Debug: Print filtered tasks
+        System.out.println("\n=== Active Tasks After Filtering (Refresh) ===");
+        allTasks.forEach(task -> System.out.println("Active Task: " + task.getTitre() + " - Status: " + task.getStatut()));
+        
+        // Display filtered tasks
         displayAllTasks();
         
         // Update task statistics

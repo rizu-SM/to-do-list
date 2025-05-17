@@ -1,0 +1,117 @@
+/* Login Page Styles */
+.root {
+    -fx-background-color: linear-gradient(to bottom right, #fe7f59, #fbdf53);
+}
+
+/* Main container */
+.login-container {
+    -fx-background-color: linear-gradient(to bottom right, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.6));
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 25, 0, 0, 0);
+    -fx-padding: 30;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(255, 255, 255, 0.5);
+    -fx-border-width: 2;
+    -fx-background-insets: 0;
+    -fx-max-width: 400;
+    -fx-max-height: 500;
+    -fx-margin-right:100px;
+}
+
+/* Title styling */
+.title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-fill: #FF7043;
+    -fx-padding: 0 0 25 0;
+    -fx-effect: dropshadow(gaussian, rgba(255,112,67,0.2), 5, 0, 0, 1);
+}
+
+/* Input fields */
+.input-field {
+    -fx-background-color: rgba(255, 255, 255, 0.8);
+    -fx-background-radius: 10;
+    -fx-border-color: #FFD600;
+    -fx-border-radius: 10;
+    -fx-border-width: 1.5;
+    -fx-padding: 12;
+    -fx-font-size: 14px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 5, 0, 0, 0);
+}
+
+.input-field:focused {
+    -fx-border-color: #FF7043;
+    -fx-border-width: 2;
+    -fx-background-color: white;
+    -fx-effect: dropshadow(gaussian, rgba(255,112,67,0.2), 8, 0, 0, 0);
+}
+
+/* Login button */
+.login-button {
+    -fx-background-color: linear-gradient(to right, #FFD600, #FF7043);
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-padding: 12 30;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(255,112,67,0.3), 10, 0, 0, 0);
+}
+
+.login-button:hover {
+    -fx-background-color: linear-gradient(to right, #FF7043, #FFD600);
+    -fx-effect: dropshadow(gaussian, rgba(255,112,67,0.4), 15, 0, 0, 0);
+}
+
+/* Error message */
+.error-label {
+    -fx-text-fill: #ff0000;
+    -fx-font-size: 12px;
+    -fx-padding: 5 0 0 0;
+}
+
+/* Links */
+.hyperlink {
+    -fx-text-fill: #FF7043;
+    -fx-underline: false;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+}
+
+.hyperlink:hover {
+    -fx-text-fill: #FFD600;
+    -fx-underline: true;
+}
+
+/* Image container */
+.image-container {
+    -fx-background-radius: 20;
+    -fx-padding: 20;
+}
+
+/* Checkbox styling */
+.check-box {
+    -fx-text-fill: #666666;
+    -fx-font-size: 14px;
+}
+
+.check-box .box {
+    -fx-background-color: white;
+    -fx-border-color: #FFD600;
+    -fx-border-radius: 3;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #FF7043;
+    -fx-border-color: #FF7043;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+/* Text styling */
+.text {
+    -fx-fill: #666666;
+    -fx-font-size: 14px;
+}
