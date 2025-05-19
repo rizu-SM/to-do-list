@@ -11,38 +11,34 @@
 
 /* 🎨 Barre latérale (Sidebar) */
 .sidebar {
-    -fx-background-color: #FF6F61;
-    -fx-padding: 20px;
-    -fx-spacing: 15px;
-    -fx-alignment: center-left;
+    -fx-background-color: linear-gradient(to bottom, #fe7f59 80%, #fe7f59c0 100%);
+    -fx-background-radius: 18;
+    -fx-padding: 40 0 40 0;
+    -fx-spacing: 25;
+    -fx-min-width: 220;
+    -fx-max-width: 260;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.10), 12, 0, 0, 4);
 }
 
 .sidebar-button {
     -fx-background-color: transparent;
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-alignment: CENTER-LEFT;
-    -fx-padding: 10px 20px;
-    -fx-background-radius: 5px;
-    -fx-pref-width: 200px;
+    -fx-text-fill: #fff;
+    -fx-font-size: 1.15em;
+    -fx-background-radius: 10;
+    -fx-padding: 12 0 12 18;
     -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-min-width: 230;
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-family: "Segoe UI", Arial, sans-serif;
+    -fx-font-weight: 500;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4, 0, 0, 2);
+    -fx-transition: background-color 0.2s;
 }
 
-.sidebar-button:hover {
-    -fx-background-color: rgba(255, 255, 255, 0.2);
-    -fx-cursor: hand;
-}
-
-.sidebar-button:pressed {
-    -fx-background-color: rgba(255, 255, 255, 0.3);
-    -fx-cursor: hand;
-}
-
-.sidebar-button:selected, .sidebar-button:focused {
-    -fx-background-color: white;
-    -fx-text-fill: #FF6F61;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
+.sidebar-button:hover, .sidebar-button:selected {
+    -fx-background-color: #fbdf53;
+    -fx-text-fill: #fe7f59;
 }
 
 .user-name {
@@ -264,13 +260,22 @@
 
 /* Task Card Styles */
 .task-card {
-    -fx-background-color: white;
+    -fx-background-color: gray;
     -fx-padding: 15px;
     -fx-spacing: 10;
     -fx-background-radius: 10;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 10, 0, 0, 3);
+    -fx-scale-x: 1;
+    -fx-scale-y: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 10, 0, 0, 3);
+    -fx-transition: all 0.5s;
 }
 
+.task-card:hover {
+    -fx-background-color: #e7c996;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.05;
+    -fx-cursor: hand;
+}
 .task-date {
     -fx-text-fill: #666666;
     -fx-font-size: 12px;
@@ -1033,8 +1038,8 @@
 }
 
 .modern-scroll-pane {
-    -fx-background-color: transparent;
     -fx-background: transparent;
+    -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
 
@@ -1319,4 +1324,73 @@
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);
     -fx-scale-x: 0.98;
     -fx-scale-y: 0.98;
+}
+
+/* ======= SETTINGS PAGE ======= */
+.settings-container {
+    -fx-background-color: #fffbe6;
+    -fx-background-radius: 18px;
+    -fx-padding: 40px 40px 40px 40px;
+    -fx-spacing: 30px;
+    -fx-effect: dropshadow(gaussian, rgba(254,127,89,0.10), 12, 0, 0, 4);
+    -fx-max-width: 600px;
+    -fx-alignment: center;
+    -fx-border-color: #fbdf53;
+    -fx-border-width: 2px;
+    -fx-border-radius: 18px;
+    -fx-margin: 30px auto;
+}
+
+.settings-title {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fe7f59;
+    -fx-padding: 0 0 20px 0;
+}
+
+.settings-section {
+    -fx-background-color: #fff;
+    -fx-background-radius: 12px;
+    -fx-padding: 24px;
+    -fx-spacing: 18px;
+    -fx-effect: dropshadow(gaussian, rgba(251,223,83,0.08), 8, 0, 0, 2);
+    -fx-border-color: #fbdf53;
+    -fx-border-width: 1.5px;
+    -fx-border-radius: 12px;
+}
+
+.settings-label {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #fe7f59;
+}
+
+.settings-field {
+    -fx-background-color: #fffbe6;
+    -fx-border-color: #fbdf53;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 8px 14px;
+    -fx-font-size: 15px;
+    -fx-text-fill: #333;
+}
+
+.settings-button {
+    -fx-background-color: linear-gradient(to right, #fbdf53, #fe7f59);
+    -fx-text-fill: #fff;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10px;
+    -fx-padding: 10px 24px;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(254,127,89,0.18), 8, 0, 0, 2);
+    -fx-border-color: transparent;
+    -fx-margin: 10px 0 0 0;
+}
+
+.settings-button:hover {
+    -fx-background-color: linear-gradient(to right, #fe7f59, #fbdf53);
+    -fx-text-fill: #fff;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
 }
