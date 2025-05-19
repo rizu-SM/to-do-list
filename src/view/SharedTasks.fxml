@@ -8,10 +8,11 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.Cursor?>
 
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="view.SharedTasksController"
+            fx:controller="Controller.SharedTasksController"
             stylesheets="@../view/style.css">
     
     <!-- Top Bar -->

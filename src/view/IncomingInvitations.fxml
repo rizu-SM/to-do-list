@@ -17,7 +17,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="view.IncomingInvitationsController">
+<BorderPane stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.IncomingInvitationsController">
 
     <!-- Top Bar -->
     <top>
@@ -31,18 +31,6 @@
             </TextFlow>
             
             <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">
-                <TextField fx:id="searchField" promptText="Search invitations..." styleClass="search-field"/>
-                <Button styleClass="icon-button">
-                    <graphic>
-                        <ImageView fitWidth="15" fitHeight="15">
-                            <Image url="@images/loupe.png"/>
-                        </ImageView>
-                    </graphic>
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
-
                 <!-- Coins Display -->
                 <HBox fx:id="coinsContainer" styleClass="coins-container">
                     <Text styleClass="coins-icon" text="🪙"/>
@@ -159,4 +147,4 @@
         </VBox>
     </center>
 
-</BorderPane> 
+</BorderPane>

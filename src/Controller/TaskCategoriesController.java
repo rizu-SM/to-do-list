@@ -1,4 +1,4 @@
-package view;
+package Controller;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -22,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import Controller.CategoryManager;
 
 import java.io.IOException;
 import java.util.List;
@@ -60,7 +61,7 @@ public class TaskCategoriesController {
                         
                         alert.showAndWait().ifPresent(response -> {
                             if (response == ButtonType.OK) {
-                                categoryManager.deleteCategory(item);
+                                categoryManager.removeCategory(item);
                             }
                         });
                     }
@@ -99,7 +100,7 @@ public class TaskCategoriesController {
             return;
         }
         
-        if (categoryManager.hasCategory(newCategory)) {
+        if (categoryManager.getCategories().contains(newCategory)) {
             showAlert("Error", "This category already exists");
             return;
         }

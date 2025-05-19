@@ -1,4 +1,4 @@
-package view;
+package Controller;
 
 import java.io.IOException;
 
@@ -91,4 +91,4 @@ public class SignUpController {
         stage.setScene(scene);
         stage.show();
     }
-}
+} 

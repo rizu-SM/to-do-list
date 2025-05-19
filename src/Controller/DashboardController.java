@@ -1,4 +1,4 @@
-package view;
+package Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,7 +22,7 @@ import util.UserSession;
 import Model.Task;
 import Controller.TaskController;
 import Model.DatabaseManager;
-
+import Controller.MyTasksController;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -569,10 +569,7 @@ public class DashboardController extends BaseController implements Initializable
             
             // Load the Notifications.fxml
             System.out.println("Loading Notifications.fxml...");
-            URL resourceUrl = getClass().getResource("/view/Notifications.fxml");
-            System.out.println("Resource URL: " + resourceUrl);
-            
-            FXMLLoader loader = new FXMLLoader(resourceUrl);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Notifications.fxml"));
             System.out.println("Created FXMLLoader");
             
             Parent notificationsRoot = loader.load();
@@ -597,7 +594,11 @@ public class DashboardController extends BaseController implements Initializable
     private void updateTaskStatistics() {
         taskStatsContainer.getChildren().clear();
         
-        if (allTasks.isEmpty()) {
+        // Get all tasks including completed ones for statistics
+        TaskController taskController = new TaskController();
+        List<Task> allTasksForStats = taskController.getTasksByUserId(UserSession.getInstance().getCurrentUser().getId());
+        
+        if (allTasksForStats.isEmpty()) {
             Label noTasksLabel = new Label("No tasks available");
             noTasksLabel.getStyleClass().add("task-status-title");
             taskStatsContainer.getChildren().add(noTasksLabel);
@@ -609,16 +610,16 @@ public class DashboardController extends BaseController implements Initializable
         titleLabel.getStyleClass().add("task-status-title");
         taskStatsContainer.getChildren().add(titleLabel);
 
-        int totalTasks = allTasks.size();
+        int totalTasks = allTasksForStats.size();
         System.out.println("Total tasks: " + totalTasks);
         
         // Debug: Print all task statuses
         System.out.println("All task statuses:");
-        allTasks.forEach(task -> System.out.println("Task: " + task.getTitre() + " - Status: " + task.getStatut() + " (raw: " + task.getStatut() + ")"));
+        allTasksForStats.forEach(task -> System.out.println("Task: " + task.getTitre() + " - Status: " + task.getStatut() + " (raw: " + task.getStatut() + ")"));
 
-        int completedTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("Terminé")).count();
-        int inProgressTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("En cours")).count();
-        int notStartedTasks = (int) allTasks.stream().filter(task -> task.getStatut().equals("À faire")).count();
+        int completedTasks = (int) allTasksForStats.stream().filter(task -> task.getStatut().equals("Terminé")).count();
+        int inProgressTasks = (int) allTasksForStats.stream().filter(task -> task.getStatut().equals("En cours")).count();
+        int notStartedTasks = (int) allTasksForStats.stream().filter(task -> task.getStatut().equals("À faire")).count();
 
         System.out.println("Completed tasks: " + completedTasks);
         System.out.println("In progress tasks: " + inProgressTasks);
@@ -754,5 +755,4 @@ public class DashboardController extends BaseController implements Initializable
         alert.setContentText(message);
         alert.showAndWait();
     }
-}
-
+} 

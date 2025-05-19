@@ -1,8 +1,8 @@
-package view;
+package Controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Label; // ✅ Correct import
+import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -10,10 +10,10 @@ import java.time.format.DateTimeFormatter;
 public class AccountInfoController {
 
     @FXML
-    private VBox formContainer; // Lien avec le FXML
+    private VBox formContainer;
 
     @FXML
-    private Label dateLabel; // ✅ S'assurer que cet ID correspond à celui du FXML
+    private Label dateLabel;
 
     @FXML
     private void handleGoBack() {
@@ -30,8 +30,7 @@ public class AccountInfoController {
 
     private void updateDate() {
         LocalDate today = LocalDate.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE,"
-        		                                                   + " MMM dd yyyy"); // Exemple : "Friday, Mar 08 2025"
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMM dd yyyy"); // Exemple : "Friday, Mar 08 2025"
         dateLabel.setText(today.format(formatter));
     }
-}
+} 

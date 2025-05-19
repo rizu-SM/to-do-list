@@ -1,4 +1,4 @@
-package view;
+package Controller;
 
 import java.net.URL;
 import java.util.List;
@@ -23,6 +23,7 @@ import java.util.function.Consumer;
 import util.UserSession;
 import javafx.scene.control.ListView;
 import Controller.NoteController;
+import Controller.NewNoteController;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.layout.Priority;
@@ -178,8 +179,8 @@ public class NotesController extends BaseController implements Initializable {
             // Get the current BorderPane
             BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
             
-            // Load the NewNote.fxml
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/NewNote.fxml"));
+            // Load the NewNote.fxml using relative path
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("../view/NewNote.fxml"));
             Parent newNoteRoot = loader.load();
             
             // Get the controller and set up the callback
@@ -197,13 +198,13 @@ public class NotesController extends BaseController implements Initializable {
             showError("Error opening new note view");
         }
     }
-
     @Override
-    protected void showError(String message) {
+    public void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
     }
+
 } 

@@ -1,4 +1,4 @@
-package view;
+package Controller;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -30,6 +30,7 @@ import javafx.scene.layout.HBox;
 import javafx.geometry.Pos;
 import Controller.TaskController;
 import Model.User;
+import javafx.scene.text.Text;
 
 public class InviteMemberController extends BaseController implements Initializable {
 
@@ -46,12 +47,6 @@ public class InviteMemberController extends BaseController implements Initializa
     private Label dateLabel;
 
     @FXML
-    private Label userNameLabel;
-
-    @FXML
-    private Label userEmailLabel;
-
-    @FXML
     private Label statusLabel;
 
     @FXML
@@ -59,6 +54,12 @@ public class InviteMemberController extends BaseController implements Initializa
 
     @FXML
     private Label invitedCountLabel;
+
+    @FXML
+    private Text userNameText;
+
+    @FXML
+    private Label coinsAmount;
 
     private TaskController taskController;
     private List<String> invitedEmails = new ArrayList<>();
@@ -73,12 +74,19 @@ public class InviteMemberController extends BaseController implements Initializa
         dayLabel.setText(formatDay(today.getDayOfWeek().toString()));
         dateLabel.setText(today.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
 
-        // Update user info from session
+        // Update user info and coins
         updateUserInfo();
+        updateCoins();
 
         statusLabel.setText("");
-
         loadInvitedMembers();
+    }
+
+    private void updateCoins() {
+        User currentUser = UserSession.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            coinsAmount.setText(String.valueOf(currentUser.getCoin()));
+        }
     }
 
     private String formatDay(String day) {
@@ -87,9 +95,11 @@ public class InviteMemberController extends BaseController implements Initializa
 
     @Override
     public void updateUserInfo() {
-        UserSession session = UserSession.getInstance();
-        userNameLabel.setText(session.getFirstName());
-        userEmailLabel.setText(session.getEmail());
+        super.updateUserInfo();
+        User currentUser = UserSession.getInstance().getCurrentUser();
+        if (currentUser != null && userNameText != null) {
+            userNameText.setText(currentUser.getPrenom() + " " + currentUser.getNom());
+        }
     }
 
     private void updateInvitedCount() {
@@ -181,124 +191,112 @@ public class InviteMemberController extends BaseController implements Initializa
     }
 
     @FXML
-    private void handleDashboardButton(ActionEvent event) {
+    private void showDashboard(ActionEvent event) {
         try {
-            Node source = (Node) event.getSource();
-            Stage stage = (Stage) source.getScene().getWindow();
-            
+            // Load only the center content of Dashboard view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Parent dashboardRoot = loader.load();
+            Parent dashboardContent = loader.load();
             
-            Scene scene = new Scene(dashboardRoot);
-            stage.setScene(scene);
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            showError("Error loading dashboard");
+            // Extract only the center content if it's a BorderPane
+            if (dashboardContent instanceof BorderPane) {
+                dashboardContent = (Parent) ((BorderPane) dashboardContent).getCenter();
+            }
+            
+            // Get the current BorderPane and update its center
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            if (borderPane != null) {
+                borderPane.setCenter(dashboardContent);
+            }
+        } catch (IOException e) {
+            showError("Failed to load dashboard: " + e.getMessage());
         }
     }
 
     @FXML
-    private void showNewTask(ActionEvent event) {
+    private void showMyTasks(ActionEvent event) {
         try {
-            // Load the main layout that contains the navigation
-            FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Parent mainRoot = mainLoader.load();
-            BorderPane mainBorderPane = (BorderPane) mainRoot;
-
-            // Load the NewTask content
-            FXMLLoader contentLoader = new FXMLLoader(getClass().getResource("/view/NewTask.fxml"));
-            Parent newTaskContent = contentLoader.load();
-
-            // Set the NewTask content in the center of the BorderPane
-            mainBorderPane.setCenter(newTaskContent);
-
-            // Update the scene
-            Scene scene = new Scene(mainBorderPane);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
+            // Load only the center content of MyTasks view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyTasks.fxml"));
+            Parent myTasksContent = loader.load();
+            
+            // Extract only the center content if it's a BorderPane
+            if (myTasksContent instanceof BorderPane) {
+                myTasksContent = (Parent) ((BorderPane) myTasksContent).getCenter();
+            }
+            
+            // Get the current BorderPane and update its center
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            if (borderPane != null) {
+                borderPane.setCenter(myTasksContent);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-            showError("Error loading new task view");
+            showError("Failed to load my tasks: " + e.getMessage());
         }
     }
 
     @FXML
     private void showNotes(ActionEvent event) {
         try {
-            // Load the main layout that contains the navigation
-            FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Parent mainRoot = mainLoader.load();
-            BorderPane mainBorderPane = (BorderPane) mainRoot;
-
-            // Load the Notes content
-            FXMLLoader contentLoader = new FXMLLoader(getClass().getResource("/view/Notes.fxml"));
-            Parent notesContent = contentLoader.load();
-
-            // Set the Notes content in the center of the BorderPane
-            mainBorderPane.setCenter(notesContent);
-
-            // Update the scene
-            Scene scene = new Scene(mainBorderPane);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
+            // Load only the center content of Notes view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Notes.fxml"));
+            Parent notesContent = loader.load();
+            
+            // Extract only the center content if it's a BorderPane
+            if (notesContent instanceof BorderPane) {
+                notesContent = (Parent) ((BorderPane) notesContent).getCenter();
+            }
+            
+            // Get the current BorderPane and update its center
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            if (borderPane != null) {
+                borderPane.setCenter(notesContent);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-            showError("Error loading notes view");
+            showError("Failed to load notes: " + e.getMessage());
         }
     }
 
     @FXML
-    private void handleTaskCategoriesButton(ActionEvent event) {
+    private void showNotifications(ActionEvent event) {
         try {
-            // Load the main layout that contains the navigation
-            FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Parent mainRoot = mainLoader.load();
-            BorderPane mainBorderPane = (BorderPane) mainRoot;
-
-            // Load the TaskCategories content
-            FXMLLoader contentLoader = new FXMLLoader(getClass().getResource("/view/TaskCategories.fxml"));
-            Parent categoriesContent = contentLoader.load();
-
-            // Set the TaskCategories content in the center of the BorderPane
-            mainBorderPane.setCenter(categoriesContent);
-
-            // Update the scene
-            Scene scene = new Scene(mainBorderPane);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
+            // Load only the center content of Notifications view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Notifications.fxml"));
+            Parent notificationsContent = loader.load();
+            
+            // Extract only the center content if it's a BorderPane
+            if (notificationsContent instanceof BorderPane) {
+                notificationsContent = (Parent) ((BorderPane) notificationsContent).getCenter();
+            }
+            
+            // Get the current BorderPane and update its center
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            if (borderPane != null) {
+                borderPane.setCenter(notificationsContent);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-            showError("Error loading task categories view");
+            showError("Failed to load notifications: " + e.getMessage());
         }
     }
 
     @FXML
-    private void handleSettingsButton(ActionEvent event) {
+    private void openSettings(ActionEvent event) {
         try {
-            // Load the main layout that contains the navigation
-            FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
-            Parent mainRoot = mainLoader.load();
-            BorderPane mainBorderPane = (BorderPane) mainRoot;
+            // Load only the center content of Settings view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
+            Parent settingsContent = loader.load();
             
-            // Load the Settings content
-            FXMLLoader contentLoader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
-            Parent settingsContent = contentLoader.load();
+            // Extract only the center content if it's a BorderPane
+            if (settingsContent instanceof BorderPane) {
+                settingsContent = (Parent) ((BorderPane) settingsContent).getCenter();
+            }
             
-            // Set the Settings content in the center of the BorderPane
-            mainBorderPane.setCenter(settingsContent);
-
-            // Update the scene
-            Scene scene = new Scene(mainBorderPane);
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(scene);
-            stage.show();
+            // Get the current BorderPane and update its center
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            if (borderPane != null) {
+                borderPane.setCenter(settingsContent);
+            }
         } catch (IOException e) {
-            e.printStackTrace();
-            showError("Error loading settings view");
+            showError("Failed to load settings: " + e.getMessage());
         }
     }
 
@@ -326,14 +324,10 @@ public class InviteMemberController extends BaseController implements Initializa
     private void showStatusMessage(String message, boolean isSuccess) {
         statusLabel.setText(message);
         statusLabel.setTextFill(isSuccess ? Color.GREEN : Color.RED);
-        }
+    }
 
     @Override
-    protected void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+    public void showError(String message) {
+        super.showError(message);
     }
 }

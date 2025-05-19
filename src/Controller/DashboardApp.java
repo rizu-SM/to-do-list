@@ -1,5 +1,4 @@
-package view;
-
+package Controller;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -14,7 +13,7 @@ public class DashboardApp extends Application {
     public void start(Stage primaryStage) {
         try {
             // CHANGER LES CHEMINS SELON TA NOUVELLE ORGANISATION
-            URL fxmlLocation = getClass().getResource("dashboard.fxml");
+            URL fxmlLocation = getClass().getResource("/view/dashboard.fxml");
             if (fxmlLocation == null) {
                 throw new IllegalStateException("FXML file not found! Check the path.");
             }
@@ -23,17 +22,11 @@ public class DashboardApp extends Application {
             Scene scene = new Scene(root);
 
             // Charger le CSS
-            URL cssLocation = getClass().getResource("style.css");
+            URL cssLocation = getClass().getResource("/view/style.css");
             
-
             if (cssLocation != null) {
-               
-            	scene.getStylesheets().add(getClass().getResource("dashboard.css").toExternalForm());
-
-                
-
+                scene.getStylesheets().add(getClass().getResource("/view/dashboard.css").toExternalForm());
                 System.out.println("CSS chargé depuis : " + cssLocation.toExternalForm());
-
             }
             System.out.println("FXML chargé correctement !");
 
@@ -48,4 +41,4 @@ public class DashboardApp extends Application {
     public static void main(String[] args) {
         launch(args);
     }
-}
+} 

@@ -1,4 +1,4 @@
-package view;
+package Controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -23,6 +23,7 @@ public class BaseController {
     @FXML
     private Label completedPercent, inProgressPercent, notStartedPercent;
 
+  
     public void updateUserInfo() {
         UserSession session = UserSession.getInstance();
         if (userNameLabel != null) {
@@ -33,7 +34,9 @@ public class BaseController {
         }
     }
 
-    protected void updateUserInfo(String fullName, String email) {
+
+    
+    public void updateUserInfo(String fullName, String email) {
         UserSession session = UserSession.getInstance();
         session.setFullName(fullName);
         session.setEmail(email);
@@ -81,7 +84,7 @@ public class BaseController {
             UserSession.getInstance().clearSession();
 
             // Load the SignIn view
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("SignIn.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignIn.fxml"));
             Parent root = loader.load();
 
             // Get the current scene and update it
@@ -90,7 +93,8 @@ public class BaseController {
                 scene.setRoot(root);
             }
         } catch (IOException e) {
+            e.printStackTrace();
             showError("Failed to logout: " + e.getMessage());
         }
     }
-}
+} 

@@ -28,18 +28,6 @@
     -fx-fill: #2c3e50;
 }
 
-.mark-read-button {
-    -fx-background-color: #FF6B6B;
-    -fx-text-fill: white;
-    -fx-font-size: 14px;
-    -fx-padding: 8px 16px;
-    -fx-background-radius: 5px;
-    -fx-cursor: hand;
-}
-
-.mark-read-button:hover {
-    -fx-background-color: #ff5252;
-}
 
 /* Notification Cards */
 .notification-card {

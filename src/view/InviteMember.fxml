@@ -20,7 +20,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="view.InviteMemberController"
+            fx:controller="Controller.InviteMemberController"
             stylesheets="@style.css">
 
     <!-- Top Bar -->
@@ -35,18 +35,6 @@
             </TextFlow>
             
             <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">
-                <TextField fx:id="searchField" promptText="Search members..." styleClass="search-field"/>
-                <Button styleClass="icon-button">
-                    <graphic>
-                        <ImageView fitWidth="15" fitHeight="15">
-                            <Image url="@images/loupe.png"/>
-                        </ImageView>
-                    </graphic>
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
-
                 <!-- Coins Display -->
                 <HBox fx:id="coinsContainer" styleClass="coins-container">
                     <Text styleClass="coins-icon" text="🪙"/>

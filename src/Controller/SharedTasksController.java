@@ -1,4 +1,4 @@
-package view;
+package Controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -219,17 +219,18 @@ public class SharedTasksController extends BaseController {
         try {
             // Clear the user session
             UserSession.getInstance().clearSession();
-            
+
             // Load the SignIn view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignIn.fxml"));
             Parent root = loader.load();
-            
+
             // Get the current scene and update it
             Scene scene = ((Node) event.getSource()).getScene();
             if (scene != null) {
                 scene.setRoot(root);
             }
         } catch (IOException e) {
+            e.printStackTrace();
             showError("Failed to logout: " + e.getMessage());
         }
     }

@@ -8,7 +8,7 @@
 
 <VBox spacing="20" styleClass="main-content" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml"
-      fx:controller="view.NewNoteController"
+      fx:controller="Controller.NewNoteController"
       stylesheets="@style.css">
     
     <padding>

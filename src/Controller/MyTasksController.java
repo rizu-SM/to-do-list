@@ -1,4 +1,4 @@
-package view;
+package Controller;
 
 import util.UserSession;
 import java.net.URL;
@@ -24,7 +24,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import Model.Task;
-import view.DashboardController;
+import java.util.ArrayList;
+import Controller.DashboardController;
 import javafx.geometry.Pos;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -34,6 +35,7 @@ import Controller.TaskController;
 import util.UserSession;
 import Model.DatabaseManager;
 import javafx.application.Platform;
+import Controller.BaseController;
 
 public class MyTasksController extends BaseController implements Initializable {
     @FXML
@@ -92,11 +94,13 @@ public class MyTasksController extends BaseController implements Initializable {
 
     private void setupFilters() {
         // Setup priority filter
+        priorityFilter.getItems().clear();
         priorityFilter.getItems().addAll("All Priorities", "Faible", "Moyenne", "Haute");
         priorityFilter.setValue("All Priorities");
         priorityFilter.setOnAction(e -> applyFilters());
 
         // Setup status filter
+        statusFilter.getItems().clear();
         statusFilter.getItems().addAll("All Statuses", "À faire", "En cours", "Terminé");
         statusFilter.setValue("All Statuses");
         statusFilter.setOnAction(e -> applyFilters());
@@ -104,17 +108,10 @@ public class MyTasksController extends BaseController implements Initializable {
         // Setup date filter
         dateFilter.setOnAction(e -> applyFilters());
 
-        // Setup priority combo box
-        priorityFilter.getItems().addAll("Faible", "Moyenne", "Haute");
-        priorityFilter.setValue("Moyenne");
-
         // Setup category filter
+        categoryFilter.getItems().clear();
         categoryFilter.getItems().addAll("Default");
         categoryFilter.setValue("Default");
-
-        // Setup status combo box
-        statusFilter.getItems().addAll("À faire", "En cours", "Terminé");
-        statusFilter.setValue("À faire");
     }
 
     @FXML
@@ -139,6 +136,9 @@ public class MyTasksController extends BaseController implements Initializable {
     }
 
     private void applyFilters() {
+        if (allTasks == null) {
+            allTasks = new ArrayList<>();
+        }
         List<Task> filteredTasks = allTasks.stream()
             .filter(task -> filterByPriority(task))
             .filter(task -> filterByStatus(task))
@@ -149,16 +149,19 @@ public class MyTasksController extends BaseController implements Initializable {
     }
 
     private boolean filterByPriority(Task task) {
+        if (task == null || priorityFilter.getValue() == null) return true;
         String priority = priorityFilter.getValue();
         return priority.equals("All Priorities") || task.getPriorite().equals(priority);
     }
 
     private boolean filterByStatus(Task task) {
+        if (task == null || statusFilter.getValue() == null) return true;
         String status = statusFilter.getValue();
         return status.equals("All Statuses") || task.getStatut().equals(status);
     }
 
     private boolean filterByDate(Task task) {
+        if (task == null || dateFilter.getValue() == null) return true;
         LocalDate selectedDate = dateFilter.getValue();
         return selectedDate == null || task.getDateLimite().equals(selectedDate);
     }
@@ -171,6 +174,7 @@ public class MyTasksController extends BaseController implements Initializable {
             createTaskCard(task);
         });
     }
+
 
     private void createTaskCard(Task task) {
         System.out.println("Creating card for task: " + task.getTitre());
@@ -491,6 +495,33 @@ public class MyTasksController extends BaseController implements Initializable {
         }
     }
 
+    
+    @FXML
+    private void handleSettingsButton(ActionEvent event) {
+        try {
+            // Load the main layout that contains the navigation
+            FXMLLoader mainLoader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
+            Parent mainRoot = mainLoader.load();
+            BorderPane mainBorderPane = (BorderPane) mainRoot;
+            
+            // Load the Settings content
+            FXMLLoader contentLoader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
+            Parent settingsContent = contentLoader.load();
+            
+            // Set the Settings content in the center of the BorderPane
+            mainBorderPane.setCenter(settingsContent);
+
+            // Update the scene
+            Scene scene = new Scene(mainBorderPane);
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.setScene(scene);
+            stage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            showError("Error loading settings view");
+        }
+    }
+    
     @FXML
     private void handleDeleteTask() {
         Task selectedTask = taskTableView.getSelectionModel().getSelectedItem();
@@ -526,7 +557,7 @@ public class MyTasksController extends BaseController implements Initializable {
     }
 
     @Override
-    protected void showError(String message) {
+    public void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error");
         alert.setHeaderText(null);
@@ -564,7 +595,7 @@ public class MyTasksController extends BaseController implements Initializable {
     }
 
     @Override
-    protected void updateUserInfo() {
+    public void updateUserInfo() {
         if (currentUser != null && welcomeLabel != null) {
             welcomeLabel.setText("Welcome, " + currentUser.getPrenom() + " " + currentUser.getNom());
         }

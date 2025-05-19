@@ -1,4 +1,4 @@
-package view;
+package Controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -180,17 +180,22 @@ public class IncomingInvitationsController extends BaseController implements Ini
     }
 
     @FXML
-    public void handleLogout(javafx.event.ActionEvent event) {
+    protected void handleLogout(javafx.event.ActionEvent event) {
         try {
+            // Clear the user session
             UserSession.getInstance().clearSession();
-            // For logout, we want to completely change the scene
+
+            // Load the SignIn view
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SignIn.fxml"));
             Parent root = loader.load();
+
+            // Get the current scene and update it
             Scene scene = ((Node) event.getSource()).getScene();
             if (scene != null) {
                 scene.setRoot(root);
             }
         } catch (IOException e) {
+            e.printStackTrace();
             showError("Failed to logout: " + e.getMessage());
         }
     }

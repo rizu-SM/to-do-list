@@ -1,4 +1,4 @@
-package view;
+package Controller;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -9,6 +9,16 @@ import javafx.stage.Stage;
 import Model.User;
 import Controller.AuthController;
 import util.UserSession;
+import Controller.DashboardController;
+import javafx.scene.layout.*;
+import javafx.scene.Node;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import util.UserSession;
+import Model.DatabaseManager;
+import Model.Task;
 
 public class LoginController {
     @FXML private TextField emailField;
@@ -29,7 +39,7 @@ public class LoginController {
                 UserSession.getInstance().setUser(user);
                 
                 // Load the dashboard
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("dashboard.fxml"));
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/dashboard.fxml"));
                 Parent dashboard = loader.load();
 
                 // Get the controller and initialize

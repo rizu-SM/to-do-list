@@ -1,4 +1,4 @@
-package view;
+package Controller;
 
 import java.io.IOException;
 
@@ -17,20 +17,23 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import Controller.DashboardController;
+import Model.DatabaseManager;
+import Model.Task;
 
 public class MainController {
 
     @FXML
-    private TextField emailField; // Correspond à l'élément TextField pour l'email dans le FXML
+    private TextField emailField;
 
     @FXML
-    private PasswordField passwordField; // Correspond à l'élément PasswordField pour le mot de passe dans le FXML
+    private PasswordField passwordField;
 
     @FXML
-    private Label label; // Correspond à l'élément Label dans le FXML
+    private Label label;
 
     @FXML
-    private Button button; // Correspond à l'élément Button dans le FXML
+    private Button button;
 
     private Stage stage;
     private Scene scene;
@@ -116,7 +119,6 @@ public class MainController {
             showAlert("Login Failed", "Invalid email or password.", Alert.AlertType.WARNING);
         }
     }
-	
 
     private void showAlert(String title, String message, Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
@@ -124,4 +126,4 @@ public class MainController {
         alert.setContentText(message);
         alert.showAndWait();
     }
-}
+} 
