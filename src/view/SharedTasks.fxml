@@ -13,7 +13,7 @@
 <BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="Controller.SharedTasksController"
-            stylesheets="@../view/style.css">
+            stylesheets="@style.css">
     
     <!-- Top Bar -->
     <top>
@@ -96,4 +96,4 @@
             </ScrollPane>
         </VBox>
     </center>
-</BorderPane> 
+</BorderPane>

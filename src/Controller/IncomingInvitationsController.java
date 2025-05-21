@@ -25,6 +25,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.text.Text;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import javafx.event.ActionEvent;
 
 public class IncomingInvitationsController extends BaseController implements Initializable {
     @FXML private VBox invitationsContainer;
@@ -114,24 +115,32 @@ public class IncomingInvitationsController extends BaseController implements Ini
     }
 
     @FXML
-    public void showMyTasks(javafx.event.ActionEvent event) {
+    
+    private void showMyTasks(javafx.event.ActionEvent  event) {
         try {
-            // Load only the center content of MyTasks view
+            // Get the current BorderPane
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            
+            // Load the MyTasks.fxml
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MyTasks.fxml"));
-            Parent myTasksContent = loader.load();
+            Parent myTasksRoot = loader.load();
             
-            // Extract only the center content if it's a BorderPane
-            if (myTasksContent instanceof BorderPane) {
-                myTasksContent = (Parent) ((BorderPane) myTasksContent).getCenter();
+            // Get the controller and set the current user
+            MyTasksController controller = loader.getController();
+            UserSession session = UserSession.getInstance();
+            if (session.getCurrentUser() != null) {
+                controller.setUser(session.getCurrentUser());
+            } else {
+                showError("No user logged in");
+                return;
             }
             
-            // Get the current BorderPane and update its center
-            BorderPane borderPane = getRootBorderPane((Node) event.getSource());
-            if (borderPane != null) {
-                borderPane.setCenter(myTasksContent);
-            }
+            // Replace only the center content
+            borderPane.setCenter(myTasksRoot);
+            
         } catch (IOException e) {
-            showError("Failed to load my tasks: " + e.getMessage());
+            e.printStackTrace();
+            showError("Error loading my tasks view");
         }
     }
 
@@ -158,24 +167,45 @@ public class IncomingInvitationsController extends BaseController implements Ini
     }
 
     @FXML
-    public void openSettings(javafx.event.ActionEvent event) {
+    private void showSettings(ActionEvent event) {
         try {
-            // Load only the center content of Settings view
+            System.out.println("=== Loading Settings Page (showSettings) ===");
+            System.out.println("Getting BorderPane...");
+            BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
+            if (borderPane == null) {
+                System.out.println("ERROR: BorderPane is null!");
+                return;
+            }
+            
+            System.out.println("Creating FXMLLoader for Settings.fxml");
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
-            Parent settingsContent = loader.load();
             
-            // Extract only the center content if it's a BorderPane
-            if (settingsContent instanceof BorderPane) {
-                settingsContent = (Parent) ((BorderPane) settingsContent).getCenter();
-            }
+            System.out.println("Loading FXML...");
+            Parent settingsRoot = loader.load();
             
-            // Get the current BorderPane and update its center
-            BorderPane borderPane = getRootBorderPane((Node) event.getSource());
-            if (borderPane != null) {
-                borderPane.setCenter(settingsContent);
+            System.out.println("Getting SettingsController...");
+            SettingsController settingsController = loader.getController();
+            if (settingsController == null) {
+                System.out.println("ERROR: SettingsController is null!");
+                return;
             }
+            System.out.println("SettingsController obtained successfully");
+            
+            System.out.println("Setting dashboard controller...");
+            settingsController.setDashboardController(this);
+            
+            System.out.println("Setting center content...");
+            borderPane.setCenter(settingsRoot);
+            System.out.println("=== Settings Page Loaded Successfully ===");
+            
         } catch (IOException e) {
-            showError("Failed to load settings: " + e.getMessage());
+            System.out.println("ERROR loading settings: " + e.getMessage());
+            e.printStackTrace();
+            showError("Error loading settings");
+        } catch (Exception e) {
+            System.out.println("UNEXPECTED ERROR loading settings: " + e.getMessage());
+            e.printStackTrace();
+            showError("Unexpected error loading settings");
         }
     }
 
@@ -223,79 +253,51 @@ public class IncomingInvitationsController extends BaseController implements Ini
         card.setStyle("-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 5;");
         card.setAlignment(Pos.CENTER_LEFT);
         card.setMaxWidth(Double.MAX_VALUE);
-        
+
         VBox infoBox = new VBox(5);
         Label nameLabel = new Label(owner.getPrenom() + " " + owner.getNom());
         nameLabel.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
         Label emailLabel = new Label(owner.getEmail());
         emailLabel.setStyle("-fx-text-fill: #666666;");
         infoBox.getChildren().addAll(nameLabel, emailLabel);
-        
+
         HBox buttonBox = new HBox(10);
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
-        
-        Button acceptButton = new Button("Accept");
-        acceptButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-padding: 8 15;");
-        
-        Button deleteButton = new Button("Delete");
-        deleteButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white; -fx-padding: 8 15;");
-        
+
         Button viewTasksButton = new Button("View Tasks");
         viewTasksButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white; -fx-padding: 8 15;");
-        viewTasksButton.setVisible(false);
-        
-        buttonBox.getChildren().addAll(acceptButton, deleteButton, viewTasksButton);
-        
-        acceptButton.setOnAction(e -> {
-            // Hide accept and delete buttons
-            acceptButton.setVisible(false);
-            deleteButton.setVisible(false);
-            // Show view tasks button
-            viewTasksButton.setVisible(true);
-        });
-        
-        deleteButton.setOnAction(e -> {
-            // Remove the invitation from database
-            if (taskController.removeInvitationByEmail(UserSession.getInstance().getCurrentUser().getId(), owner.getEmail())) {
-                // Remove the card from the UI
-                invitationsContainer.getChildren().remove(card);
-                
-                // If no more invitations, show the "no invitations" message
-                if (invitationsContainer.getChildren().isEmpty()) {
-                    Label noInvitationsLabel = new Label("No incoming invitations");
-                    noInvitationsLabel.getStyleClass().add("no-invitations-label");
-                    invitationsContainer.getChildren().add(noInvitationsLabel);
-                }
-            } else {
-                showError("Failed to delete invitation");
-            }
-        });
-        
+        viewTasksButton.setVisible(true);
+
+        buttonBox.getChildren().add(viewTasksButton);
+
         viewTasksButton.setOnAction(e -> {
             try {
-                // Load the SharedTasks view
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/SharedTasks.fxml"));
-                Parent root = loader.load();
-                
-                // Get the controller and set the owner info
+                Parent sharedTasksContent = loader.load();
+
                 SharedTasksController controller = loader.getController();
                 controller.setTaskOwner(owner);
-                
-                // Get the current scene and set the new root
-                Scene scene = invitationsContainer.getScene();
-                scene.setRoot(root);
+
+                BorderPane borderPane = getRootBorderPane((Node) e.getSource());
+                if (borderPane != null) {
+                    Node centerContent = sharedTasksContent;
+                    if (sharedTasksContent instanceof BorderPane) {
+                        centerContent = ((BorderPane) sharedTasksContent).getCenter();
+                    }
+                    borderPane.setCenter(centerContent);
+                }
             } catch (IOException ex) {
                 ex.printStackTrace();
                 showError("Failed to load shared tasks: " + ex.getMessage());
             }
         });
-        
-        card.getChildren().addAll(infoBox, buttonBox);
+
         HBox.setHgrow(infoBox, Priority.ALWAYS);
-        
+        card.getChildren().addAll(infoBox, buttonBox);
         invitationsContainer.getChildren().add(card);
     }
 
+    // Correct showError method
     @Override
     public void showError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -304,4 +306,5 @@ public class IncomingInvitationsController extends BaseController implements Ini
         alert.setContentText(message);
         alert.showAndWait();
     }
+
 }
