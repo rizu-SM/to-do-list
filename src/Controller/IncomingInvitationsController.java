@@ -192,7 +192,6 @@ public class IncomingInvitationsController extends BaseController implements Ini
             System.out.println("SettingsController obtained successfully");
             
             System.out.println("Setting dashboard controller...");
-            settingsController.setDashboardController(this);
             
             System.out.println("Setting center content...");
             borderPane.setCenter(settingsRoot);

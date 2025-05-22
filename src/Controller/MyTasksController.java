@@ -20,9 +20,16 @@ import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import java.io.IOException;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.Label;
+
+
+
 import Model.Task;
 import java.util.ArrayList;
 import Controller.DashboardController;
@@ -109,9 +116,10 @@ public class MyTasksController extends BaseController implements Initializable {
         dateFilter.setOnAction(e -> applyFilters());
 
         // Setup category filter
-        categoryFilter.getItems().clear();
-        categoryFilter.getItems().addAll("Default");
-        categoryFilter.setValue("Default");
+            categoryFilter.getItems().clear();
+            categoryFilter.getItems().addAll("All Categories", "Sport", "Work", "Study", "Routin", "Other");
+            categoryFilter.setValue("All Categories");
+            categoryFilter.setOnAction(e -> applyFilters());
     }
 
     @FXML
@@ -143,6 +151,7 @@ public class MyTasksController extends BaseController implements Initializable {
             .filter(task -> filterByPriority(task))
             .filter(task -> filterByStatus(task))
             .filter(task -> filterByDate(task))
+            .filter(task -> filterByCategory(task))
             .collect(Collectors.toList());
         
         displayFilteredTasks(filteredTasks);
@@ -152,6 +161,11 @@ public class MyTasksController extends BaseController implements Initializable {
         if (task == null || priorityFilter.getValue() == null) return true;
         String priority = priorityFilter.getValue();
         return priority.equals("All Priorities") || task.getPriorite().equals(priority);
+    }
+    private boolean filterByCategory(Task task) {
+        if (task == null || categoryFilter.getValue() == null) return true;
+        String selectedCategory = categoryFilter.getValue();
+        return selectedCategory.equals("All Categories") || task.getCategorie().equals(selectedCategory);
     }
 
     private boolean filterByStatus(Task task) {
@@ -407,7 +421,7 @@ public class MyTasksController extends BaseController implements Initializable {
         LocalDate dueDate = dueDatePicker.getValue();
         String priority = priorityFilter.getValue();
         String status = statusFilter.getValue();
-        String category = "Default"; // You can add category selection later
+        String category = categoryFilter.getValue(); // You can add category selection later
 
         System.out.println("Creating new task with details:");
         System.out.println("Title: " + title);
@@ -485,6 +499,7 @@ public class MyTasksController extends BaseController implements Initializable {
         selectedTask.setDateLimite(dueDatePicker.getValue());
         selectedTask.setPriorite(priorityFilter.getValue());
         selectedTask.setStatut(statusFilter.getValue());
+        selectedTask.setCategorie(categoryFilter.getValue());
 
         if (taskController.editTask(selectedTask)) {
             loadTasks(); // Reload all tasks to reflect changes

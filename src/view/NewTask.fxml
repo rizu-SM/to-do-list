@@ -19,17 +19,17 @@
    <children>
       <Pane layoutX="26.0" layoutY="14.0" prefHeight="533.0" prefWidth="581.0" style="-fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #A1A3AB; -fx-border-width: 1px;" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="26.0" AnchorPane.rightAnchor="29.0" AnchorPane.topAnchor="14.0">
          <children>
-            <Text layoutX="40.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add new task" underline="true">
+            <Text layoutX="400.0" layoutY="23.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add new task" underline="true">
                <font>
                   <Font name="Trebuchet MS" size="14.0" />
                </font>
             </Text>
-            <Hyperlink fx:id="goBackLink" layoutX="501.0" layoutY="7.0" onAction="#goBackToDashboard" text="Go back" underline="true">
+            <Hyperlink fx:id="goBackLink" layoutX="821.0" layoutY="7.0" onAction="#goBackToDashboard" text="Go back" underline="true">
                <font>
                   <Font name="Trebuchet MS" size="14.0" />
                </font>
             </Hyperlink>
-            <Pane layoutX="40.0" layoutY="38.0" prefHeight="454.0" prefWidth="515.0" style="-fx-border-style: solid; -fx-border-color: A1A3AB; -fx-border-width: 1px;" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="38.0">
+            <Pane layoutX="400.0" layoutY="38.0" prefHeight="454.0" prefWidth="515.0" style="-fx-border-style: solid; -fx-border-color: A1A3AB; -fx-border-width: 1px;" AnchorPane.bottomAnchor="40.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0" AnchorPane.topAnchor="38.0">
                <children>
                   <Text layoutX="14.0" layoutY="18.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Title">
                      <font>
@@ -105,7 +105,7 @@
                   <TextArea fx:id="descriptionArea" layoutX="20.0" layoutY="258.0" style="-fx-border-color: A1A3AB; -fx-border-style: solid; -fx-border-radius: 5;" wrapText="true" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="258.0" />
                </children>
             </Pane>
-            <Button fx:id="doneButton" layoutX="281.0" layoutY="504.0" mnemonicParsing="false" onAction="#handleDoneButton" style="-fx-background-color: FF6767;" text="Done" textFill="WHITE">
+            <Button fx:id="doneButton" layoutX="661.0" layoutY="504.0" mnemonicParsing="false" onAction="#handleDoneButton" style="-fx-background-color: FF6767;" text="Done" textFill="WHITE">
                <font>
                   <Font name="Trebuchet MS" size="14.0" />
                </font>

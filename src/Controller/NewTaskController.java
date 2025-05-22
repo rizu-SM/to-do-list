@@ -23,6 +23,7 @@ import util.UserSession;
 import java.time.LocalDate;
 import Controller.TaskController;
 import javafx.collections.FXCollections;
+import javafx.scene.control.ButtonType;
 
 public class NewTaskController {
     @FXML private TextField titleField;
@@ -87,23 +88,23 @@ public class NewTaskController {
     private void handleDoneButton(ActionEvent event) {
         // Validation des champs
         StringBuilder errorMessage = new StringBuilder();
-        
+
         if (titleField.getText().trim().isEmpty()) {
             errorMessage.append("• Title is required\n");
         }
-        
+
         if (datePicker.getValue() == null) {
             errorMessage.append("• Date is required\n");
         }
-        
+
         if (descriptionArea.getText().trim().isEmpty()) {
             errorMessage.append("• Description is required\n");
         }
-        
+
         if (!extremePriority.isSelected() && !moderatePriority.isSelected() && !lowPriority.isSelected()) {
             errorMessage.append("• Please select a priority\n");
         }
-        
+
         // Si des erreurs sont trouvées, afficher l'alerte
         if (errorMessage.length() > 0) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -113,15 +114,41 @@ public class NewTaskController {
             alert.showAndWait();
             return;
         }
-        
+
+        LocalDate dateLimite = datePicker.getValue();
+        LocalDate today = LocalDate.now();
+
+        // Vérifie si la date choisie est dans le passé
+        if (dateLimite.isBefore(today)) {
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("Date in the past");
+            confirmAlert.setHeaderText("The selected date is before today.");
+            confirmAlert.setContentText("Are you sure you want to add the task with this date?");
+            ButtonType yesButton = new ButtonType("Yes");
+            ButtonType noButton = new ButtonType("No");
+            confirmAlert.getButtonTypes().setAll(yesButton, noButton);
+
+            // Affiche la boîte de dialogue et attends la réponse
+            confirmAlert.showAndWait().ifPresent(response -> {
+                if (response == yesButton) {
+                    addTaskAndNavigate(event, dateLimite);
+                }
+                // Si "No", ne fait rien
+            });
+            return;
+        }
+
+        // Si la date est correcte, ajoute la tâche normalement
+        addTaskAndNavigate(event, dateLimite);
+    }
+
+    // Nouvelle méthode pour factoriser l'ajout et la navigation
+    private void addTaskAndNavigate(ActionEvent event, LocalDate dateLimite) {
         try {
-            // Get task information
             String titre = titleField.getText();
             String description = descriptionArea.getText();
             String categorie = this.category.getValue();
-            LocalDate dateLimite = datePicker.getValue();
-            
-            // Determine priority using correct ENUM values
+
             String priorite;
             if (extremePriority.isSelected()) {
                 priorite = "Haute";
@@ -131,45 +158,36 @@ public class NewTaskController {
                 priorite = "Faible";
             }
 
-            // Get current user ID
             int userId = UserSession.getInstance().getCurrentUser().getId();
-
-            // Create new task with the correct constructor and ENUM values
             Task newTask = new Task(userId, titre, description, dateLimite, "À faire", priorite, categorie);
 
-            // Add the task to the database using TaskController
             TaskController taskController = new TaskController();
             if (taskController.addTask(newTask)) {
-                // Add the task to the static list in DashboardController
                 DashboardController.getAllTasks().add(0, newTask);
-                
-                // Navigate back to dashboard
+
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Dashboard.fxml"));
                     Parent dashboardRoot = loader.load();
-                    
                     Scene scene = ((Node) event.getSource()).getScene();
                     scene.setRoot(dashboardRoot);
-                    
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Alert alert = new Alert(AlertType.ERROR);
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
                     alert.setTitle("Navigation Error");
                     alert.setHeaderText("Could not return to dashboard");
                     alert.setContentText("An error occurred while trying to navigate back.");
                     alert.showAndWait();
                 }
             } else {
-                Alert alert = new Alert(AlertType.ERROR);
+                Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Error");
                 alert.setHeaderText("Could not create task");
                 alert.setContentText("Failed to save the task to the database.");
                 alert.showAndWait();
             }
-            
         } catch (Exception e) {
             e.printStackTrace();
-            Alert alert = new Alert(AlertType.ERROR);
+            Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setHeaderText("Could not create task");
             alert.setContentText("An error occurred while trying to save the task.");

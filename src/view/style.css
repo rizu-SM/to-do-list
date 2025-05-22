@@ -1075,7 +1075,7 @@
 .coins-container {
     -fx-background-color: linear-gradient(to right, #FFD700, #FFA500);
     -fx-background-radius: 20px;
-    -fx-padding: 8px 15px;
+    -fx-padding: 2px 8px;
     -fx-spacing: 8px;
     -fx-alignment: center;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 10, 0, 0, 2);

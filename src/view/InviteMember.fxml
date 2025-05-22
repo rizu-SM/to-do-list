@@ -24,17 +24,29 @@
             stylesheets="@style.css">
 
     <!-- Top Bar -->
-    <top>
+   <top>
         <HBox alignment="CENTER_LEFT" spacing="15" styleClass="top-bar">
             <padding>
                 <Insets top="10" right="20" bottom="10" left="20"/>
             </padding>
             <TextFlow>
-                <Text styleClass="title-red" text="Invite"/>
-                <Text styleClass="title-black" text=" Members"/>
+                <Text styleClass="title-red" text="Task" />
+                <Text styleClass="title-black" text="Spark" />
             </TextFlow>
             
             <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">
+            <TextField fx:id="searchField" promptText="Search your task here..." styleClass="search-field" />
+                <Button styleClass="icon-button">
+                    <graphic>
+                        <ImageView fitWidth="15" fitHeight="15">
+                            <Image url="@images/loupe.png" />
+                        </ImageView>
+                    </graphic>
+                    <cursor>
+                        <Cursor fx:constant="HAND" />
+                    </cursor>
+                </Button>
+
                 <!-- Coins Display -->
                 <HBox fx:id="coinsContainer" styleClass="coins-container">
                     <Text styleClass="coins-icon" text="🪙"/>
@@ -73,7 +85,7 @@
 
     <!-- Sidebar -->
     <left>
-        <VBox prefHeight="400.0" prefWidth="200.0" style="-fx-background-color: #FF6B6B;">
+        <VBox prefHeight="600.0" prefWidth="240.0" styleClass="sidebar">
             <children>
                 <Label text="To-Do List" textFill="WHITE">
                     <font>
@@ -83,40 +95,40 @@
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                     </VBox.margin>
                 </Label>
-                <Button styleClass="sidebar-button" text="🏠 Dashboard" onAction="#showDashboard">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
-                <Button styleClass="sidebar-button" text="📝 My Task" onAction="#showMyTasks">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
-                <Button styleClass="sidebar-button" text="📝 Notes" onAction="#showNotes">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
-                <Button styleClass="sidebar-button" text="🔔 Notifications" onAction="#showNotifications">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
-                <Button styleClass="sidebar-button" text="⚙️ Settings" onAction="#openSettings">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
+            <Button styleClass="sidebar-button" text="🏠 Dashboard" onAction="#showDashboard">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button styleClass="sidebar-button" text="📝 My Task" onAction="#showMyTasks">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button styleClass="sidebar-button" text="📝 Notes" onAction="#showNotes">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button styleClass="sidebar-button" text="🔔 Notifications" onAction="#showNotifications">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
+            <Button styleClass="sidebar-button" text="⚙️ Settings" onAction="#showSettings">
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
+            </Button>
                 <Region VBox.vgrow="ALWAYS" />
                 <Button styleClass="sidebar-button" text="🚪 Logout" onAction="#handleLogout">
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
+                <cursor>
+                    <Cursor fx:constant="HAND" />
+                </cursor>
                     <VBox.margin>
                         <Insets bottom="20.0" />
                     </VBox.margin>
-                </Button>
+            </Button>
             </children>
             <padding>
                 <Insets top="10" />

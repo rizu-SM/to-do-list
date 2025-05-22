@@ -27,8 +27,8 @@
                 <Insets top="10" right="20" bottom="10" left="20"/>
             </padding>
             <TextFlow>
-                <Text styleClass="title-red" text="Dash" />
-                <Text styleClass="title-black" text="board" />
+                <Text styleClass="title-red" text="Task" />
+                <Text styleClass="title-black" text="Spark" />
             </TextFlow>
             
             <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">
@@ -46,7 +46,9 @@
 
                 <!-- Coins Display -->
                 <HBox fx:id="coinsContainer" styleClass="coins-container">
-                    <Text styleClass="coins-icon" text="🪙"/>
+                    <ImageView fitWidth="35" fitHeight="35">
+                    <Image url="@images/coin.png" />
+                </ImageView>
                     <Label fx:id="coinsAmount" styleClass="coins-amount" text="0"/>
                     <Label styleClass="coins-label" text="coins"/>
                 </HBox>

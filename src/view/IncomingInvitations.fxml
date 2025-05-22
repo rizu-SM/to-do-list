@@ -27,8 +27,8 @@
                 <Insets top="10" right="20" bottom="10" left="20"/>
             </padding>
             <TextFlow>
-                <Text styleClass="title-red" text="Dash" />
-                <Text styleClass="title-black" text="board" />
+                <Text styleClass="title-red" text="Task" />
+                <Text styleClass="title-black" text="Spark" />
             </TextFlow>
             
             <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">

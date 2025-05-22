@@ -279,27 +279,43 @@ public class InviteMemberController extends BaseController implements Initializa
     }
 
     @FXML
-    private void openSettings(ActionEvent event) {
+    private void showSettings(ActionEvent event) {
         try {
-            // Load only the center content of Settings view
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
-            Parent settingsContent = loader.load();
-            
-            // Extract only the center content if it's a BorderPane
-            if (settingsContent instanceof BorderPane) {
-                settingsContent = (Parent) ((BorderPane) settingsContent).getCenter();
-            }
-            
-            // Get the current BorderPane and update its center
+            System.out.println("=== Loading Settings Page (showSettings) ===");
+            System.out.println("Getting BorderPane...");
             BorderPane borderPane = (BorderPane) ((Node) event.getSource()).getScene().getRoot();
-            if (borderPane != null) {
-                borderPane.setCenter(settingsContent);
+            if (borderPane == null) {
+                System.out.println("ERROR: BorderPane is null!");
+                return;
             }
+            
+            System.out.println("Creating FXMLLoader for Settings.fxml");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/Settings.fxml"));
+            
+            System.out.println("Loading FXML...");
+            Parent settingsRoot = loader.load();
+            
+            System.out.println("Getting SettingsController...");
+            SettingsController settingsController = loader.getController();
+            if (settingsController == null) {
+                System.out.println("ERROR: SettingsController is null!");
+                return;
+            }
+            
+            System.out.println("Setting center content...");
+            borderPane.setCenter(settingsRoot);
+            System.out.println("=== Settings Page Loaded Successfully ===");
+            
         } catch (IOException e) {
-            showError("Failed to load settings: " + e.getMessage());
+            System.out.println("ERROR loading settings: " + e.getMessage());
+            e.printStackTrace();
+            showError("Error loading settings");
+        } catch (Exception e) {
+            System.out.println("UNEXPECTED ERROR loading settings: " + e.getMessage());
+            e.printStackTrace();
+            showError("Unexpected error loading settings");
         }
     }
-
     @FXML
     protected void handleLogout(javafx.event.ActionEvent event) {
         try {
