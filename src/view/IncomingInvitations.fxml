@@ -20,7 +20,6 @@
 <BorderPane stylesheets="@style.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.IncomingInvitationsController">
 
     <!-- Top Bar -->
-    <!-- Top Bar -->
    <top>
         <HBox alignment="CENTER_LEFT" spacing="15" styleClass="top-bar">
             <padding>
@@ -46,7 +45,9 @@
 
                 <!-- Coins Display -->
                 <HBox fx:id="coinsContainer" styleClass="coins-container">
-                    <Text styleClass="coins-icon" text="🪙"/>
+                    <ImageView fitWidth="35" fitHeight="35">
+                    <Image url="@images/coin.png" />
+                </ImageView>
                     <Label fx:id="coinsAmount" styleClass="coins-amount" text="0"/>
                     <Label styleClass="coins-label" text="coins"/>
                 </HBox>

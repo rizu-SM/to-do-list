@@ -24,11 +24,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.Label;
-
-
 
 import Model.Task;
 import java.util.ArrayList;
@@ -180,14 +175,42 @@ public class MyTasksController extends BaseController implements Initializable {
         return selectedDate == null || task.getDateLimite().equals(selectedDate);
     }
 
-    private void displayFilteredTasks(List<Task> tasks) {
-        System.out.println("Displaying " + tasks.size() + " tasks");
-        tasksContainer.getChildren().clear();
-        tasks.forEach(task -> {
-            System.out.println("Creating card for task: " + task.getTitre());
-            createTaskCard(task);
-        });
+private void displayFilteredTasks(List<Task> tasks) {
+    System.out.println("Displaying " + tasks.size() + " tasks");
+    tasksContainer.getChildren().clear();
+    
+    // Séparer les tâches terminées et non terminées
+    List<Task> incompleteTasks = tasks.stream()
+        .filter(task -> !task.getStatut().equals("Terminé"))
+        .collect(Collectors.toList());
+    
+    List<Task> completedTasks = tasks.stream()
+        .filter(task -> task.getStatut().equals("Terminé"))
+        .collect(Collectors.toList());
+    
+    // Afficher d'abord les tâches non terminées
+    incompleteTasks.forEach(task -> {
+        System.out.println("Creating card for incomplete task: " + task.getTitre());
+        createTaskCard(task);
+    });
+    
+    // Ajouter un séparateur visuel si les deux listes ne sont pas vides
+    if (!incompleteTasks.isEmpty() && !completedTasks.isEmpty()) {
+        Separator separator = new Separator();
+        separator.getStyleClass().add("task-separator");
+        tasksContainer.getChildren().add(separator);
+        
+        Label completedLabel = new Label("Completed Tasks");
+        completedLabel.getStyleClass().add("completed-tasks-label");
+        tasksContainer.getChildren().add(completedLabel);
     }
+    
+    // Afficher ensuite les tâches terminées
+    completedTasks.forEach(task -> {
+        System.out.println("Creating card for completed task: " + task.getTitre());
+        createTaskCard(task);
+    });
+}
 
 
     private void createTaskCard(Task task) {

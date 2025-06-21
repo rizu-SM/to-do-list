@@ -35,35 +35,19 @@
             </TextFlow>
             
             <HBox spacing="10" alignment="CENTER" HBox.hgrow="ALWAYS">
-            <TextField fx:id="searchField" promptText="Search your task here..." styleClass="search-field" />
-                <Button styleClass="icon-button">
-                    <graphic>
-                        <ImageView fitWidth="15" fitHeight="15">
-                            <Image url="@images/loupe.png" />
-                        </ImageView>
-                    </graphic>
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
+            
+                
 
                 <!-- Coins Display -->
                 <HBox fx:id="coinsContainer" styleClass="coins-container">
-                    <Text styleClass="coins-icon" text="🪙"/>
+                    <ImageView fitWidth="35" fitHeight="35">
+                    <Image url="@images/coin.png" />
+                </ImageView>
                     <Label fx:id="coinsAmount" styleClass="coins-amount" text="0"/>
                     <Label styleClass="coins-label" text="coins"/>
                 </HBox>
 
-                <Button styleClass="icon-button">
-                    <graphic>
-                        <ImageView fitWidth="15" fitHeight="15">
-                            <Image url="@images/calendar.png" />
-                        </ImageView>
-                    </graphic>
-                    <cursor>
-                        <Cursor fx:constant="HAND" />
-                    </cursor>
-                </Button>
+                
                 <Button styleClass="icon-button" onAction="#showNotifications">
                     <graphic>
                         <ImageView fitWidth="15" fitHeight="15">
